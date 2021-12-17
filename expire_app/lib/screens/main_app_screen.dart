@@ -64,7 +64,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(_pages.elementAt(_pageIndex)['title']),
       ),
       body: Stack(

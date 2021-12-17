@@ -5,8 +5,8 @@ class DBHelper {
   static Future<sql.Database> database() async {
     final dbPath = await sql.getDatabasesPath();
 
-    return sql.openDatabase(path.join(dbPath, 'places.db'), onCreate: (db, version) {
-      return db.execute('CREATE TABLE user_places(id TEXT PRIMARY KEY, title TEXT, image TEXT)');
+    return sql.openDatabase(path.join(dbPath, 'DB.db'), onCreate: (db, version) {
+      return db.execute('CREATE TABLE user_products(id TEXT PRIMARY KEY, title TEXT, expiration TEXT, image TEXT)');
     }, version: 1);
   }
 
@@ -18,5 +18,13 @@ class DBHelper {
   static Future<List<Map<String, dynamic>>> getData(String table) async {
     final sqlDB = await DBHelper.database();
     return sqlDB.query(table);
+  }
+
+  static Future<void> delete(String table, String id) async {
+    final sqlDB = await DBHelper.database();
+    sqlDB.rawDelete(
+      'DELETE FROM $table WHERE id = ?',
+      [id],
+    );
   }
 }

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBarItem extends StatelessWidget {
   final Icon icon;
+  final double selectedSize;
+  final double unselectedSize;
   final VoidCallback onTap;
   final bool selected;
 
-  CustomBottomNavigationBarItem({required this.icon, required this.onTap, required this.selected});
+  CustomBottomNavigationBarItem(
+      {required this.icon, required this.onTap, required this.selected, this.selectedSize = 50, this.unselectedSize = 35});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +18,8 @@ class CustomBottomNavigationBarItem extends StatelessWidget {
       children: [
         IconButton(
           padding: const EdgeInsets.all(0),
-          iconSize: 35,
-          color: Colors.indigoAccent,
+          iconSize: selected ? selectedSize : unselectedSize,
+          color: selected ? Colors.indigoAccent : Colors.grey,
           icon: icon,
           onPressed: onTap,
         ),

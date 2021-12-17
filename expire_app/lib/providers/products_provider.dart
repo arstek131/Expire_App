@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 /* models */
 import '../models/product.dart';
 
+/* helpers */
+import '../helpers/db_helper.dart';
+
 class ProductsProvider extends ChangeNotifier {
-  List<Product> _items = [Product(id: '0', title: 'Nutella', expiration: DateTime.now(), image: null)];
+  List<Product> _items = [];
 
   List<Product> get items {
     return [..._items];
@@ -15,6 +18,35 @@ class ProductsProvider extends ChangeNotifier {
 
   void addProduct(Product product) {
     _items.add(product);
+    notifyListeners();
+
+    DBHelper.insert(
+      'user_products',
+      {
+        'id': product.id,
+        'title': product.title,
+        'expiration': product.expiration.toIso8601String(),
+        'image': 'null',
+      },
+    );
+  }
+
+  void deleteProduct(String productId) {
+    _items.removeWhere((element) => element.id == productId);
+    notifyListeners();
+
+    DBHelper.delete('user_products', productId);
+  }
+
+  Future<void> fetchAndSetProducts() async {
+    final dataList = await DBHelper.getData('user_products');
+    print(dataList);
+    _items = dataList
+        .map(
+          (item) => Product(id: item['id'], title: item['title'], expiration: DateTime.parse(item['expiration']), image: null),
+        )
+        .toList();
+
     notifyListeners();
   }
 }

@@ -12,18 +12,30 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<ProductsProvider>(
-      child: const Center(
-        child: Text("Add some products!"),
-      ),
-      builder: (ctx, productsData, ch) => productsData.items.isEmpty
-          ? ch!
-          : ListView.builder(
-              itemCount: productsData.items.length,
-              itemBuilder: (ctx, i) => ListTile(
-                title: Text(productsData.items[i].title),
+    return FutureBuilder(
+      future: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(),
+      builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Consumer<ProductsProvider>(
+              child: const Center(
+                child: Text("Add some products!"),
               ),
+              builder: (ctx, productsData, ch) => productsData.items.isEmpty
+                  ? ch!
+                  : ListView.builder(
+                      itemCount: productsData.items.length,
+                      itemBuilder: (ctx, i) => ListTile(
+                        title: Text(productsData.items[i].title),
+                      ),
+                    ),
             ),
     );
   }
