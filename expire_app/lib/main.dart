@@ -1,28 +1,32 @@
+/* dart libraries */
 import 'package:flutter/material.dart';
 import 'dart:io';
+
+/* Screens */
+import './screens/products_screen.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Expire app',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Expire app"),
-        ),
-        body: Center(
-          child: Text("Welcome to the expire app!"),
-        ),
-      ),
+      routes: {
+        '/': (ctx) => ProductsScreen(),
+      },
     );
   }
 }
