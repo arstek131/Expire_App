@@ -1,9 +1,12 @@
 /* dart libraries */
 import 'package:flutter/material.dart';
-import 'dart:io';
 
 /* Screens */
-import './screens/products_screen.dart';
+import 'screens/main_app_screen.dart';
+
+/* Providers */
+import 'package:provider/provider.dart';
+import './providers/products_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,14 +22,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Expire app',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
+    return ChangeNotifierProvider.value(
+      value: ProductsProvider(),
+      child: MaterialApp(
+        title: 'Expire app',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+        ),
+        routes: {
+          '/': (ctx) => MainAppScreen(),
+        },
       ),
-      routes: {
-        '/': (ctx) => ProductsScreen(),
-      },
     );
   }
 }
