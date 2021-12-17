@@ -18,25 +18,36 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(),
-      builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Consumer<ProductsProvider>(
-              child: const Center(
-                child: Text("Add some products!"),
-              ),
-              builder: (ctx, productsData, ch) => productsData.items.isEmpty
-                  ? ch!
-                  : ListView.builder(
-                      itemCount: productsData.items.length,
-                      itemBuilder: (ctx, i) => ListTile(
-                        title: Text(productsData.items[i].title),
-                      ),
-                    ),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          height: 200,
+          width: 10,
+          color: Colors.red,
+        ),
+        FutureBuilder(
+          future: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(),
+          builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Consumer<ProductsProvider>(
+                  child: const Center(
+                    child: Text("Add some products!"),
+                  ),
+                  builder: (ctx, productsData, ch) => productsData.items.isEmpty
+                      ? ch!
+                      : ListView.builder(
+                          itemCount: productsData.items.length,
+                          itemBuilder: (ctx, i) => ListTile(
+                            title: Text(productsData.items[i].title),
+                          ),
+                        ),
+                ),
+        ),
+      ],
     );
   }
 }

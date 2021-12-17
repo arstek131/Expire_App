@@ -89,7 +89,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                       )
                     : const Icon(
                         Icons.home_filled,
-                        size: 30,
+                        size: 25,
                       ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(const CircleBorder()),

@@ -12,6 +12,8 @@ class CustomBottomNavigationBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AnimationController iconAnimationController;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,

@@ -7,6 +7,13 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  // Todo: change
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 3), () => Navigator.of(context).pop());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
