@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 /* providers */
 import '../providers/products_provider.dart';
+import '../providers/bottom_navigator_bar_size_provider.dart';
 
 /* widgets */
 import '../widgets/custom_bottom_navigation_bar_item.dart';
@@ -28,17 +29,18 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  final double _selectedIconSize = 37;
+  final double _unselectedIconSize = 35;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final bottomNavigationSize = Provider.of<BottomNavigationBarSizeProvider>(context);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      margin: const EdgeInsets.only(bottom: 40),
-      height: 75,
+      margin: EdgeInsets.only(bottom: bottomNavigationSize.bottomPadding),
+      height: bottomNavigationSize.height,
       child: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -46,7 +48,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             BoxShadow(
               color: Colors.black26,
               blurRadius: 7,
-              spreadRadius: 1,
+              spreadRadius: 3,
               offset: Offset(0, 5),
             ),
           ],
@@ -61,8 +63,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 0,
               icon: const Icon(Icons.restaurant_menu),
-              selectedSize: 40,
-              unselectedSize: 35,
+              selectedSize: _selectedIconSize,
+              unselectedSize: _unselectedIconSize,
               onTap: () {
                 widget.setIndex(0);
               },
@@ -70,33 +72,37 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 1,
               icon: const Icon(Icons.format_list_bulleted),
-              selectedSize: 40,
-              unselectedSize: 35,
+              selectedSize: _selectedIconSize,
+              unselectedSize: _unselectedIconSize,
               onTap: () {
                 widget.setIndex(1);
               },
             ),
-            Container(
-              //margin: widget.pageIndex == 2 ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: widget.pageIndex != 2 ? 70 : 100,
               child: ElevatedButton(
                 onPressed: widget.pageIndex != 2
                     ? () => widget.setIndex(2)
                     : () => Provider.of<ProductsProvider>(context, listen: false).addProduct(
                           Product(
-                              id: DateTime.now().toString(), title: 'Nutella esplosiva', expiration: DateTime.now(), image: null),
+                              id: DateTime.now().toString(),
+                              title: 'Porzella esplosiva',
+                              expiration: DateTime.now(),
+                              image: null),
                         ), //Navigator.of(context).pushNamed(AddProductScreen.routeName),
                 child: widget.pageIndex == 2
-                    ? const Icon(
-                        Icons.add,
-                        size: 30,
+                    ? const FittedBox(
+                        child: Icon(
+                          Icons.add,
+                        ),
                       )
-                    : const Icon(
-                        Icons.home_filled,
-                        size: 25,
+                    : const FittedBox(
+                        child: Icon(Icons.home_filled),
                       ),
                 style: ButtonStyle(
-                  shape: MaterialStateProperty.all(const CircleBorder()),
-                  padding: MaterialStateProperty.all(const EdgeInsets.all(15)),
+                  shape: MaterialStateProperty.all(bottomNavigationSize.outlineBorder),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(bottomNavigationSize.mainButtonInternalPadding)),
                   backgroundColor: widget.pageIndex == 2
                       ? MaterialStateProperty.all(Colors.indigoAccent)
                       : MaterialStateProperty.all(Colors.indigo[400]), // <-- Button color
@@ -106,8 +112,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 3,
               icon: const Icon(Icons.auto_graph),
-              selectedSize: 40,
-              unselectedSize: 35,
+              selectedSize: _selectedIconSize,
+              unselectedSize: _unselectedIconSize,
               onTap: () {
                 widget.setIndex(3);
               },
@@ -115,8 +121,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 4,
               icon: const Icon(Icons.supervisor_account),
-              selectedSize: 40,
-              unselectedSize: 35,
+              selectedSize: _selectedIconSize,
+              unselectedSize: _unselectedIconSize,
               onTap: () {
                 widget.setIndex(4);
               },

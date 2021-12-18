@@ -1,13 +1,14 @@
 /* dart libraries */
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /* Screens */
 import 'screens/main_app_screen.dart';
 import 'screens/add_product_screen.dart';
 
 /* Providers */
-import 'package:provider/provider.dart';
 import './providers/products_provider.dart';
+import 'providers/bottom_navigator_bar_size_provider.dart';
 
 /* helpers */
 import './helpers/custom_route.dart';
@@ -26,8 +27,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: ProductsProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ProductsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BottomNavigationBarSizeProvider(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Expire app',
         theme: ThemeData(

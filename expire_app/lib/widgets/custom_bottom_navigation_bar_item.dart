@@ -1,4 +1,9 @@
+/* dart */
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+/* providers */
+import '../providers/bottom_navigator_bar_size_provider.dart';
 
 class CustomBottomNavigationBarItem extends StatelessWidget {
   final Icon icon;
@@ -12,7 +17,7 @@ class CustomBottomNavigationBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AnimationController iconAnimationController;
+    final bottomNavigationSize = Provider.of<BottomNavigationBarSizeProvider>(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -20,7 +25,7 @@ class CustomBottomNavigationBarItem extends StatelessWidget {
       children: [
         IconButton(
           padding: const EdgeInsets.all(0),
-          iconSize: selected ? selectedSize : unselectedSize,
+          iconSize: (selected ? selectedSize : unselectedSize) - bottomNavigationSize.iconSizeOffset,
           color: selected ? Colors.indigoAccent : Colors.grey,
           icon: icon,
           onPressed: onTap,

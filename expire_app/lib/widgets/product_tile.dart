@@ -1,9 +1,13 @@
 /* dart */
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 /* modes */
 import '../models/product.dart';
+
+/* provider */
+import '../providers/products_provider.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
@@ -13,7 +17,7 @@ class ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(product.id),
+      key: UniqueKey(), //ValueKey(product.id), since so far everything has same id for testing
       onDismissed: (direction) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -46,7 +50,13 @@ class ProductTile extends StatelessWidget {
               title: const Text("Confirm"),
               content: const Text("Are you sure you wish to delete this item?"),
               actions: <Widget>[
-                TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text("DELETE")),
+                TextButton(
+                  onPressed: () {
+                    Provider.of<ProductsProvider>(context, listen: false).deleteProduct(product.id); //Todo: not working.
+                    Navigator.of(ctx).pop(true);
+                  },
+                  child: const Text("DELETE"),
+                ),
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(false),
                   child: const Text("CANCEL"),

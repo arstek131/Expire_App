@@ -1,10 +1,13 @@
 /* dart */
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/rendering.dart';
 
 /* providers */
 import '../providers/products_provider.dart';
-import 'package:provider/provider.dart';
+import '../providers/bottom_navigator_bar_size_provider.dart';
+
+/* models */
 
 /* widgets */
 import '../widgets/product_tile.dart';
@@ -15,11 +18,6 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -35,6 +33,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             width: double.infinity,
             color: Colors.blue,
             margin: const EdgeInsets.symmetric(vertical: 10),
+            child: Center(
+              child: Text(
+                "SEARCH BAR, FILTERING AND VIEW CHANGE",
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           FutureBuilder(
             future: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(),
@@ -50,15 +54,35 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                     builder: (ctx, productsData, ch) => productsData.items.isEmpty
                         ? ch!
                         : Flexible(
-                            child: RefreshIndicator(
-                              key: _refreshIndicatorKey,
-                              color: Colors.blue,
-                              onRefresh: () async {
-                                return; //return Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(); ????
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: (ScrollNotification scrollInfo) {
+                                if (scrollInfo is UserScrollNotification) {
+                                  // scrolling up
+                                  if (scrollInfo.direction == ScrollDirection.forward) {
+                                    Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
+                                  } else if (scrollInfo.direction == ScrollDirection.reverse) {
+                                    // scrolling down
+                                    Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
+                                  }
+                                }
+                                return true;
                               },
-                              child: ListView.builder(
-                                itemCount: productsData.items.length,
-                                itemBuilder: (ctx, i) => ProductTile(productsData.items[i]), //product item...
+                              child: RefreshIndicator(
+                                key: _refreshIndicatorKey,
+                                color: Colors.blue,
+                                onRefresh: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts,
+                                child: ListView.builder(
+                                  itemCount: productsData.items.length + 1,
+                                  itemBuilder: (ctx, i) {
+                                    if (i < productsData.items.length) {
+                                      return ProductTile(productsData.items[i]);
+                                    } else {
+                                      return const SizedBox(
+                                        height: 80,
+                                      );
+                                    }
+                                  }, //product item...
+                                ),
                               ),
                             ),
                           ),
