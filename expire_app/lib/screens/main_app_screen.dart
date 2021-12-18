@@ -65,11 +65,30 @@ class _ProductsScreenState extends State<MainAppScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text(_pages.elementAt(_pageIndex)['title']),
+        //title: Text(_pages.elementAt(_pageIndex)['title']),
+        centerTitle: true,
+        title: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const FlutterLogo(
+                size: 30,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 5),
+                child: Text(_pages.elementAt(_pageIndex)['title']),
+              )
+            ],
+          ),
+        ),
       ),
       body: Stack(
         children: [
-          _pages.elementAt(_pageIndex)['page'],
+          IndexedStack(
+            index: _pageIndex,
+            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
+          ),
+          //_pages.elementAt(_pageIndex)['page'],
           SafeArea(
             child: Align(
               child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),

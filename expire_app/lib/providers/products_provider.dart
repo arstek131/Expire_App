@@ -40,7 +40,7 @@ class ProductsProvider extends ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     final dataList = await DBHelper.getData('user_products');
-    print(dataList);
+    //print(dataList);
     _items = dataList
         .map(
           (item) => Product(id: item['id'], title: item['title'], expiration: DateTime.parse(item['expiration']), image: null),

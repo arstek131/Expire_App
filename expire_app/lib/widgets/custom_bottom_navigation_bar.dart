@@ -37,8 +37,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      margin: const EdgeInsets.only(bottom: 20),
-      height: 85,
+      margin: const EdgeInsets.only(bottom: 40),
+      height: 75,
       child: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -77,11 +77,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               },
             ),
             Container(
-              margin: widget.pageIndex == 2 ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
+              //margin: widget.pageIndex == 2 ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
               child: ElevatedButton(
                 onPressed: widget.pageIndex != 2
                     ? () => widget.setIndex(2)
-                    : () => Navigator.of(context).pushNamed(AddProductScreen.routeName),
+                    : () => Provider.of<ProductsProvider>(context, listen: false).addProduct(
+                          Product(
+                              id: DateTime.now().toString(), title: 'Nutella esplosiva', expiration: DateTime.now(), image: null),
+                        ), //Navigator.of(context).pushNamed(AddProductScreen.routeName),
                 child: widget.pageIndex == 2
                     ? const Icon(
                         Icons.add,
