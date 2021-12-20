@@ -18,26 +18,29 @@ class SignUp extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(
-          height: 20,
+          height: 10,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.person_add_alt_rounded,
-                color: Colors.white,
-                size: 35,
+              IconButton(
+                onPressed: () =>
+                    _pageController.animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 32,
+                ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 10),
                 alignment: Alignment.centerLeft,
                 child: const Text(
                   "Sign Up",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 36,
+                    fontSize: 30,
                     color: Colors.white,
                     fontFamily: 'SanFrancisco',
                   ),
@@ -49,7 +52,7 @@ class SignUp extends StatelessWidget {
         ),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(top: 20),
+            margin: const EdgeInsets.only(top: 10),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -60,17 +63,20 @@ class SignUp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  padding: EdgeInsets.all(10),
+                Expanded(
+                  /*padding: EdgeInsets.all(10),
                   height: 280,
-                  width: 423,
-                  child: Image.asset(
-                    "./assets/images/auth_signup_img.png",
-                    fit: BoxFit.contain,
+                  width: 423,*/
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Image.asset(
+                      "./assets/images/auth_signup_img.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -78,6 +84,7 @@ class SignUp extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            keyboardType: TextInputType.emailAddress,
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.person, color: Colors.indigoAccent),
@@ -92,6 +99,12 @@ class SignUp extends StatelessWidget {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter some text';
                               }
+                              if (!RegExp(
+                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                  .hasMatch(value)) {
+                                return 'Please insert a valid e-mail';
+                              }
+
                               return null;
                             },
                           ),
@@ -156,7 +169,11 @@ class SignUp extends StatelessWidget {
                                 // If the form is valid, display a snackbar. In the real world,
                                 // you'd often call a server or save the information in a database.
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Processing Data')),
+                                  const SnackBar(
+                                      content: Text(
+                                    'Processing Data',
+                                    textAlign: TextAlign.center,
+                                  )),
                                 );
                               }
                             },
