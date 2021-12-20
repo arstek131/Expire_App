@@ -10,7 +10,14 @@ import '../models/product.dart';
 import '../helpers/db_helper.dart';
 
 class ProductsProvider extends ChangeNotifier {
-  List<Product> _items = [];
+  /* TODO: if authToken != null AND userId != null then comunicate with firebase, else just store locally! */
+
+  final String? authToken;
+  final String? userId;
+
+  List<Product> _items;
+
+  ProductsProvider(this.authToken, this.userId, this._items);
 
   List<Product> get items {
     return [..._items];

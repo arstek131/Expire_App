@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
-class SignUp extends StatelessWidget {
-  const SignUp({
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+
+import '../models/http_exception.dart';
+
+class SignUp extends StatefulWidget {
+  SignUp({
     Key? key,
     required GlobalKey<FormState> formKey,
     required PageController pageController,
@@ -14,6 +19,76 @@ class SignUp extends StatelessWidget {
   final PageController _pageController;
 
   @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Map<String, String> _authData = {
+    'email': '',
+    'password': '',
+  };
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(title: Text("An error occurred"), content: Text(message), actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Okay")),
+      ]),
+    );
+  }
+
+  Future<void> _submit() async {
+    print(_authData);
+    if (!widget._formKey.currentState!.validate()) {
+      // Invalid!
+      return;
+    } // redundant??
+    widget._formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      // Sign user up
+      await Provider.of<AuthProvider>(context, listen: false).signUp(
+        _authData['email']!,
+        _authData['password']!,
+      );
+    } on HttpException catch (error) {
+      // IT IS NOT CATCHING THIS EVEN 'THO IT IS HttpException
+      print(error);
+      var errorMessage = 'Authentication failed';
+
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email addresss';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find user with that email';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password';
+      }
+
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      const errorMessage = 'Chould not authenticate you. Please try again later';
+
+      _showErrorDialog(errorMessage);
+
+      print(error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -21,13 +96,13 @@ class SignUp extends StatelessWidget {
           height: 10,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+          padding: const EdgeInsets.only(top: 5.0, left: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
                 onPressed: () =>
-                    _pageController.animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut),
+                    widget._pageController.animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut),
                 icon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
@@ -44,7 +119,6 @@ class SignUp extends StatelessWidget {
                     color: Colors.white,
                     fontFamily: 'SanFrancisco',
                   ),
-                  textAlign: TextAlign.left,
                 ),
               ),
             ],
@@ -78,7 +152,7 @@ class SignUp extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                   child: Form(
-                    key: _formKey,
+                    key: widget._formKey,
                     child: Column(
                       children: <Widget>[
                         Padding(
@@ -107,6 +181,14 @@ class SignUp extends StatelessWidget {
 
                               return null;
                             },
+                            onSaved: (value) {
+                              _authData['email'] = value!;
+                              print(_authData);
+                            },
+                            onFieldSubmitted: (value) {
+                              _authData['email'] = value;
+                              print(_authData);
+                            },
                           ),
                         ),
                         Padding(
@@ -122,6 +204,16 @@ class SignUp extends StatelessWidget {
                               ),
                               hintText: 'password',
                             ),
+                            controller: _passwordController,
+                            onSaved: (value) {
+                              _authData['password'] = value!;
+                              print(_authData);
+                            },
+                            onFieldSubmitted: (value) {
+                              _authData['password'] = value;
+                              print(_authData);
+                            },
+                            obscureText: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter some text';
@@ -143,9 +235,13 @@ class SignUp extends StatelessWidget {
                               ),
                               hintText: 'confirm password',
                             ),
+                            obscureText: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter some text';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match!';
                               }
                               return null;
                             },
@@ -165,22 +261,23 @@ class SignUp extends StatelessWidget {
                             ),
                             onPressed: () {
                               // Validate returns true if the form is valid, or false otherwise.
-                              if (_formKey.currentState!.validate()) {
-                                // If the form is valid, display a snackbar. In the real world,
-                                // you'd often call a server or save the information in a database.
+                              if (widget._formKey.currentState!.validate()) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text(
-                                    'Processing Data',
+                                    'Signing up, hold tight!',
                                     textAlign: TextAlign.center,
                                   )),
                                 );
+                                _submit();
                               }
                             },
-                            child: const Text(
-                              'Submit',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                            child: _isLoading
+                                ? CircularProgressIndicator()
+                                : const Text(
+                                    'Submit',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
                           ),
                         ),
                         const SizedBox(
@@ -224,8 +321,8 @@ class SignUp extends StatelessWidget {
                                 style: TextStyle(color: Colors.blue),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    _pageController.animateToPage(0,
-                                        duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+                                    widget._pageController
+                                        .animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
                                   },
                               ),
                             ],

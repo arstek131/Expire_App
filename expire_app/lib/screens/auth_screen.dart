@@ -35,13 +35,14 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           child: SafeArea(
-              child: PageView(
-            controller: pageController,
-            children: [
-              SignIn(formKey: _formKeySignIn, pageController: pageController),
-              SignUp(formKey: _formKeySignUp, pageController: pageController),
-            ],
-          )),
+            child: PageView(
+              controller: pageController,
+              children: [
+                SignIn(formKey: _formKeySignIn, pageController: pageController),
+                SignUp(formKey: _formKeySignUp, pageController: pageController),
+              ],
+            ),
+          ),
         ),
       ),
     );

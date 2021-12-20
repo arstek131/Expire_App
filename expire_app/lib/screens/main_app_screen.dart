@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 /* Widgets */
 import '../widgets/custom_bottom_navigation_bar.dart';
 
+/* providers */
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+
 /* Screens */
 import '../screens/products_overview_screen.dart';
 
@@ -17,6 +21,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   /* Variables */
   var _pageIndex = 2;
   List<Map<String, dynamic>> _pages = [];
+  final pageController = PageController(initialPage: 2);
 
   /* Class methods */
   void _bottomNavigationBarHandler(index) {
@@ -52,7 +57,15 @@ class _ProductsScreenState extends State<MainAppScreen> {
       },
       {
         'page': Center(
-          child: Text("test4"),
+          child: ElevatedButton(
+            child: Text("LOGOUT"),
+            onPressed: () {
+              //Navigator.of(context).pushReplacementNamed(UserProductsScreen.routeName);
+              //Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
+              Provider.of<AuthProvider>(context, listen: false).logout();
+            },
+          ),
         ),
         'title': "User settings",
       },
@@ -84,9 +97,16 @@ class _ProductsScreenState extends State<MainAppScreen> {
       ),
       body: Stack(
         children: [
-          IndexedStack(
+          /*IndexedStack(
             index: _pageIndex,
             children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
+          ),*/
+          PageView(
+            controller: pageController,
+            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
+            onPageChanged: (value) {
+              _bottomNavigationBarHandler(value);
+            },
           ),
           //_pages.elementAt(_pageIndex)['page'],
           SafeArea(
