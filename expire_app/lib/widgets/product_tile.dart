@@ -67,7 +67,10 @@ class ProductTile extends StatelessWidget {
         );
       },
       child: Card(
-        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 8,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Row(children: <Widget>[

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 /* Screens */
 import 'screens/main_app_screen.dart';
 import 'screens/add_product_screen.dart';
+import 'screens/auth_screen.dart';
 
 /* Providers */
 import './providers/products_provider.dart';
@@ -45,9 +46,11 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.iOS: CustomPageTransitionBuilder(),
           }),
         ),
+        home: true ? AuthScreen() : MainAppScreen(),
         routes: {
-          '/': (ctx) => MainAppScreen(),
+          //'/': (ctx) => MainAppScreen(),
           AddProductScreen.routeName: (ctx) => AddProductScreen(),
+          AuthScreen.routeName: (ctx) => AuthScreen(),
         },
       ),
     );

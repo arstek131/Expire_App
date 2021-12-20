@@ -7,7 +7,7 @@ class BottomNavigationBarSizeProvider extends ChangeNotifier {
   double _bottomPadding = 40.0;
   double _mainButtonInternalPadding = 15;
   double _iconSizeOffset = 0;
-  OutlinedBorder _outlineBorder = const CircleBorder();
+  OutlinedBorder _outlineBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)); //const CircleBorder();
 
   double get height {
     return _height;
