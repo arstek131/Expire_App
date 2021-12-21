@@ -38,13 +38,13 @@ class _ProductsScreenState extends State<MainAppScreen> {
   void initState() {
     _pages = [
       {
-        'page': Center(
+        'page': const Center(
           child: Text("test0"),
         ),
         'title': "Recipes",
       },
       {
-        'page': Center(
+        'page': const Center(
           child: Text("test1"),
         ),
         'title': "Shopping list",
@@ -54,7 +54,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Products",
       },
       {
-        'page': Center(
+        'page': const Center(
           child: Text("test3"),
         ),
         'title': "Analytics",
@@ -64,8 +64,6 @@ class _ProductsScreenState extends State<MainAppScreen> {
           child: ElevatedButton(
             child: Text("LOGOUT"),
             onPressed: () async {
-              //Navigator.of(context).pushReplacementNamed(UserProductsScreen.routeName);
-              //Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
               final auth = Provider.of<AuthProvider>(context, listen: false);
 
@@ -80,7 +78,6 @@ class _ProductsScreenState extends State<MainAppScreen> {
                 default:
                   print(auth.signInMethod);
                   throw Exception("Something went wrong during log-out");
-                  break;
               }
             },
           ),

@@ -17,9 +17,16 @@ class ProductsOverviewScreen extends StatefulWidget {
   _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
 }
 
-class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
+    with AutomaticKeepAliveClientMixin<ProductsOverviewScreen> {
+  // Keep page state alive
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
     return Padding(
@@ -33,7 +40,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             width: double.infinity,
             color: Colors.blue,
             margin: const EdgeInsets.symmetric(vertical: 10),
-            child: Center(
+            child: const Center(
               child: Text(
                 "SEARCH BAR, FILTERING AND VIEW CHANGE",
                 textAlign: TextAlign.center,

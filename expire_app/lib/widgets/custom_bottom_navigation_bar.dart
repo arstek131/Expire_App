@@ -8,12 +8,12 @@ import '../providers/bottom_navigator_bar_size_provider.dart';
 
 /* widgets */
 import '../widgets/custom_bottom_navigation_bar_item.dart';
+import '../widgets/add_item_modal.dart';
 
 /* models */
 import '../models/product.dart';
 
 /* screens */
-import '../screens/add_product_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final Function setIndex;
@@ -84,13 +84,29 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               child: ElevatedButton(
                 onPressed: widget.pageIndex != 2
                     ? () => widget.setIndex(2)
-                    : () => Provider.of<ProductsProvider>(context, listen: false).addProduct(
+                    : () {
+                        showModalBottomSheet<void>(
+                          isScrollControlled: true,
+                          enableDrag: true,
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          builder: (BuildContext ctx) {
+                            return AddItemModal(modalContext: ctx);
+                          },
+                        );
+                      },
+                /*=> Provider.of<ProductsProvider>(context, listen: false).addProduct(
                           Product(
                               id: DateTime.now().toString(),
                               title: 'Porzella esplosiva',
                               expiration: DateTime.now(),
                               image: null),
-                        ), //Navigator.of(context).pushNamed(AddProductScreen.routeName),
+                        ),*/ //Navigator.of(context).pushNamed(AddProductScreen.routeName),
                 child: widget.pageIndex == 2
                     ? const FittedBox(
                         child: Icon(

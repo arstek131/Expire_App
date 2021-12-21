@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 /* Screens */
 import 'screens/main_app_screen.dart';
-import 'screens/add_product_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 
@@ -72,7 +71,6 @@ class _MyAppState extends State<MyApp> {
                   ),
             routes: {
               //'/': (ctx) => MainAppScreen(),
-              AddProductScreen.routeName: (ctx) => AddProductScreen(),
               AuthScreen.routeName: (ctx) => AuthScreen(),
             },
           ),
