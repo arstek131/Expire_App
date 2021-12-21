@@ -11,6 +11,9 @@ import '../providers/auth_provider.dart';
 /* Screens */
 import '../screens/products_overview_screen.dart';
 
+/* helpers */
+import '../helpers/sign_in_method.dart';
+
 class MainAppScreen extends StatefulWidget {
   static const routeName = '/';
   @override
@@ -20,14 +23,15 @@ class MainAppScreen extends StatefulWidget {
 class _ProductsScreenState extends State<MainAppScreen> {
   /* Variables */
   var _pageIndex = 2;
-  List<Map<String, dynamic>> _pages = [];
   final pageController = PageController(initialPage: 2);
+  List<Map<String, dynamic>> _pages = [];
 
   /* Class methods */
   void _bottomNavigationBarHandler(index) {
     setState(() {
       _pageIndex = index;
     });
+    pageController.jumpToPage(index);
   }
 
   @override
@@ -59,11 +63,25 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'page': Center(
           child: ElevatedButton(
             child: Text("LOGOUT"),
-            onPressed: () {
+            onPressed: () async {
               //Navigator.of(context).pushReplacementNamed(UserProductsScreen.routeName);
               //Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              Provider.of<AuthProvider>(context, listen: false).logout();
+              final auth = Provider.of<AuthProvider>(context, listen: false);
+
+              print(auth.signInMethod);
+              switch (auth.signInMethod) {
+                case SignInMethod.EmailAndPassword:
+                  await auth.logout();
+                  break;
+                case SignInMethod.Google:
+                  auth.googleLogout();
+                  break;
+                default:
+                  print(auth.signInMethod);
+                  throw Exception("Something went wrong during log-out");
+                  break;
+              }
             },
           ),
         ),
@@ -71,6 +89,12 @@ class _ProductsScreenState extends State<MainAppScreen> {
       },
     ];
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override

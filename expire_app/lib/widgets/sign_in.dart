@@ -301,7 +301,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  print("Login with facebook");
+                                  Provider.of<AuthProvider>(context, listen: false).googleLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

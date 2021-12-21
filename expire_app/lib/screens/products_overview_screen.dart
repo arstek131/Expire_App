@@ -10,7 +10,7 @@ import '../providers/bottom_navigator_bar_size_provider.dart';
 /* models */
 
 /* widgets */
-import '../widgets/product_tile.dart';
+import '../widgets/product_list_tile.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
   @override
@@ -75,7 +75,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                                   itemCount: productsData.items.length + 1,
                                   itemBuilder: (ctx, i) {
                                     if (i < productsData.items.length) {
-                                      return ProductTile(productsData.items[i]);
+                                      return ProductListTile(productsData.items[i]);
                                     } else {
                                       return const SizedBox(
                                         height: 80,

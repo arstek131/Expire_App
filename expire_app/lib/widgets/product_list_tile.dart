@@ -9,10 +9,10 @@ import '../models/product.dart';
 /* provider */
 import '../providers/products_provider.dart';
 
-class ProductTile extends StatelessWidget {
+class ProductListTile extends StatelessWidget {
   final Product product;
 
-  ProductTile(this.product);
+  ProductListTile(this.product);
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +83,7 @@ class ProductTile extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     product.title,

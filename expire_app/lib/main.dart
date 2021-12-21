@@ -1,6 +1,8 @@
 /* dart libraries */
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 /* Screens */
 import 'screens/main_app_screen.dart';
@@ -16,7 +18,10 @@ import './providers/auth_provider.dart';
 /* helpers */
 import './helpers/custom_route.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

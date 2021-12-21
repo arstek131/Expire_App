@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "160174632437",
+    "firebase_url": "https://expire-app-8070c-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "expire-app-8070c",
+    "storage_bucket": "expire-app-8070c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160174632437:android:3ec9bde4342c22c50544bc",
+        "android_client_info": {
+          "package_name": "com.example.expire_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160174632437-edqsc547b0dc5bko35qjjtlo6okm1l6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1dDmi2x3kj2XtPhVHHyME1XQMryzyZxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160174632437-edqsc547b0dc5bko35qjjtlo6okm1l6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
