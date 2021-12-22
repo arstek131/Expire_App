@@ -1,6 +1,15 @@
+/* dart */
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+/* provider */
+import 'package:provider/provider.dart';
+import '../providers/products_provider.dart';
+import '../providers/auth_provider.dart';
+
+/* models */
+import '../models/product.dart';
 
 class AddItemModal extends StatefulWidget {
   final BuildContext modalContext;
@@ -37,7 +46,48 @@ class _AddItemModalState extends State<AddItemModal> {
         _chosenIndexes.add(index);
       });
     }
-    print(_chosenIndexes);
+  }
+
+  Map<String, String> _authData = {
+    'email': '',
+    'expiration': '',
+  };
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(title: Text("An error occurred"), content: Text(message), actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Okay")),
+      ]),
+    );
+  }
+
+  Future<void> _submit() async {
+    /*if (_formKey.currentState!.validate()) {
+      // Invalid!
+      return;
+    } */
+    // redundant??
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      // Sign user up
+      await Provider.of<ProductsProvider>(context, listen: false).addProduct(
+        Product(id: '', title: "Porzella esplosiva", expiration: DateTime.now(), creatorId: '', image: null),
+      );
+    } catch (error) {
+      const errorMessage = 'Chould not upload product. Please try again later';
+
+      _showErrorDialog(errorMessage);
+
+      print(error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -123,7 +173,6 @@ class _AddItemModalState extends State<AddItemModal> {
                       height: 10,
                     ),
                     TextFormField(
-                      keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.black),
                       decoration: const InputDecoration(
                         prefixIcon: Padding(
@@ -169,19 +218,12 @@ class _AddItemModalState extends State<AddItemModal> {
                             ),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
+                        onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
-                          /*if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                'Signing up, hold tight!',
-                                textAlign: TextAlign.center,
-                              )),
-                            );
-                            _submit();
-                          }*/
+                          if (_formKey.currentState!.validate()) {
+                            await _submit();
+                            Navigator.of(widget.modalContext).pop();
+                          }
                         },
                         child: _isLoading
                             ? CircularProgressIndicator()

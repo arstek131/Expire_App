@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-
 /* dart */
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 /* models */
 import '../models/product.dart';
+import '../models/http_exception.dart';
 
 /* helpers */
 import '../helpers/db_helper.dart';
@@ -23,19 +24,53 @@ class ProductsProvider extends ChangeNotifier {
     return [..._items];
   }
 
-  void addProduct(Product product) {
-    _items.add(product);
-    notifyListeners();
+  final baseUrl = "https://expire-app-8070c-default-rtdb.europe-west1.firebasedatabase.app";
 
-    DBHelper.insert(
-      'user_products',
-      {
-        'id': product.id,
-        'title': product.title,
-        'expiration': product.expiration.toIso8601String(),
-        'image': 'null',
-      },
-    );
+  Future<void> addProduct(Product product) async {
+    final url = "$baseUrl/products/$userId.json?auth=$authToken";
+
+    // http post
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: json.encode(
+          {
+            'title': product.title,
+            'expiration': product.expiration.toIso8601String(),
+            'imageUrl': null,
+            'creatorId': userId,
+          },
+        ),
+      );
+
+      final decodedResponse = json.decode(response.body);
+      final productId = decodedResponse['name'];
+
+      Product newProduct = Product(
+        id: productId,
+        title: product.title,
+        expiration: product.expiration,
+        creatorId: userId!,
+      );
+
+      // local
+      _items.add(newProduct);
+      notifyListeners();
+
+      DBHelper.insert(
+        'user_products',
+        {
+          'id': newProduct.id,
+          'title': newProduct.title,
+          'expiration': newProduct.expiration.toIso8601String(),
+          'creatorId': newProduct.creatorId,
+          'image': 'null',
+        },
+      );
+    } catch (error) {
+      print(error);
+      throw HttpException("Something went wrong while inserting product");
+    }
   }
 
   void deleteProduct(String productId) {
@@ -46,11 +81,19 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final dataList = await DBHelper.getData('user_products');
+    // todo: change with DB call
+    final dataList = await DBHelper.getData(table: 'user_products');
     //print(dataList);
     _items = dataList
         .map(
-          (item) => Product(id: item['id'], title: item['title'], expiration: DateTime.parse(item['expiration']), image: null),
+          (item) => Product(
+              id: item['id'],
+              title: item['title'],
+              expiration: DateTime.parse(
+                item['expiration'],
+              ),
+              creatorId: item['creatorId'],
+              image: null),
         )
         .toList();
 

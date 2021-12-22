@@ -1,4 +1,6 @@
 /* dart */
+import 'package:expire_app/helpers/db_helper.dart';
+import 'package:expire_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +11,25 @@ import '../models/product.dart';
 /* provider */
 import '../providers/products_provider.dart';
 
-class ProductListTile extends StatelessWidget {
+class ProductListTile extends StatefulWidget {
   final Product product;
 
   ProductListTile(this.product);
+
+  @override
+  State<ProductListTile> createState() => _ProductListTileState();
+}
+
+class _ProductListTileState extends State<ProductListTile> {
+  String _displayName = "";
+
+  /*_ProductListTileState() {
+    Provider.of<AuthProvider>(context, listen: false).getDisplayNameFromId(widget.product.id).then((value) {
+      setState(() {
+        _displayName = value;
+      });
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +39,7 @@ class ProductListTile extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Product '${product.title}' deleted",
+              "Product '${widget.product.title}' deleted",
               textAlign: TextAlign.center,
             ),
           ),
@@ -52,7 +69,7 @@ class ProductListTile extends StatelessWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Provider.of<ProductsProvider>(context, listen: false).deleteProduct(product.id); //Todo: not working.
+                    Provider.of<ProductsProvider>(context, listen: false).deleteProduct(widget.product.id); //Todo: not working.
                     Navigator.of(ctx).pop(true);
                   },
                   child: const Text("DELETE"),
@@ -86,11 +103,11 @@ class ProductListTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    product.title,
+                    widget.product.title,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
-                    'Expiration: ${DateFormat('dd/MM/yyyy').format(product.expiration)}',
+                    'Expiration: ${DateFormat('dd/MM/yyyy').format(widget.product.expiration)}',
                     style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold),
                   ),
                   Row(
@@ -100,10 +117,15 @@ class ProductListTile extends StatelessWidget {
                         color: Colors.grey,
                         size: 20,
                       ),
-                      Text(
-                        product.id,
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
-                      ),
+                      FutureBuilder(
+                          future: DBHelper.getDisplayNameFromId(widget.product.creatorId),
+                          initialData: "Loading text..",
+                          builder: (BuildContext context, AsyncSnapshot<String> text) {
+                            return Text(
+                              text.data!,
+                              style: const TextStyle(color: Colors.grey, fontSize: 14),
+                            );
+                          })
                     ],
                   ),
                 ],

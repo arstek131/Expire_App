@@ -1,4 +1,5 @@
 /* dart */
+import 'package:expire_app/helpers/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,17 +19,20 @@ import '../models/http_exception.dart';
 class AuthProvider with ChangeNotifier {
   static const WEB_API_KEY = "AIzaSyCB3lLOarxGaMlJxRhL1QXVKUCh-O2T83Q";
 
+  /* Session related */
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
   Timer? _authTimer;
+
+  /* User info */
+  String? _displayName;
 
   /* OAuth */
   SignInMethod _signInMethod = SignInMethod.None; // default
 
   // Google
   final googleSignIn = GoogleSignIn();
-  GoogleSignInAccount? _user;
 
   // Facebook
   //...
@@ -55,6 +59,10 @@ class AuthProvider with ChangeNotifier {
 
   SignInMethod get signInMethod {
     return _signInMethod;
+  }
+
+  String? get displayName {
+    return _displayName;
   }
 
   Future<void> _authenticate(String email, String password, String urlSegment) async {
@@ -85,8 +93,17 @@ class AuthProvider with ChangeNotifier {
           ),
         ),
       );
+
       _autoLogout(logout);
       notifyListeners();
+
+      await DBHelper.insert(
+        'users',
+        {
+          'userId': _userId!,
+          'displayName': "Alessandro Sorrentino", // todo: change
+        },
+      );
 
       _signInMethod = SignInMethod.EmailAndPassword;
 
@@ -119,7 +136,6 @@ class AuthProvider with ChangeNotifier {
     }
     final extractedUserData = json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
     _signInMethod = EnumToString.fromString(SignInMethod.values, prefs.getString("signInMethod")!)!;
-    print(_signInMethod);
 
     final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
     if (expiryDate.isBefore(DateTime.now())) {
@@ -165,7 +181,8 @@ class AuthProvider with ChangeNotifier {
       }
 
       // User info
-      _user = googleUser;
+      GoogleSignInAccount? _user = googleUser;
+      _displayName = _user.displayName;
 
       // Google authentication (token, id, ...)
       final googleAuth = await googleUser.authentication;
@@ -192,6 +209,14 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
 
       _signInMethod = SignInMethod.Google;
+
+      await DBHelper.insert(
+        'users',
+        {
+          'userId': _userId!,
+          'displayName': _displayName as String,
+        },
+      );
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode({
