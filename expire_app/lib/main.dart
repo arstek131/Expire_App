@@ -1,4 +1,6 @@
 /* dart libraries */
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +21,12 @@ import './helpers/custom_route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (Platform.isIOS) {
+    print("initializeApp still not implemented for iOS");
+    return;
+  }
+
+  await Firebase.initializeApp(); // todo: set for ios
 
   runApp(const MyApp());
 }
@@ -40,10 +47,11 @@ class _MyAppState extends State<MyApp> {
             create: (_) => AuthProvider(),
           ),
           ChangeNotifierProxyProvider<AuthProvider, ProductsProvider>(
-            create: (_) => ProductsProvider(null, null, []),
+            create: (_) => ProductsProvider(null, null, null, []),
             update: (_, auth, previousProducts) => ProductsProvider(
               auth.token,
               auth.userId,
+              auth.familyId,
               previousProducts == null ? [] : previousProducts.items,
             ),
           ),

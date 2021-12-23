@@ -41,7 +41,6 @@ class _SignUpState extends State<SignUp> {
   }
 
   Future<void> _submit() async {
-    print(_authData);
     if (!widget._formKey.currentState!.validate()) {
       // Invalid!
       return;
@@ -84,6 +83,7 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         _isLoading = false;
       });
+
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     }
   }
@@ -183,11 +183,9 @@ class _SignUpState extends State<SignUp> {
                             },
                             onSaved: (value) {
                               _authData['email'] = value!;
-                              print(_authData);
                             },
                             onFieldSubmitted: (value) {
                               _authData['email'] = value;
-                              print(_authData);
                             },
                           ),
                         ),
@@ -207,11 +205,9 @@ class _SignUpState extends State<SignUp> {
                             controller: _passwordController,
                             onSaved: (value) {
                               _authData['password'] = value!;
-                              print(_authData);
                             },
                             onFieldSubmitted: (value) {
                               _authData['password'] = value;
-                              print(_authData);
                             },
                             obscureText: true,
                             validator: (value) {

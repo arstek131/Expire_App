@@ -1,6 +1,7 @@
 /* dart */
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 
 /* models */
@@ -15,10 +16,11 @@ class ProductsProvider extends ChangeNotifier {
 
   final String? authToken;
   final String? userId;
+  final String? familyId;
 
   List<Product> _items;
 
-  ProductsProvider(this.authToken, this.userId, this._items);
+  ProductsProvider(this.authToken, this.userId, this.familyId, this._items);
 
   List<Product> get items {
     return [..._items];
@@ -27,8 +29,8 @@ class ProductsProvider extends ChangeNotifier {
   final baseUrl = "https://expire-app-8070c-default-rtdb.europe-west1.firebasedatabase.app";
 
   Future<void> addProduct(Product product) async {
-    final url = "$baseUrl/products/$userId.json?auth=$authToken";
-
+    final url = "$baseUrl/families/$familyId/$userId.json?auth=$authToken";
+    print(url);
     // http post
     try {
       final response = await http.post(

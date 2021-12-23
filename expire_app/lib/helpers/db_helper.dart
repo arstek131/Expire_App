@@ -9,6 +9,7 @@ class DBHelper {
       await db
           .execute('CREATE TABLE user_products(id TEXT PRIMARY KEY, title TEXT, expiration TEXT, creatorId TEXT, image TEXT)');
       await db.execute('CREATE TABLE users(userId TEXT PRIMARY KEY, displayName TEXT)');
+      await db.execute('CREATE TABLE family(familyId TEXT NOT NULL, userId TEXT NOT NULL, PRIMARY KEY (familyId, userId))');
     }, version: 1);
   }
 
@@ -30,8 +31,15 @@ class DBHelper {
     );
   }
 
-  static Future<String> getDisplayNameFromId(String userId) async {
+  static Future<String?> getFamilyIdFromUserId(String userId) async {
+    final data = await DBHelper.getData(table: 'family', where: "userId == (?)", whereArgs: [userId]);
+
+    return data.isEmpty ? null : data[0]['familyId'];
+  }
+
+  static Future<String?> getDisplayNameFromUserId(String userId) async {
     final data = await DBHelper.getData(table: 'users', where: "userId == (?)", whereArgs: [userId]);
-    return data[0]['displayName'];
+
+    return data.isEmpty ? null : data[0]['displayName'];
   }
 }

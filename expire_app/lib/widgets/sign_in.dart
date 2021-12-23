@@ -39,7 +39,6 @@ class _SignInState extends State<SignIn> {
   }
 
   Future<void> _submit() async {
-    print(_authData);
     if (!widget._formKey.currentState!.validate()) {
       // Invalid!
       return;
@@ -161,11 +160,9 @@ class _SignInState extends State<SignIn> {
                             ),
                             onSaved: (value) {
                               _authData['email'] = value!;
-                              print(_authData);
                             },
                             onFieldSubmitted: (value) {
                               _authData['email'] = value;
-                              print(_authData);
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -222,7 +219,7 @@ class _SignInState extends State<SignIn> {
                                 ),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               // Validate returns true if the form is valid, or false otherwise.
                               if (widget._formKey.currentState!.validate()) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -232,7 +229,7 @@ class _SignInState extends State<SignIn> {
                                     textAlign: TextAlign.center,
                                   )),
                                 );
-                                _submit();
+                                await _submit();
                               }
                             },
                             child: _isLoading

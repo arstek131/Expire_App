@@ -38,8 +38,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
   void initState() {
     _pages = [
       {
-        'page': const Center(
-          child: Text("test0"),
+        'page': Center(
+          child: Text(Provider.of<AuthProvider>(context, listen: false).displayName ?? "null"),
         ),
         'title': "Recipes",
       },

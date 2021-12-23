@@ -118,14 +118,15 @@ class _ProductListTileState extends State<ProductListTile> {
                         size: 20,
                       ),
                       FutureBuilder(
-                          future: DBHelper.getDisplayNameFromId(widget.product.creatorId),
-                          initialData: "Loading text..",
-                          builder: (BuildContext context, AsyncSnapshot<String> text) {
-                            return Text(
-                              text.data!,
-                              style: const TextStyle(color: Colors.grey, fontSize: 14),
-                            );
-                          })
+                        future: DBHelper.getDisplayNameFromUserId(widget.product.creatorId),
+                        initialData: "Loading text..",
+                        builder: (BuildContext context, AsyncSnapshot<String?> text) {
+                          return Text(
+                            text.data ?? "UNKNOWN",
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                          );
+                        },
+                      )
                     ],
                   ),
                 ],

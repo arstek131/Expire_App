@@ -9,12 +9,34 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /* helpers */
 import '../helpers/sign_in_method.dart';
 
 /* models */
 import '../models/http_exception.dart';
+
+/* getting things */
+/*firestore.collection('families').get().then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        //print(document.data());
+        //print(document.id);
+      });
+    });*/
+
+/* pushing things */
+/*firestore.collection('families').add({
+      "PROVA": "prova",
+    });*/
+/*firestore.collection('families').doc("prova").set({
+      'porco': 'dio',
+    });*/
+
+/* firestore.collection('families').add({
+      "PROVA": "prova",
+    }).then((docRef) => print(docRef.id));*/
 
 class AuthProvider with ChangeNotifier {
   static const WEB_API_KEY = "AIzaSyCB3lLOarxGaMlJxRhL1QXVKUCh-O2T83Q";
@@ -23,10 +45,14 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
+  String? _familyId;
   Timer? _authTimer;
 
   /* User info */
   String? _displayName;
+
+  /* Firebase */
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   /* OAuth */
   SignInMethod _signInMethod = SignInMethod.None; // default
@@ -55,6 +81,10 @@ class AuthProvider with ChangeNotifier {
 
   String? get userId {
     return _userId;
+  }
+
+  String? get familyId {
+    return _familyId;
   }
 
   SignInMethod get signInMethod {
@@ -95,15 +125,6 @@ class AuthProvider with ChangeNotifier {
       );
 
       _autoLogout(logout);
-      notifyListeners();
-
-      await DBHelper.insert(
-        'users',
-        {
-          'userId': _userId!,
-          'displayName': "Alessandro Sorrentino", // todo: change
-        },
-      );
 
       _signInMethod = SignInMethod.EmailAndPassword;
 
@@ -121,11 +142,112 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signUp(String email, String password) async {
-    return _authenticate(email, password, 'signUp');
+    // authenitcate
+    await _authenticate(email, password, 'signUp'); // set token, userId, expiryDate
+
+    // display name
+    _displayName = "Paolino Paperino"; // todo: ask user
+    await DBHelper.insert(
+      'users',
+      {
+        'userId': _userId!,
+        'displayName': _displayName!, // todo: change
+      },
+    );
+
+    // generate new family and insert id
+    await firestore.collection('families').add({}).then(
+      (familyReference) {
+        _familyId = familyReference.id;
+        print("Family id: $_familyId");
+        return firestore.collection("families").doc(familyReference.id).collection(_userId!).doc('userInfo').set(
+          {
+            "displayName": _displayName,
+          },
+        );
+      },
+    );
+
+    // family id registering on db
+    await DBHelper.insert(
+      'family',
+      {
+        'userId': _userId!,
+        'familyId': _familyId!, // todo: change
+      },
+    );
+
+    notifyListeners();
   }
 
   Future<void> login(String email, String password) async {
-    return _authenticate(email, password, 'signInWithPassword');
+    await _authenticate(email, password, 'signInWithPassword');
+
+    _familyId = await DBHelper.getFamilyIdFromUserId(_userId!);
+    if (_familyId == null) {
+      print("Need to check familyId in the firebase DB!");
+
+      // check on remote DB
+      var querySnapshot = await firestore.collection('families').get();
+      for (final document in querySnapshot.docs) {
+        print("Searching in document: ${document.id}");
+        try {
+          // check if family collection has subuser with given id
+          var sub = await firestore.collection('families').doc(document.id).collection(_userId!).get();
+          if (sub.docs.length > 0) {
+            print("user ${_userId} found family: ${document.id}");
+            _familyId = document.id;
+          }
+        } catch (e, stacktrace) {
+          print('Exception: ' + e.toString());
+          print('Stacktrace: ' + stacktrace.toString());
+        }
+        //print(document.id);
+      }
+
+      if (_familyId == null) {
+        print("Something went wrong");
+        return;
+      }
+      // update local DB
+      await DBHelper.insert(
+        'family',
+        {
+          'userId': _userId!,
+          'familyId': _familyId!,
+        },
+      );
+    } else {
+      print("No need to check familyId on remote DB!");
+    }
+
+    // try to get displayName from local DB
+    _displayName = await DBHelper.getDisplayNameFromUserId(userId!);
+    if (_displayName == null) {
+      print("Need to check displayName on firebase DB!");
+
+      // search in DB
+      var querySnapshot = await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').get();
+
+      if (querySnapshot.data() == null) {
+        print("Something went wrong");
+        return;
+      }
+      _displayName = querySnapshot.data()!['displayName'];
+
+      // update local DB
+      await DBHelper.insert(
+        'users',
+        {
+          'userId': _userId!,
+          'displayName': _displayName!, // todo: change
+        },
+      );
+    } else {
+      print("No need to check displayName on remote DB!");
+    }
+
+    notifyListeners();
   }
 
   Future<bool> tryAutoLogin() async {
