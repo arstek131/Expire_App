@@ -78,6 +78,9 @@ class _ProductsScreenState extends State<MainAppScreen> {
                 case SignInMethod.Google:
                   auth.googleLogout();
                   break;
+                case SignInMethod.Facebook:
+                  auth.facebookLogout();
+                  break;
                 default:
                   print(auth.signInMethod);
                   throw Exception("Something went wrong during log-out");

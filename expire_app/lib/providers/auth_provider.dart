@@ -59,7 +59,7 @@ class AuthProvider with ChangeNotifier {
   final googleSignIn = GoogleSignIn();
 
   // Facebook
-  //...
+  FacebookAuth facebookAuth = FacebookAuth.instance;
 
   // Apple
   //...
@@ -254,6 +254,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> googleLogIn() async {
+    // TODO with UserCredential(additionalUserInfo: AdditionalUserInfo(isNewUser: true, ...
     try {
       // Google sign in
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -293,7 +294,7 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode({
         'token': _token,
-        'userId': userId,
+        'userId': _userId,
         'expiryDate': _expiryDate!.toIso8601String(),
       });
       prefs.setString('userData', userData);
@@ -372,6 +373,102 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> facebookLogIn() async {
-    print("prova");
+    final facebookLoginResult = await facebookAuth.login();
+
+    final _user = await facebookAuth.getUserData();
+    print("USER DATA: $_user");
+
+    _token = facebookLoginResult.accessToken!.token;
+
+    final facebookAuthCredential = FacebookAuthProvider.credential(_token!);
+    final response = await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    print("RESPONSE: $response");
+    _userId = response.user!.uid;
+
+    bool isNewUser = response.additionalUserInfo!.isNewUser;
+
+    // default 1h expiration token
+    _expiryDate = DateTime.now().add(
+      const Duration(
+        seconds: 3600,
+      ),
+    );
+
+    _autoLogout(googleLogout);
+
+    _signInMethod = SignInMethod.Facebook;
+
+    final prefs = await SharedPreferences.getInstance();
+    final userData = json.encode({
+      'token': _token,
+      'userId': _userId,
+      'expiryDate': _expiryDate!.toIso8601String(),
+    });
+    prefs.setString('userData', userData);
+    prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
+
+    if (isNewUser) {
+      // for sure we don't have data in DB, communicate with remote DB + store locally
+      print("New facebook user!");
+      var familyReference = await firestore.collection('families').add({});
+      _familyId = familyReference.id;
+      print("Family id: $_familyId");
+
+      await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').set(
+        {
+          'displayName': _user['name'],
+        },
+      );
+    } else {
+      print("Not the first time i see you around uh");
+
+      // retrieving existing family Id
+      _familyId = await DBHelper.getFamilyIdFromUserId(_userId!);
+      if (_familyId == null) {
+        print("Need to check on remote DB");
+        var querySnapshot = await firestore.collection('families').get();
+        for (final document in querySnapshot.docs) {
+          try {
+            // check if family collection has subuser with given id
+            var sub = await firestore.collection('families').doc(document.id).collection(_userId!).get();
+            if (sub.docs.length > 0) {
+              print("user ${_userId} found family: ${document.id}");
+              _familyId = document.id;
+            }
+          } catch (e, stacktrace) {
+            print('Exception: ' + e.toString());
+            print('Stacktrace: ' + stacktrace.toString());
+          }
+        }
+      } else {
+        print("No need to check on remote DB for familyid");
+      }
+    }
+
+    // family id registering on db
+    await DBHelper.insert(
+      'family',
+      {
+        'userId': _userId!,
+        'familyId': _familyId!, // todo: change
+      },
+    );
+
+    // display Name
+    await DBHelper.insert(
+      'users',
+      {
+        'userId': _userId!,
+        'displayName': _user['name'] as String,
+      },
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> facebookLogout() async {
+    await FacebookAuth.instance.logOut();
+    FirebaseAuth.instance.signOut();
+    logout();
   }
 }
