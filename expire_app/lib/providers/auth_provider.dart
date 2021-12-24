@@ -231,11 +231,13 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     _userId = null;
+    _familyId = null;
     _expiryDate = null;
     if (_authTimer != null) {
       _authTimer!.cancel();
       _authTimer = null;
     }
+
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
@@ -296,6 +298,57 @@ class AuthProvider with ChangeNotifier {
       prefs.setString('userData', userData);
       prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
 
+      /* if user doens't belong to any family, generate new family and insert id */
+      // search for familyId
+      _familyId = await DBHelper.getFamilyIdFromUserId(_userId!);
+      if (_familyId == null) {
+        print("Need to check on remote DB");
+        var querySnapshot = await firestore.collection('families').get();
+        for (final document in querySnapshot.docs) {
+          print("Searching in document: ${document.id}");
+          try {
+            // check if family collection has subuser with given id
+            var sub = await firestore.collection('families').doc(document.id).collection(_userId!).get();
+            if (sub.docs.length > 0) {
+              print("user ${_userId} found family: ${document.id}");
+              _familyId = document.id;
+            }
+          } catch (e, stacktrace) {
+            print('Exception: ' + e.toString());
+            print('Stacktrace: ' + stacktrace.toString());
+          }
+          //print(document.id);
+        }
+
+        // add if doens't exist
+        if (_familyId == null) {
+          print("First time logging in with google account");
+          var familyReference = await firestore.collection('families').add({});
+          _familyId = familyReference.id;
+          print("Family id: $_familyId");
+
+          await firestore.collection("families").doc(familyReference.id).collection(_userId!).doc('userInfo').set(
+            {
+              'displayName': _user.displayName,
+            },
+          );
+        } else {
+          print("Not the first time logging in with google account");
+        }
+
+        // family id registering on db
+        await DBHelper.insert(
+          'family',
+          {
+            'userId': _userId!,
+            'familyId': _familyId!, // todo: change
+          },
+        );
+      } else {
+        print("No need to check on remote DB for familyid");
+      }
+
+      // display Name
       await DBHelper.insert(
         'users',
         {

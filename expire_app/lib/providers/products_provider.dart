@@ -28,7 +28,7 @@ class ProductsProvider extends ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = "$baseUrl/families/$familyId/$userId.json?auth=$authToken";
-    print(url);
+    
     // http post
     try {
       final response = await http.post(
