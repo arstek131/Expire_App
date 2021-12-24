@@ -251,7 +251,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> googleLogIn() async {
-    // todo: same logic as login with password!
     try {
       // Google sign in
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -285,17 +284,8 @@ class AuthProvider with ChangeNotifier {
       );
 
       _autoLogout(googleLogout);
-      notifyListeners();
 
       _signInMethod = SignInMethod.Google;
-
-      /*await DBHelper.insert(
-        'users',
-        {
-          'userId': _userId!,
-          'displayName': _displayName as String,
-        },
-      );*/
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode({
@@ -305,7 +295,16 @@ class AuthProvider with ChangeNotifier {
       });
       prefs.setString('userData', userData);
       prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
-      //prefs.setString('signInMethod', signInMethod.name);
+
+      await DBHelper.insert(
+        'users',
+        {
+          'userId': _userId!,
+          'displayName': _user.displayName as String,
+        },
+      );
+
+      notifyListeners();
     } catch (error) {
       print(error);
       rethrow;

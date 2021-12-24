@@ -35,7 +35,8 @@ class UserInfoProvider extends ChangeNotifier {
   }
 
   Future<void> tryFetchDisplayName() async {
-    _displayName = await DBHelper.getDisplayNameFromUserId(userId!);
+    _displayName =
+        await DBHelper.getDisplayNameFromUserId(userId!); // if OAuth login, this will be set by auth provider in the DB
     print("Family id: $_familyId");
     if (_displayName == null) {
       print("Need to check displayName in the firebase DB!");
