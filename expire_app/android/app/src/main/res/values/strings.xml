@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Expiry App</string>
+  <string name="facebook_app_id">270149645099851</string> 
+  <string name="fb_login_protocol_scheme">fb270149645099851</string>
+</resources>
+
