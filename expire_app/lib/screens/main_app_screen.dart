@@ -7,9 +7,11 @@ import '../widgets/custom_bottom_navigation_bar.dart';
 /* providers */
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/user_info_provider.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
+import '../screens/name_input_screen.dart';
 
 /* helpers */
 import '../helpers/sign_in_method.dart';
@@ -24,6 +26,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   /* Variables */
   var _pageIndex = 2;
   final pageController = PageController(initialPage: 2);
+  final mainAppScreenPageController = PageController(initialPage: 0);
   List<Map<String, dynamic>> _pages = [];
 
   /* Class methods */
@@ -39,7 +42,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     _pages = [
       {
         'page': Center(
-          child: Text(Provider.of<AuthProvider>(context, listen: false).displayName ?? "null"),
+          child: Text(Provider.of<UserInfoProvider>(context, listen: false).displayName ?? "null"),
         ),
         'title': "Recipes",
       },
@@ -85,6 +88,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "User settings",
       },
     ];
+
     super.initState();
   }
 
@@ -99,7 +103,6 @@ class _ProductsScreenState extends State<MainAppScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        //title: Text(_pages.elementAt(_pageIndex)['title']),
         centerTitle: true,
         title: Center(
           child: Row(
@@ -118,18 +121,14 @@ class _ProductsScreenState extends State<MainAppScreen> {
       ),
       body: Stack(
         children: [
-          /*IndexedStack(
-            index: _pageIndex,
-            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
-          ),*/
           PageView(
+            physics: BouncingScrollPhysics(),
             controller: pageController,
             children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
             onPageChanged: (value) {
               _bottomNavigationBarHandler(value);
             },
           ),
-          //_pages.elementAt(_pageIndex)['page'],
           SafeArea(
             child: Align(
               child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),

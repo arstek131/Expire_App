@@ -56,7 +56,6 @@ class _SignUpState extends State<SignUp> {
         _authData['password']!,
       );
     } on HttpException catch (error) {
-      // IT IS NOT CATCHING THIS EVEN 'THO IT IS HttpException
       print(error);
       var errorMessage = 'Authentication failed';
 

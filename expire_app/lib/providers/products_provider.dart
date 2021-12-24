@@ -12,8 +12,6 @@ import '../models/http_exception.dart';
 import '../helpers/db_helper.dart';
 
 class ProductsProvider extends ChangeNotifier {
-  /* TODO: if authToken != null AND userId != null then comunicate with firebase, else just store locally! */
-
   final String? authToken;
   final String? userId;
   final String? familyId;

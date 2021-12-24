@@ -1,5 +1,6 @@
 /* dart */
 import 'package:expire_app/helpers/db_helper.dart';
+import 'package:expire_app/providers/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,6 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /* helpers */
@@ -47,9 +47,6 @@ class AuthProvider with ChangeNotifier {
   String? _userId;
   String? _familyId;
   Timer? _authTimer;
-
-  /* User info */
-  String? _displayName;
 
   /* Firebase */
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -89,10 +86,6 @@ class AuthProvider with ChangeNotifier {
 
   SignInMethod get signInMethod {
     return _signInMethod;
-  }
-
-  String? get displayName {
-    return _displayName;
   }
 
   Future<void> _authenticate(String email, String password, String urlSegment) async {
@@ -145,25 +138,13 @@ class AuthProvider with ChangeNotifier {
     // authenitcate
     await _authenticate(email, password, 'signUp'); // set token, userId, expiryDate
 
-    // display name
-    _displayName = "Paolino Paperino"; // todo: ask user
-    await DBHelper.insert(
-      'users',
-      {
-        'userId': _userId!,
-        'displayName': _displayName!, // todo: change
-      },
-    );
-
     // generate new family and insert id
     await firestore.collection('families').add({}).then(
       (familyReference) {
         _familyId = familyReference.id;
         print("Family id: $_familyId");
         return firestore.collection("families").doc(familyReference.id).collection(_userId!).doc('userInfo').set(
-          {
-            "displayName": _displayName,
-          },
+          {},
         );
       },
     );
@@ -183,6 +164,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String email, String password) async {
     await _authenticate(email, password, 'signInWithPassword');
 
+    // family ID
     _familyId = await DBHelper.getFamilyIdFromUserId(_userId!);
     if (_familyId == null) {
       print("Need to check familyId in the firebase DB!");
@@ -219,32 +201,6 @@ class AuthProvider with ChangeNotifier {
       );
     } else {
       print("No need to check familyId on remote DB!");
-    }
-
-    // try to get displayName from local DB
-    _displayName = await DBHelper.getDisplayNameFromUserId(userId!);
-    if (_displayName == null) {
-      print("Need to check displayName on firebase DB!");
-
-      // search in DB
-      var querySnapshot = await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').get();
-
-      if (querySnapshot.data() == null) {
-        print("Something went wrong");
-        return;
-      }
-      _displayName = querySnapshot.data()!['displayName'];
-
-      // update local DB
-      await DBHelper.insert(
-        'users',
-        {
-          'userId': _userId!,
-          'displayName': _displayName!, // todo: change
-        },
-      );
-    } else {
-      print("No need to check displayName on remote DB!");
     }
 
     notifyListeners();
@@ -295,6 +251,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> googleLogIn() async {
+    // todo: same logic as login with password!
     try {
       // Google sign in
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -304,7 +261,7 @@ class AuthProvider with ChangeNotifier {
 
       // User info
       GoogleSignInAccount? _user = googleUser;
-      _displayName = _user.displayName;
+      //_displayName = _user.displayName;
 
       // Google authentication (token, id, ...)
       final googleAuth = await googleUser.authentication;
@@ -332,13 +289,13 @@ class AuthProvider with ChangeNotifier {
 
       _signInMethod = SignInMethod.Google;
 
-      await DBHelper.insert(
+      /*await DBHelper.insert(
         'users',
         {
           'userId': _userId!,
           'displayName': _displayName as String,
         },
-      );
+      );*/
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode({
