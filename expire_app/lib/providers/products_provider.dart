@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
+import 'dart:async';
 
 /* models */
 import '../models/product.dart';
@@ -18,6 +19,8 @@ class ProductsProvider extends ChangeNotifier {
 
   List<Product> _items;
 
+  bool _disposed = false;
+
   /* Firebase */
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -28,6 +31,19 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   final baseUrl = "https://expire-app-8070c-default-rtdb.europe-west1.firebasedatabase.app";
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   Future<void> addProduct(Product product) async {
     // http post
@@ -88,7 +104,49 @@ class ProductsProvider extends ChangeNotifier {
     DBHelper.delete('user_products', productId);
   }
 
+  void updateProductsOnChange() async {
+    try {
+      var querySnapshot = await firestore.collection('families').doc(_familyId).get();
+
+      for (final userId in querySnapshot.data()!['_users']) {
+        print("starting listening on user $userId");
+        CollectionReference reference = FirebaseFirestore.instance.collection('families').doc(_familyId).collection(userId);
+        reference.snapshots().listen((querySnapshot) {
+          fetchAndSetProducts();
+          /*for (final change in querySnapshot.docChanges) {
+            print("Launching changes on $userId");
+            final productData = change.doc.data() as Map<String, dynamic>;
+            print(productData);
+            if (!productData.containsKey('displayName')) {
+              print("Changing product ${change.doc.id}");
+              Product newProduct = Product(
+                  id: change.doc.id,
+                  title: productData['title'],
+                  expiration: DateTime.parse(productData['expiration']),
+                  creatorId: productData['creatorId']);
+              _items[_items.indexWhere((element) => element.id == change.doc.id)] = newProduct;
+              print("Finished updating product ${change.doc.id}");
+            }
+            print("Finished updating $userId...");
+          }*/
+        });
+      }
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
+    }
+
+    //notifyListeners();
+  }
+
+  bool init = true;
   Future<void> fetchAndSetProducts() async {
+    print("Fetch called");
+    if (init) {
+      init = false;
+      updateProductsOnChange();
+    }
+
     List<Product> products = [];
 
     /* fetch on remote DB */

@@ -43,9 +43,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     _pages = [
       {
         'page': Center(
-          child: Text(Provider.of<UserInfoProvider>(context, listen: false)
-                  .displayName ??
-              "null"),
+          child: Text(Provider.of<UserInfoProvider>(context, listen: false).displayName ?? "null"),
         ),
         'title': "Recipes",
       },
@@ -75,8 +73,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
                 fit: StackFit.expand,
                 children: [
                   CircleAvatar(
-                    backgroundImage:
-                        ExactAssetImage("assets/images/sorre.png"),
+                    backgroundImage: ExactAssetImage("assets/images/sorre.png"),
                   ),
                 ],
               ),
@@ -90,8 +87,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
                   style: ElevatedButton.styleFrom(
                       primary: Color(0xFFF5F6F9),
                       padding: EdgeInsets.all(20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15))),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                   onPressed: () {},
                   child: Row(
                     children: [
@@ -101,42 +97,45 @@ class _ProductsScreenState extends State<MainAppScreen> {
                       ),
                       SizedBox(width: 20),
                       Expanded(
-                          child: Text(
-                        "My Account",
-                        style: TextStyle(color: Colors.black),
-                      ),),
-                      Icon(Icons.arrow_forward_rounded, color: Colors.black,)
+                        child: Text(
+                          "My Account",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.black,
+                      )
                     ],
                   )),
+            ),
+            Center(
+              child: ElevatedButton(
+                child: Text("LOGOUT"),
+                onPressed: () async {
+                  Navigator.of(context).pushReplacementNamed('/');
+                  final auth = Provider.of<AuthProvider>(context, listen: false);
+
+                  print(auth.signInMethod);
+                  switch (auth.signInMethod) {
+                    case SignInMethod.EmailAndPassword:
+                      await auth.logout();
+                      break;
+                    case SignInMethod.Google:
+                      auth.googleLogout();
+                      break;
+                    case SignInMethod.Facebook:
+                      auth.facebookLogout();
+                      break;
+                    default:
+                      print(auth.signInMethod);
+                      throw Exception("Something went wrong during log-out");
+                  }
+                },
+              ),
             )
           ],
-        )
-        /*Center(
-          child: ElevatedButton(
-            child: Text("LOGOUT"),
-            onPressed: () async {
-              Navigator.of(context).pushReplacementNamed('/');
-              final auth = Provider.of<AuthProvider>(context, listen: false);
-
-              print(auth.signInMethod);
-              switch (auth.signInMethod) {
-                case SignInMethod.EmailAndPassword:
-                  await auth.logout();
-                  break;
-                case SignInMethod.Google:
-                  auth.googleLogout();
-                  break;
-                case SignInMethod.Facebook:
-                  auth.facebookLogout();
-                  break;
-                default:
-                  print(auth.signInMethod);
-                  throw Exception("Something went wrong during log-out");
-              }
-            },
-          ),
-        )*/
-        ,
+        ),
         'title': "User settings",
       },
     ];
@@ -176,17 +175,14 @@ class _ProductsScreenState extends State<MainAppScreen> {
           PageView(
             physics: BouncingScrollPhysics(),
             controller: pageController,
-            children: _pages
-                .map<Widget>((pageElement) => pageElement['page'])
-                .toList(),
+            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
             onPageChanged: (value) {
               _bottomNavigationBarHandler(value);
             },
           ),
           SafeArea(
             child: Align(
-              child: CustomBottomNavigationBar(
-                  setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
+              child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
               alignment: Alignment.bottomCenter,
             ),
           ),

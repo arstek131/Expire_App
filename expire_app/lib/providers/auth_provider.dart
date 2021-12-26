@@ -146,10 +146,11 @@ class AuthProvider with ChangeNotifier {
       ]
     }).then((familyReference) => _familyId = familyReference.id);
 
-    print("Family id: $_familyId");
+    //_familyId = "7tiEy0VHt5uBwqrF9Xa1";
+    /*print("Family id: $_familyId");
 
     // set display info
-    /*await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').set(
+    await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').set(
       {},
     );*/
 
