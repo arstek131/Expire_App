@@ -12,13 +12,16 @@ import '../models/http_exception.dart';
 import '../helpers/db_helper.dart';
 
 class ProductsProvider extends ChangeNotifier {
-  final String? authToken;
-  final String? userId;
-  final String? familyId;
+  final String? _authToken;
+  final String? _userId;
+  final String? _familyId;
 
   List<Product> _items;
 
-  ProductsProvider(this.authToken, this.userId, this.familyId, this._items);
+  /* Firebase */
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  ProductsProvider(this._authToken, this._userId, this._familyId, this._items);
 
   List<Product> get items {
     return [..._items];
@@ -27,33 +30,25 @@ class ProductsProvider extends ChangeNotifier {
   final baseUrl = "https://expire-app-8070c-default-rtdb.europe-west1.firebasedatabase.app";
 
   Future<void> addProduct(Product product) async {
-    final url = "$baseUrl/families/$familyId/$userId.json?auth=$authToken";
-    
     // http post
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: json.encode(
-          {
-            'title': product.title,
-            'expiration': product.expiration.toIso8601String(),
-            'imageUrl': null,
-            'creatorId': userId,
-          },
-        ),
-      );
+      /* remote insertion */
+      final response = await firestore.collection("families").doc(_familyId).collection(_userId!).add({
+        'title': product.title,
+        'expiration': product.expiration.toIso8601String(),
+        'creatorId': product.creatorId,
+      });
 
-      final decodedResponse = json.decode(response.body);
-      final productId = decodedResponse['name'];
+      String productId = response.id;
 
+      /* local insertion */
       Product newProduct = Product(
         id: productId,
         title: product.title,
         expiration: product.expiration,
-        creatorId: userId!,
+        creatorId: _userId!,
       );
 
-      // local
       _items.add(newProduct);
       notifyListeners();
 
@@ -67,13 +62,22 @@ class ProductsProvider extends ChangeNotifier {
           'image': 'null',
         },
       );
-    } catch (error) {
-      print(error);
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
+
       throw HttpException("Something went wrong while inserting product");
     }
   }
 
-  void deleteProduct(String productId) {
+  Future<void> deleteProduct(String productId) async {
+    String creatorId = await DBHelper.getCreatorId(productId: productId);
+    print("Deleting product $productId on creatorId $creatorId");
+
+    /* remote delete */
+    firestore.collection("families").doc(_familyId).collection(creatorId).doc(productId).delete();
+
+    /* local delete */
     _items.removeWhere((element) => element.id == productId);
     notifyListeners();
 
@@ -81,7 +85,45 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    // todo: change with DB call
+    List<Product> products = [];
+
+    /* fetch on remote DB */
+    try {
+      var querySnapshot = await firestore.collection('families').doc(_familyId).get();
+
+      for (final userId in querySnapshot.data()!['_users']) {
+        final productsRef = await firestore.collection('families').doc(_familyId).collection(userId).get();
+        for (final product in productsRef.docs.where((element) => element.id != 'userInfo')) {
+          products.add(
+            Product(
+              id: product.id,
+              title: product['title'],
+              expiration: DateTime.parse(product['expiration']),
+              creatorId: userId,
+            ),
+          );
+        }
+      }
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
+    }
+
+    /* store on local DB */
+    for (final product in products) {
+      DBHelper.insert(
+        'user_products',
+        {
+          'id': product.id,
+          'title': product.title,
+          'expiration': product.expiration.toIso8601String(),
+          'creatorId': product.creatorId,
+          'image': 'null',
+        },
+      );
+    }
+
+    /* fetch locally */
     final dataList = await DBHelper.getData(table: 'user_products');
     //print(dataList);
     _items = dataList

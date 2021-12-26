@@ -42,4 +42,9 @@ class DBHelper {
 
     return data.isEmpty ? null : data[0]['displayName'];
   }
+
+  static Future<String> getCreatorId({required String productId}) async {
+    final data = await DBHelper.getData(table: 'user_products', where: "id == (?)", whereArgs: [productId]);
+    return data[0]['creatorId'];
+  }
 }

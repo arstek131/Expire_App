@@ -140,15 +140,17 @@ class AuthProvider with ChangeNotifier {
     await _authenticate(email, password, 'signUp'); // set token, userId, expiryDate
 
     // generate new family and insert id
-    await firestore.collection('families').add({}).then(
-      (familyReference) {
-        _familyId = familyReference.id;
-        print("Family id: $_familyId");
-        return firestore.collection("families").doc(familyReference.id).collection(_userId!).doc('userInfo').set(
-          {},
-        );
-      },
-    );
+    await firestore.collection('families').add({
+      '_users': [
+        _userId,
+      ]
+    }).then((familyReference) => _familyId = familyReference.id);
+    print("Family id: $_familyId");
+
+    // set display info
+    /*await firestore.collection("families").doc(_familyId).collection(_userId!).doc('userInfo').set(
+      {},
+    );*/
 
     // family id registering on db
     await DBHelper.insert(
@@ -165,12 +167,13 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String email, String password) async {
     await _authenticate(email, password, 'signInWithPassword');
 
-    // family ID
+    /* local family ID */
     _familyId = await DBHelper.getFamilyIdFromUserId(_userId!);
+
+    /* remote family ID */
     if (_familyId == null) {
       print("Need to check familyId in the firebase DB!");
 
-      // check on remote DB
       var querySnapshot = await firestore.collection('families').get();
       for (final document in querySnapshot.docs) {
         print("Searching in document: ${document.id}");
@@ -360,9 +363,9 @@ class AuthProvider with ChangeNotifier {
       );
 
       notifyListeners();
-    } catch (error) {
-      print(error);
-      rethrow;
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
     }
   }
 

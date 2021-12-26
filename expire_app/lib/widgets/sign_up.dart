@@ -72,12 +72,13 @@ class _SignUpState extends State<SignUp> {
       }
 
       _showErrorDialog(errorMessage);
-    } catch (error) {
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
+
       const errorMessage = 'Chould not authenticate you. Please try again later';
 
       _showErrorDialog(errorMessage);
-
-      print(error);
     } finally {
       setState(() {
         _isLoading = false;
