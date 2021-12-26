@@ -31,12 +31,13 @@ class ProductsProvider extends ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     // http post
+
     try {
       /* remote insertion */
       final response = await firestore.collection("families").doc(_familyId).collection(_userId!).add({
         'title': product.title,
         'expiration': product.expiration.toIso8601String(),
-        'creatorId': product.creatorId,
+        'creatorId': _userId,
       });
 
       String productId = response.id;
@@ -50,6 +51,9 @@ class ProductsProvider extends ChangeNotifier {
       );
 
       _items.add(newProduct);
+      _items.sort((a, b) => a.expiration.compareTo(b.expiration));
+      //_items = _items.reversed.toList();
+
       notifyListeners();
 
       DBHelper.insert(
@@ -124,20 +128,24 @@ class ProductsProvider extends ChangeNotifier {
     }
 
     /* fetch locally */
-    final dataList = await DBHelper.getData(table: 'user_products');
+    final dataList = await DBHelper.getProductsFromFamilyId(familyId: _familyId!);
+
     //print(dataList);
     _items = dataList
         .map(
           (item) => Product(
-              id: item['id'],
-              title: item['title'],
-              expiration: DateTime.parse(
-                item['expiration'],
-              ),
-              creatorId: item['creatorId'],
-              image: null),
+            id: item['id'],
+            title: item['title'],
+            expiration: DateTime.parse(
+              item['expiration'],
+            ),
+            creatorId: item['creatorId'],
+            image: null,
+          ),
         )
         .toList();
+    _items.sort((a, b) => a.expiration.compareTo(b.expiration));
+    //_items = _items.reversed.toList();
 
     notifyListeners();
   }

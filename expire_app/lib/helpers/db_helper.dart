@@ -47,4 +47,14 @@ class DBHelper {
     final data = await DBHelper.getData(table: 'user_products', where: "id == (?)", whereArgs: [productId]);
     return data[0]['creatorId'];
   }
+
+  static Future<List<Map<String, dynamic>>> getProductsFromFamilyId({required String familyId}) async {
+    final sqlDB = await DBHelper.database();
+
+    final data = await sqlDB.rawQuery(""" SELECT * FROM user_products
+    WHERE creatorID IN (SELECT userId FROM family WHERE familyId = '$familyId')
+    """);
+
+    return data;
+  }
 }

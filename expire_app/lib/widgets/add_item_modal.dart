@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 /* provider */
 import 'package:provider/provider.dart';
@@ -22,14 +23,24 @@ class AddItemModal extends StatefulWidget {
 
 class _AddItemModalState extends State<AddItemModal> {
   final _formKey = GlobalKey<FormState>();
+
   bool _isLoading = false;
+
   final List<Map<String, Object>> _choicesList = [
     {"title": "MEAT", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
     {"title": "FISH", "icon": const FaIcon(FontAwesomeIcons.fish)},
     {"title": "VEGETARIAN", "icon": const FaIcon(FontAwesomeIcons.leaf)},
     {"title": "FRUIT", "icon": const FaIcon(FontAwesomeIcons.appleAlt)}
   ];
+
   List<int> _chosenIndexes = [];
+
+  Map<String, Object?> _productData = {
+    'title': null,
+    'expiration': null,
+  };
+
+  DateTime _pickedDate = DateTime.now();
 
   @override
   initState() {
@@ -48,11 +59,6 @@ class _AddItemModalState extends State<AddItemModal> {
     }
   }
 
-  Map<String, String> _authData = {
-    'email': '',
-    'expiration': '',
-  };
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -63,11 +69,6 @@ class _AddItemModalState extends State<AddItemModal> {
   }
 
   Future<void> _submit() async {
-    /*if (_formKey.currentState!.validate()) {
-      // Invalid!
-      return;
-    } */
-    // redundant??
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
@@ -75,7 +76,12 @@ class _AddItemModalState extends State<AddItemModal> {
     try {
       // Sign user up
       await Provider.of<ProductsProvider>(context, listen: false).addProduct(
-        Product(id: '', title: "Porzella esplosiva", expiration: DateTime.now(), creatorId: '', image: null),
+        Product(
+            id: '',
+            title: _productData['title'] as String,
+            expiration: _pickedDate, //_productData['expiration'] as DateTime,
+            creatorId: '',
+            image: null),
       );
     } catch (error) {
       const errorMessage = 'Chould not upload product. Please try again later';
@@ -88,6 +94,21 @@ class _AddItemModalState extends State<AddItemModal> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _pickedDate,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _pickedDate) {
+      setState(() {
+        _pickedDate = picked;
+      });
+    }
+    print(_pickedDate.toLocal());
   }
 
   @override
@@ -175,20 +196,20 @@ class _AddItemModalState extends State<AddItemModal> {
                     TextFormField(
                       style: const TextStyle(color: Colors.black),
                       decoration: const InputDecoration(
-                        prefixIcon: Padding(
+                        /*prefixIcon: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: FaIcon(
                             FontAwesomeIcons.pizzaSlice,
                             size: 24,
                             color: Colors.indigo,
                           ),
-                        ), //Icon(Icons.person, color: Colors.indigoAccent),
+                        ),*/ //Icon(Icons.person, color: Colors.indigoAccent),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(15),
                           ),
                         ),
-                        hintText: 'product name',
+                        hintText: 'Product name',
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -197,14 +218,41 @@ class _AddItemModalState extends State<AddItemModal> {
 
                         return null;
                       },
-                      /*onSaved: (value) {
-                            _authData['email'] = value!;
-                            print(_authData);
-                          },
-                          onFieldSubmitted: (value) {
-                            _authData['email'] = value;
-                            print(_authData);
-                          },*/
+                      onSaved: (value) {
+                        _productData['title'] = value!;
+                      },
+                      onFieldSubmitted: (value) {
+                        _productData['title'] = value;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: TextButton.icon(
+                            icon: Icon(Icons.calendar_today_rounded),
+                            label: Text(
+                              "${DateFormat('dd MMMM yyyy').format(_pickedDate)}",
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
+                                EdgeInsets.symmetric(vertical: 15),
+                              ),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  side: BorderSide(color: Colors.indigoAccent),
+                                ),
+                              ),
+                            ),
+                            onPressed: () => _selectDate(context),
+                          ),
+                        ),
+                      ],
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 20),

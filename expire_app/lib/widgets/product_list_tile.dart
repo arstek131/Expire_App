@@ -4,17 +4,38 @@ import 'package:expire_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
-/* modes */
+/* models */
 import '../models/product.dart';
 
 /* provider */
 import '../providers/products_provider.dart';
 
+/* helpers */
+import '../helpers/expire_status.dart';
+
 class ProductListTile extends StatefulWidget {
   final Product product;
+  ExpireStatus? expireStatus;
 
-  ProductListTile(this.product);
+  ProductListTile(this.product) {
+    DateTime today = DateTime.now();
+
+    int dateDifferenceInDays = DateTime(product.expiration.year, product.expiration.month, product.expiration.day)
+        .difference(
+          DateTime(today.year, today.month, today.day),
+        )
+        .inDays;
+
+    if (dateDifferenceInDays < 0) {
+      expireStatus = ExpireStatus.Expired;
+    } else if (dateDifferenceInDays == 0) {
+      expireStatus = ExpireStatus.ExpiringToday;
+    } else {
+      expireStatus = ExpireStatus.NotExpired;
+    }
+  }
 
   @override
   State<ProductListTile> createState() => _ProductListTileState();
@@ -22,14 +43,6 @@ class ProductListTile extends StatefulWidget {
 
 class _ProductListTileState extends State<ProductListTile> {
   String _displayName = "";
-
-  /*_ProductListTileState() {
-    Provider.of<AuthProvider>(context, listen: false).getDisplayNameFromId(widget.product.id).then((value) {
-      setState(() {
-        _displayName = value;
-      });
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -83,57 +96,85 @@ class _ProductListTileState extends State<ProductListTile> {
           },
         );
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(children: <Widget>[
-            const FlutterLogo(
-              size: 70,
+      child: Stack(
+        children: [
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
             ),
-            const SizedBox(
-              width: 20,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    widget.product.title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            elevation: 8,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                children: <Widget>[
+                  const FlutterLogo(
+                    size: 70,
                   ),
-                  Text(
-                    'Expiration: ${DateFormat('dd/MM/yyyy').format(widget.product.expiration)}',
-                    style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold),
+                  const SizedBox(
+                    width: 20,
                   ),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Icon(
-                        Icons.person,
-                        color: Colors.grey,
-                        size: 20,
+                      Text(
+                        widget.product.title,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
-                      FutureBuilder(
-                        future: DBHelper.getDisplayNameFromUserId(widget.product.creatorId),
-                        initialData: "Loading text..",
-                        builder: (BuildContext context, AsyncSnapshot<String?> text) {
-                          return Text(
-                            text.data ?? "UNKNOWN",
-                            style: const TextStyle(color: Colors.grey, fontSize: 14),
-                          );
-                        },
-                      )
+                      Text(
+                        'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
+                        style: TextStyle(
+                            color: widget.expireStatus == ExpireStatus.Expired
+                                ? Colors.red
+                                : widget.expireStatus == ExpireStatus.ExpiringToday
+                                    ? Colors.orange
+                                    : Colors.indigo,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                            size: 20,
+                          ),
+                          FutureBuilder(
+                            future: DBHelper.getDisplayNameFromUserId(widget.product.creatorId),
+                            initialData: "Loading text..",
+                            builder: (BuildContext context, AsyncSnapshot<String?> text) {
+                              return Text(
+                                text.data ?? "UNKNOWN",
+                                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                              );
+                            },
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ],
               ),
-            )
-          ]),
-        ),
+            ),
+          ),
+          if (widget.expireStatus == ExpireStatus.Expired)
+            Positioned(
+              top: 10,
+              right: 0,
+              child: Align(
+                alignment: Alignment.center,
+                child: Transform.rotate(
+                  angle: 40 / 180 * math.pi,
+                  child: Container(
+                    height: 30,
+                    width: 70,
+                    alignment: Alignment.center,
+                    color: Colors.red,
+                    child: Text("EXPIRED"),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
