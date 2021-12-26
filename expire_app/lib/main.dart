@@ -19,7 +19,7 @@ import './providers/auth_provider.dart';
 import './providers/user_info_provider.dart';
 
 /* helpers */
-import './helpers/custom_route.dart';
+import 'helpers/custom_route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

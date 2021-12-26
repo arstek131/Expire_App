@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.0.11
   enum_to_string: ^2.0.1
   cloud_firestore: ^3.1.5
+  flutter_svg: ^1.0.0
 
   # google sign in
   firebase_auth: ^3.3.4
@@ -78,6 +79,8 @@ flutter:
   assets:
     - assets/images/auth_login_img.png
     - assets/images/auth_signup_img.png
+    - assets/images/sorre.png
+    - assets/icons/user_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

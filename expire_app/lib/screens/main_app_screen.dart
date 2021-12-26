@@ -1,5 +1,6 @@
 /* Dart */
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /* Widgets */
 import '../widgets/custom_bottom_navigation_bar.dart';
@@ -42,7 +43,9 @@ class _ProductsScreenState extends State<MainAppScreen> {
     _pages = [
       {
         'page': Center(
-          child: Text(Provider.of<UserInfoProvider>(context, listen: false).displayName ?? "null"),
+          child: Text(Provider.of<UserInfoProvider>(context, listen: false)
+                  .displayName ??
+              "null"),
         ),
         'title': "Recipes",
       },
@@ -63,7 +66,52 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Analytics",
       },
       {
-        'page': Center(
+        'page': Column(
+          children: [
+            SizedBox(
+              height: 115,
+              width: 115,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircleAvatar(
+                    backgroundImage:
+                        ExactAssetImage("assets/images/sorre.png"),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFF5F6F9),
+                      padding: EdgeInsets.all(20),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15))),
+                  onPressed: () {},
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/user_icon.svg",
+                        width: 22,
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                          child: Text(
+                        "My Account",
+                        style: TextStyle(color: Colors.black),
+                      ),),
+                      Icon(Icons.arrow_forward_rounded, color: Colors.black,)
+                    ],
+                  )),
+            )
+          ],
+        )
+        /*Center(
           child: ElevatedButton(
             child: Text("LOGOUT"),
             onPressed: () async {
@@ -87,7 +135,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
               }
             },
           ),
-        ),
+        )*/
+        ,
         'title': "User settings",
       },
     ];
@@ -127,14 +176,17 @@ class _ProductsScreenState extends State<MainAppScreen> {
           PageView(
             physics: BouncingScrollPhysics(),
             controller: pageController,
-            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
+            children: _pages
+                .map<Widget>((pageElement) => pageElement['page'])
+                .toList(),
             onPageChanged: (value) {
               _bottomNavigationBarHandler(value);
             },
           ),
           SafeArea(
             child: Align(
-              child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
+              child: CustomBottomNavigationBar(
+                  setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
               alignment: Alignment.bottomCenter,
             ),
           ),
