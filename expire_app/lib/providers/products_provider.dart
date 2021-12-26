@@ -124,7 +124,8 @@ class ProductsProvider extends ChangeNotifier {
     }
 
     /* fetch locally */
-    final dataList = await DBHelper.getData(table: 'user_products');
+    final dataList = await DBHelper.getProductsFromFamilyId(familyId: _familyId!);
+
     //print(dataList);
     _items = dataList
         .map(
