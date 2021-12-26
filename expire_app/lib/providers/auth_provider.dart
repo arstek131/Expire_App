@@ -145,6 +145,7 @@ class AuthProvider with ChangeNotifier {
         _userId,
       ]
     }).then((familyReference) => _familyId = familyReference.id);
+
     print("Family id: $_familyId");
 
     // set display info
