@@ -159,7 +159,7 @@ class _ProductListTileState extends State<ProductListTile> {
           if (widget.expireStatus == ExpireStatus.Expired)
             Positioned(
               top: 10,
-              right: 0,
+              right: -5,
               child: Align(
                 alignment: Alignment.center,
                 child: Transform.rotate(

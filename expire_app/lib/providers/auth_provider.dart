@@ -121,30 +121,39 @@ class AuthProvider with ChangeNotifier {
       _autoLogout(logout);
 
       _signInMethod = SignInMethod.EmailAndPassword;
-
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'token': _token,
-        'userId': userId,
-        'expiryDate': _expiryDate!.toIso8601String(),
-      });
-      prefs.setString('userData', userData);
-      prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
     } catch (error) {
       rethrow;
     }
   }
 
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp({required String email, required String password, String? familyId}) async {
     // authenitcate
     await _authenticate(email, password, 'signUp'); // set token, userId, expiryDate
 
-    // generate new family and insert id
-    await firestore.collection('families').add({
-      '_users': [
-        _userId,
-      ]
-    }).then((familyReference) => _familyId = familyReference.id);
+    if (familyId == null) {
+      // generate new family and insert id
+      await firestore.collection('families').add({
+        '_users': [
+          _userId,
+        ]
+      }).then((familyReference) => _familyId = familyReference.id);
+    } else {
+      _familyId = familyId;
+      firestore.collection('families').doc(familyId).update({
+        "_users": FieldValue.arrayUnion([_userId]),
+      });
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final userData = json.encode({
+      'token': _token,
+      'userId': userId,
+      'expiryDate': _expiryDate!.toIso8601String(),
+      'familyId': _familyId,
+    });
+
+    prefs.setString('userData', userData);
+    prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
 
     //_familyId = "7tiEy0VHt5uBwqrF9Xa1";
     /*print("Family id: $_familyId");
@@ -209,6 +218,17 @@ class AuthProvider with ChangeNotifier {
       print("No need to check familyId on remote DB!");
     }
 
+    final prefs = await SharedPreferences.getInstance();
+    final userData = json.encode({
+      'token': _token,
+      'userId': userId,
+      'expiryDate': _expiryDate!.toIso8601String(),
+      'familyId': _familyId,
+    });
+
+    prefs.setString('userData', userData);
+    prefs.setString('signInMethod', EnumToString.convertToString(signInMethod));
+
     notifyListeners();
   }
 
@@ -228,8 +248,11 @@ class AuthProvider with ChangeNotifier {
 
     _token = extractedUserData['token'];
     _userId = extractedUserData['userId'];
+    _familyId = extractedUserData['familyId'];
     _expiryDate = expiryDate;
+
     notifyListeners();
+
     _autoLogout(logout);
     return true;
   }

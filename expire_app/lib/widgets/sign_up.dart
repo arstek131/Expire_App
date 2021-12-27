@@ -1,10 +1,16 @@
+/* dart */
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-
 import 'package:provider/provider.dart';
+
+/* providers */
 import '../providers/auth_provider.dart';
 
+/* models */
 import '../models/http_exception.dart';
+
+/* screens */
+import '../screens/family_id_choice_screen.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({
@@ -25,10 +31,12 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isFamilyIdSet = false;
 
-  Map<String, String> _authData = {
+  Map<String, String?> _authData = {
     'email': '',
     'password': '',
+    'familyId': null,
   };
 
   void _showErrorDialog(String message) {
@@ -51,9 +59,11 @@ class _SignUpState extends State<SignUp> {
     });
     try {
       // Sign user up
+
       await Provider.of<AuthProvider>(context, listen: false).signUp(
-        _authData['email']!,
-        _authData['password']!,
+        email: _authData['email']!,
+        password: _authData['password']!,
+        familyId: _authData['familyId'],
       );
     } on HttpException catch (error) {
       print(error);
@@ -241,6 +251,40 @@ class _SignUpState extends State<SignUp> {
                               }
                               return null;
                             },
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
+                            if (familyId != null) {
+                              _authData['familyId'] = familyId as String?;
+                              setState(() {
+                                _isFamilyIdSet = true;
+                              });
+                            } else {
+                              setState(() {
+                                _isFamilyIdSet = false;
+                              });
+                            }
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: _isFamilyIdSet ? "Valid family ID " : "I have a family ID ",
+                                  style: TextStyle(color: _isFamilyIdSet ? Colors.green : Colors.blue),
+                                ),
+                                WidgetSpan(
+                                  child: _isFamilyIdSet
+                                      ? const Icon(
+                                          Icons.check_circle_outline_outlined,
+                                          color: Colors.green,
+                                          size: 16,
+                                        )
+                                      : const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Container(

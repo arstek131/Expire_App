@@ -196,15 +196,8 @@ class _AddItemModalState extends State<AddItemModal> {
                     TextFormField(
                       style: const TextStyle(color: Colors.black),
                       decoration: const InputDecoration(
-                        /*prefixIcon: Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: FaIcon(
-                            FontAwesomeIcons.pizzaSlice,
-                            size: 24,
-                            color: Colors.indigo,
-                          ),
-                        ),*/ //Icon(Icons.person, color: Colors.indigoAccent),
                         border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(
                             Radius.circular(15),
                           ),
@@ -229,14 +222,13 @@ class _AddItemModalState extends State<AddItemModal> {
                       height: 10,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: TextButton.icon(
                             icon: Icon(Icons.calendar_today_rounded),
                             label: Text(
                               "${DateFormat('dd MMMM yyyy').format(_pickedDate)}",
-                              style: const TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 18),
                             ),
                             style: ButtonStyle(
                               padding: MaterialStateProperty.all<EdgeInsets>(

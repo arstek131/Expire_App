@@ -11,6 +11,7 @@ import 'screens/main_app_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/name_input_screen.dart';
+import 'screens/family_id_choice_screen.dart';
 
 /* Providers */
 import './providers/products_provider.dart';
@@ -95,6 +96,7 @@ class _MyAppState extends State<MyApp> {
             //'/': (ctx) => MainAppScreen(),
             AuthScreen.routeName: (ctx) => AuthScreen(),
             NameInputScreen.routeName: (ctx) => NameInputScreen(),
+            FamilyIdChoiceScreen.routeName: (ctx) => FamilyIdChoiceScreen(),
           },
         ),
       ),
