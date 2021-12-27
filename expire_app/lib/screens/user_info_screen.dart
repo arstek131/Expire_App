@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 
+import 'dart:ui' as ui;
+
 
 /* providers */
 import '../providers/auth_provider.dart';
@@ -15,7 +17,8 @@ class UserInfoScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(children: <Widget>[
         HeaderArea(size: size),
-        TitleWithBtn()
+        TitleWithBtn(),
+        AddMemberButton()
       ]),
     );
   }
@@ -55,7 +58,7 @@ class TitleWithBtn extends StatelessWidget {
                   throw Exception("Something went wrong during log-out");
               }
             },
-          )
+          ),
         ],
       ),
     );
@@ -131,6 +134,7 @@ class HeaderArea extends StatelessWidget {
                       backgroundImage:
                           ExactAssetImage("assets/images/sorre.png"),
                     ),
+                    //Add this CustomPaint widget to the Widget Tree
                   ],
                 ),
               ),
@@ -140,4 +144,42 @@ class HeaderArea extends StatelessWidget {
       ]),
     );
   }
+}
+
+
+class AddMemberButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(0.0),
+        elevation: 3,
+      ),
+      onPressed: () {},
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")]),
+            borderRadius: BorderRadius.circular(14.0)
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(60),
+          constraints: const BoxConstraints(minWidth: 150),
+          child: const Text('Add member', textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+}
+
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
