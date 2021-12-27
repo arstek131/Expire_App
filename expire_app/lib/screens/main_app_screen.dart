@@ -12,6 +12,7 @@ import '../providers/user_info_provider.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
+import '../screens/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
 /* helpers */
@@ -64,78 +65,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Analytics",
       },
       {
-        'page': Column(
-          children: [
-            SizedBox(
-              height: 115,
-              width: 115,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: ExactAssetImage("assets/images/sorre.png"),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFF5F6F9),
-                      padding: EdgeInsets.all(20),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                  onPressed: () {},
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/user_icon.svg",
-                        width: 22,
-                      ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: Text(
-                          "My Account",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Colors.black,
-                      )
-                    ],
-                  )),
-            ),
-            Center(
-              child: ElevatedButton(
-                child: Text("LOGOUT"),
-                onPressed: () async {
-                  Navigator.of(context).pushReplacementNamed('/');
-                  final auth = Provider.of<AuthProvider>(context, listen: false);
-
-                  print(auth.signInMethod);
-                  switch (auth.signInMethod) {
-                    case SignInMethod.EmailAndPassword:
-                      await auth.logout();
-                      break;
-                    case SignInMethod.Google:
-                      auth.googleLogout();
-                      break;
-                    case SignInMethod.Facebook:
-                      auth.facebookLogout();
-                      break;
-                    default:
-                      print(auth.signInMethod);
-                      throw Exception("Something went wrong during log-out");
-                  }
-                },
-              ),
-            )
-          ],
-        ),
+        'page': UserInfoScreen(),
         'title': "User settings",
       },
     ];
