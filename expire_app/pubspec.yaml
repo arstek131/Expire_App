@@ -40,6 +40,8 @@ dependencies:
   enum_to_string: ^2.0.1
   cloud_firestore: ^3.1.5
   flutter_svg: ^1.0.0
+  flutter_custom_clippers: ^2.0.0
+  flutter_lorem: ^2.0.0
 
   # google sign in
   firebase_auth: ^3.3.4
