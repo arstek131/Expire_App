@@ -9,7 +9,7 @@ import '../widgets/custom_bottom_navigation_bar.dart';
 /* providers */
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../providers/user_info_provider.dart';
+import '../helpers/user_info.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
@@ -82,6 +82,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
     super.dispose();
   }
 
+  late final Future? initUserInfoProvider = UserInfo.instance.initUserInfoProvider();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,23 +105,30 @@ class _ProductsScreenState extends State<MainAppScreen> {
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          PageView(
-            physics: BouncingScrollPhysics(),
-            controller: pageController,
-            children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
-            onPageChanged: (value) {
-              _bottomNavigationBarHandler(value);
-            },
-          ),
-          SafeArea(
-            child: Align(
-              child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
-              alignment: Alignment.bottomCenter,
-            ),
-          ),
-        ],
+      body: FutureBuilder(
+        future: initUserInfoProvider,
+        builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(
+                children: [
+                  PageView(
+                    physics: BouncingScrollPhysics(),
+                    controller: pageController,
+                    children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
+                    onPageChanged: (value) {
+                      _bottomNavigationBarHandler(value);
+                    },
+                  ),
+                  SafeArea(
+                    child: Align(
+                      child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
+                      alignment: Alignment.bottomCenter,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

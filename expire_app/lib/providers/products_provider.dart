@@ -47,7 +47,7 @@ class ProductsProvider extends ChangeNotifier {
       super.notifyListeners();
     }
   }
-
+/*
   Future<void> addProduct(Product product) async {
     /* remote insertion */
     try {
@@ -210,7 +210,7 @@ class ProductsProvider extends ChangeNotifier {
               item['expiration'],
             ),
             creatorId: item['creatorId'],
-            image: null,
+            imageUrl: null,
           ),
         )
         .toList();
@@ -219,4 +219,5 @@ class ProductsProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+  */
 }

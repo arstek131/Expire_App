@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/models/product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+/* helper */
+import '../helpers/user_info.dart' as userinfo;
+import '../helpers/firebase_auth_helper.dart';
 
 class FirestoreHelper {
   /* singleton */
@@ -12,6 +16,15 @@ class FirestoreHelper {
   final firestore = FirebaseFirestore.instance;
 
   /* getters */
+  Future<bool> familyExists({required String familyId}) async {
+    final docSnapshot = await firestore.collection('families').doc(familyId).get();
+    if (docSnapshot.exists) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<List<dynamic>> getUsersFromFamilyId({required String familyId}) async {
     final response = await firestore.collection('families').doc(familyId).get();
 
@@ -23,40 +36,21 @@ class FirestoreHelper {
   }
 
   Future<String?> getFamilyIdFromUserId({required String userId}) async {
-    // Legacy
-    /*
-    var querySnapshot = await firestore.collection('families').get();
-    for (final document in querySnapshot.docs) {
-      print("Searching in document: ${document.id}");
-      try {
-        // check if family collection has subuser with given id
-        var sub = await firestore.collection('families').doc(document.id).get();
-        final userIds = List<String>.from(sub.data()!["_users"]);
-        if (userIds.contains(userId)) {
-          return document.id;
-        }
-      } catch (e, stacktrace) {
-        print('Exception: ' + e.toString());
-        print('Stacktrace: ' + stacktrace.toString());
-      }
+    final userRef = await firestore.collection('users').doc(userId).get();
+    if (userRef.data() != null && userRef.data()!.containsKey('familyId')) {
+      return userRef.data()!['familyId'];
+    } else {
+      return null;
     }
-    return null;*/
   }
 
-  Future<String?> getDisplayNameFromUserId({required String userId, String? familyId}) async {
-    // legacy
-    /*
-    // if no family ID provided, find family id first
-    if (familyId == null) {
-      familyId = await getFamilyIdFromUserId(userId: userId);
-      if (familyId == null) {
-        throw Exception("no familyId found from userId given");
-      }
+  Future<String?> getDisplayNameFromUserId({required String userId}) async {
+    final userRef = await firestore.collection('users').doc(userId).get();
+    if (userRef.data() != null && userRef.data()!.containsKey('displayName')) {
+      return userRef.data()!['displayName'];
+    } else {
+      return null;
     }
-    // get display name
-    var response = await firestore.collection("families").doc(familyId).collection(userId).doc('userInfo').get();
-
-    return response["displayName"];*/
   }
 
   /* setters */
@@ -74,11 +68,13 @@ class FirestoreHelper {
     // generate new family if none given and add username to user list
     if (familyId == null) {
       // generate new family and insert id
-      final familyReference = await firestore.collection('families').add({
-        '_users': [
-          userId,
-        ]
-      });
+      final familyReference = await firestore.collection('families').add(
+        {
+          '_users': [
+            userId,
+          ]
+        },
+      );
       familyId = familyReference.id;
     } else {
       firestore.collection('families').doc(familyId).update({
@@ -90,5 +86,25 @@ class FirestoreHelper {
     await firestore.collection("users").doc(userId).set({
       'familyId': familyId,
     });
+  }
+
+  Stream<QuerySnapshot> getFamilyProductsStream({required String familyId}) {
+    return firestore.collection('families').doc(familyId).collection('products').snapshots();
+  }
+
+  Future<void> addProduct(Product product) async {
+    final userInfo = userinfo.UserInfo.instance;
+    final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products').add({
+      'title': product.title,
+      'expiration': product.expiration.toIso8601String(),
+      'creatorId': userInfo.userId,
+      'imageUrl': product.imageUrl,
+    });
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    final userInfo = userinfo.UserInfo.instance;
+
+    firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).delete();
   }
 }

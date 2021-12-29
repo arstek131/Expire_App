@@ -32,16 +32,10 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
       _isLoading = true;
     });
     try {
-      userIDs = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: referenceId!);
-      for (final userId in userIDs) {
-        final usersDisplayName = await FirestoreHelper.instance.getDisplayNameFromUserId(userId: userId, familyId: referenceId!);
-        if (usersDisplayName != null) {
-          setState(() {
-            listOfUsersName.add(usersDisplayName);
-          });
-        }
-      }
-      print(listOfUsersName);
+      bool familyExists = await FirestoreHelper.instance.familyExists(familyId: referenceId!);
+      setState(() {
+        _isValid = familyExists;
+      });
     } catch (e, stacktrace) {
       setState(() {
         _isValid = false;
@@ -50,20 +44,13 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
       print('Exception: ' + e.toString());
       print('Stacktrace: ' + stacktrace.toString());
       rethrow;
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
+    setState(() {
+      _isLoading = false;
+    });
 
-    if (userIDs.isNotEmpty) {
-      setState(() {
-        _isValid = true;
-      });
-    } else {
-      setState(() {
-        _isValid = false;
-      });
+    if (_isValid) {
+      Future.delayed(Duration(seconds: 2)).then((_) => Navigator.of(context).pop(referenceId));
     }
   }
 
@@ -98,7 +85,7 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
             ),
             const SelectableText(
               // todo: remove
-              "4PIrcoc7lWvymtw5Mq6v",
+              "6Ar2c5ATtIVtwPGHyPqI",
               style: TextStyle(color: Colors.white),
             ),
             const SizedBox(
@@ -228,17 +215,9 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
                     ),
                     if (!_firstCheck)
                       _isValid
-                          ? Column(
-                              children: [
-                                const Text(
-                                  "Family found",
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ...listOfUsersName.map((userName) => Text(userName)).toList()
-                              ],
+                          ? const Text(
+                              "Valid family ID",
+                              style: TextStyle(color: Colors.green),
                             )
                           : const Text(
                               "No family found with gived ID",

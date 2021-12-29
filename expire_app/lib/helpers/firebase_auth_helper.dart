@@ -1,10 +1,14 @@
 /* dart */
-import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 /* enums */
 import '../enums/sign_in_method.dart';
+
+/* helper */
+import '../helpers/firestore_helper.dart';
+import '../helpers/user_info.dart';
 
 class FirebaseAuthHelper {
   /* singleton */
@@ -21,6 +25,7 @@ class FirebaseAuthHelper {
 
   // OAuth
   GoogleSignIn googleSignIn = GoogleSignIn();
+  FacebookAuth facebookAuth = FacebookAuth.instance;
 
   /* getters */
   FirebaseAuth get auth {
@@ -99,6 +104,35 @@ class FirebaseAuthHelper {
       if (response.additionalUserInfo!.isNewUser) {
         String userId = response.user!.uid;
         String displayName = _user.displayName!;
+
+        await FirestoreHelper.instance.addUser(userId: userId);
+        await setDisplayName(displayName);
+        await FirestoreHelper.instance.setDisplayName(userId: userId, displayName: displayName);
+      }
+    } on FirebaseAuthException catch (error) {
+      rethrow;
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> facebookLogIn() async {
+    try {
+      final facebookLoginResult = await facebookAuth.login();
+      if (false) {
+        //facebookLoginResult.status) {
+        return;
+      }
+      final _user = await facebookAuth.getUserData();
+
+      final facebookAuthCredential = FacebookAuthProvider.credential(facebookLoginResult.accessToken!.token);
+      final response = await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+
+      _signInMethod = SignInMethod.Facebook;
+
+      if (response.additionalUserInfo!.isNewUser) {
+        String userId = response.user!.uid;
+        String displayName = _user['name'];
 
         await FirestoreHelper.instance.addUser(userId: userId);
         await setDisplayName(displayName);

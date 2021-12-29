@@ -1,5 +1,6 @@
 /* dart */
 import 'package:expire_app/helpers/db_helper.dart';
+import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:expire_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -82,7 +83,7 @@ class _ProductListTileState extends State<ProductListTile> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Provider.of<ProductsProvider>(context, listen: false).deleteProduct(widget.product.id); //Todo: not working.
+                    FirestoreHelper.instance.deleteProduct(widget.product.id); //Todo: not working.
                     Navigator.of(ctx).pop(true);
                   },
                   child: const Text("DELETE"),
@@ -107,14 +108,14 @@ class _ProductListTileState extends State<ProductListTile> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 children: <Widget>[
-                  widget.product.image != null
+                  widget.product.imageUrl != null
                       ? Container(
                           height: 100,
                           width: 100,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(18.0),
-                            child: Image.file(
-                              widget.product.image!,
+                            child: Image.network(
+                              widget.product.imageUrl!,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -151,7 +152,7 @@ class _ProductListTileState extends State<ProductListTile> {
                             size: 20,
                           ),
                           FutureBuilder(
-                            future: DBHelper.getDisplayNameFromUserId(widget.product.creatorId),
+                            future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
                             initialData: "Loading text..",
                             builder: (BuildContext context, AsyncSnapshot<String?> text) {
                               return Text(

@@ -1,6 +1,6 @@
 /* dart */
 import 'package:expire_app/helpers/db_helper.dart';
-import 'package:expire_app/providers/user_info_provider.dart';
+import 'package:expire_app/helpers/user_info.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';

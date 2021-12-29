@@ -1,6 +1,7 @@
 /* dart libraries */
 import 'dart:io';
 
+import 'package:expire_app/helpers/user_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -47,12 +48,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        /*ChangeNotifierProvider(
-          create: (_) => AuthProvider(),
-        ),*/
-        ChangeNotifierProvider<ProductsProvider>(
-          create: (_) => ProductsProvider(null, null, null, false, []),
-        ),
         ChangeNotifierProvider(
           create: (_) => BottomNavigationBarSizeProvider(),
         ),

@@ -8,7 +8,7 @@ import 'dart:math';
 
 /* providers */
 import 'package:provider/provider.dart';
-import '../providers/user_info_provider.dart';
+import '../helpers/user_info.dart';
 
 /* firebase */
 import '../helpers/firebase_auth_helper.dart';

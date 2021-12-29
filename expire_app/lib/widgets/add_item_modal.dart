@@ -1,4 +1,5 @@
 /* dart */
+import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -99,22 +100,23 @@ class _AddItemModalState extends State<AddItemModal> {
 
     /* add product locally */
     // local storage
-    final appDir = await syspaths.getApplicationDocumentsDirectory();
+    /*final appDir = await syspaths.getApplicationDocumentsDirectory();
     final fileName = path.basename(_pickedImage!.path);
-    final savedImage = await _pickedImage!.copy('${appDir.path}/$fileName');
+    final savedImage = await _pickedImage!.copy('${appDir.path}/$fileName');*/
 
     // local DB (image path)
 
     /* add product remotely */
 
     try {
-      await Provider.of<ProductsProvider>(context, listen: false).addProduct(
+      FirestoreHelper.instance.addProduct(
         Product(
-            id: '',
-            title: _productData['title'] as String,
-            expiration: _pickedDate, //_productData['expiration'] as DateTime,
-            creatorId: '',
-            image: _pickedImage),
+          id: '',
+          title: _productData['title'] as String,
+          expiration: _pickedDate, //_productData['expiration'] as DateTime,
+          creatorId: '',
+          imageUrl: null,
+        ),
       );
     } catch (error) {
       const errorMessage = 'Chould not upload product. Please try again later';
@@ -122,11 +124,10 @@ class _AddItemModalState extends State<AddItemModal> {
       _showErrorDialog(errorMessage);
 
       print(error);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {

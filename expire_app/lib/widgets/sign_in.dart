@@ -336,7 +336,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Provider.of<AuthProvider>(context, listen: false).facebookLogIn();
+                                  FirebaseAuthHelper.instance.facebookLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
