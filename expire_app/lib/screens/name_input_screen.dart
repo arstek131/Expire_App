@@ -1,5 +1,6 @@
 /* dart */
 import 'dart:io';
+import 'package:expire_app/screens/products_overview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
@@ -9,6 +10,12 @@ import 'dart:math';
 import 'package:provider/provider.dart';
 import '../providers/user_info_provider.dart';
 
+/* firebase */
+import '../helpers/firebase_auth_helper.dart';
+
+/* screens */
+import '../screens/main_app_screen.dart';
+
 class NameInputScreen extends StatefulWidget {
   static const routeName = '/name-input-screen';
 
@@ -17,6 +24,8 @@ class NameInputScreen extends StatefulWidget {
 }
 
 class _NameInputScreenState extends State<NameInputScreen> with TickerProviderStateMixin {
+  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper.instance;
+
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, String> _userData = {
     "name": "",
@@ -79,11 +88,13 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
     });
     final String displayName = _userData['name']! + " " + _userData['surname']!;
 
-    await Provider.of<UserInfoProvider>(context, listen: false).setDisplayName(displayName);
+    await firebaseAuthHelper.setDisplayName(displayName);
 
     setState(() {
       _isLoading = false;
     });
+
+    Navigator.of(context).pushNamed(MainAppScreen.routeName);
   }
 
   @override

@@ -32,12 +32,14 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
       _isLoading = true;
     });
     try {
-      userIDs = await FirestoreHelper.getUsersFromFamilyId(familyId: referenceId!);
+      userIDs = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: referenceId!);
       for (final userId in userIDs) {
-        final usersDisplayName = await FirestoreHelper.getDisplayNameFromUserId(userId: userId, familyId: referenceId!);
-        setState(() {
-          listOfUsersName.add(usersDisplayName);
-        });
+        final usersDisplayName = await FirestoreHelper.instance.getDisplayNameFromUserId(userId: userId, familyId: referenceId!);
+        if (usersDisplayName != null) {
+          setState(() {
+            listOfUsersName.add(usersDisplayName);
+          });
+        }
       }
       print(listOfUsersName);
     } catch (e, stacktrace) {
@@ -96,7 +98,7 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
             ),
             const SelectableText(
               // todo: remove
-              "7tiEy0VHt5uBwqrF9Xa1",
+              "4PIrcoc7lWvymtw5Mq6v",
               style: TextStyle(color: Colors.white),
             ),
             const SizedBox(
@@ -229,7 +231,7 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
                           ? Column(
                               children: [
                                 const Text(
-                                  "Family found with given members: ",
+                                  "Family found",
                                   style: TextStyle(color: Colors.green),
                                 ),
                                 const SizedBox(

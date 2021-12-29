@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/http_exception.dart';
 
+/* firebase */
+import '../helpers/firebase_auth_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class SignIn extends StatefulWidget {
   const SignIn({
     Key? key,
@@ -39,6 +43,7 @@ class _SignInState extends State<SignIn> {
   }
 
   Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
     if (!widget._formKey.currentState!.validate()) {
       // Invalid!
       return;
@@ -49,42 +54,36 @@ class _SignInState extends State<SignIn> {
     });
     try {
       // Sign user up
-      await Provider.of<AuthProvider>(context, listen: false).login(
-        _authData['email']!,
-        _authData['password']!,
+      await FirebaseAuthHelper.instance.signInWithEmail(
+        email: _authData['email']!,
+        password: _authData['password']!,
       );
-    } on HttpException catch (error) {
-      // IT IS NOT CATCHING THIS EVEN 'THO IT IS HttpException
-      print(error);
-      var errorMessage = 'Authentication failed';
-
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email addresss';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find user with that email';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password';
+    } on FirebaseAuthException catch (error) {
+      if (error.message != null) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message!,
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
       }
-
-      _showErrorDialog(errorMessage);
-    } catch (e, stacktrace) {
-      print('Exception: ' + e.toString());
-      print('Stacktrace: ' + stacktrace.toString());
-
-      const errorMessage = 'Chould not authenticate you. Please try again later';
-
-      _showErrorDialog(errorMessage);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    } catch (error) {
+      print(error);
     }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   @override
@@ -234,7 +233,11 @@ class _SignInState extends State<SignIn> {
                               }
                             },
                             child: _isLoading
-                                ? CircularProgressIndicator()
+                                ? const CircularProgressIndicator(
+                                    color: Colors.amber,
+                                    backgroundColor: Colors.grey,
+                                    strokeWidth: 2,
+                                  )
                                 : const Text(
                                     'Submit',
                                     style: TextStyle(fontSize: 16),
@@ -299,7 +302,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Provider.of<AuthProvider>(context, listen: false).googleLogIn();
+                                  FirebaseAuthHelper.instance.googleLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

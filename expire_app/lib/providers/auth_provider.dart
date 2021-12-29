@@ -14,7 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 /* helpers */
-import '../helpers/sign_in_method.dart';
+import '../enums/sign_in_method.dart';
 
 /* models */
 import '../models/http_exception.dart';

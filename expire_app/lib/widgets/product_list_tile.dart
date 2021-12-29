@@ -13,7 +13,7 @@ import '../models/product.dart';
 import '../providers/products_provider.dart';
 
 /* helpers */
-import '../helpers/expire_status.dart';
+import '../enums/expire_status.dart';
 
 class ProductListTile extends StatefulWidget {
   final Product product;
@@ -107,9 +107,21 @@ class _ProductListTileState extends State<ProductListTile> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 children: <Widget>[
-                  const FlutterLogo(
-                    size: 70,
-                  ),
+                  widget.product.image != null
+                      ? Container(
+                          height: 100,
+                          width: 100,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(18.0),
+                            child: Image.file(
+                              widget.product.image!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      : const FlutterLogo(
+                          size: 50,
+                        ),
                   const SizedBox(
                     width: 20,
                   ),

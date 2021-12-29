@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 /* models */
 import '../models/product.dart';
@@ -16,6 +18,7 @@ class ProductsProvider extends ChangeNotifier {
   final String? _authToken;
   final String? _userId;
   final String? _familyId;
+  final bool _isAuth;
 
   List<Product> _items;
 
@@ -24,7 +27,7 @@ class ProductsProvider extends ChangeNotifier {
   /* Firebase */
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  ProductsProvider(this._authToken, this._userId, this._familyId, this._items);
+  ProductsProvider(this._authToken, this._userId, this._familyId, this._isAuth, this._items);
 
   List<Product> get items {
     return [..._items];
@@ -46,10 +49,8 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    // http post
-
+    /* remote insertion */
     try {
-      /* remote insertion */
       final response = await firestore.collection("families").doc(_familyId).collection(_userId!).add({
         'title': product.title,
         'expiration': product.expiration.toIso8601String(),
@@ -58,12 +59,20 @@ class ProductsProvider extends ChangeNotifier {
 
       String productId = response.id;
 
+      // storing image on firestore
+      if (product.image != null) {
+        final ref = FirebaseStorage.instance.ref().child(_userId!).child('$productId.jpg');
+        await ref.putFile(product.image!);
+        final url = await ref.getDownloadURL();
+      }
+
       /* local insertion */
       Product newProduct = Product(
         id: productId,
         title: product.title,
         expiration: product.expiration,
         creatorId: _userId!,
+        image: product.image,
       );
 
       _items.add(newProduct);
@@ -79,7 +88,7 @@ class ProductsProvider extends ChangeNotifier {
           'title': newProduct.title,
           'expiration': newProduct.expiration.toIso8601String(),
           'creatorId': newProduct.creatorId,
-          'image': 'null',
+          'image': newProduct.image != null ? newProduct.image!.path : "",
         },
       );
     } catch (e, stacktrace) {
@@ -104,6 +113,7 @@ class ProductsProvider extends ChangeNotifier {
     DBHelper.delete('user_products', productId);
   }
 
+  // todo: use this instead of fetchandset...
   void updateProductsOnChange() async {
     try {
       var querySnapshot = await firestore.collection('families').doc(_familyId).get();
@@ -156,6 +166,8 @@ class ProductsProvider extends ChangeNotifier {
       for (final userId in querySnapshot.data()!['_users']) {
         final productsRef = await firestore.collection('families').doc(_familyId).collection(userId).get();
         for (final product in productsRef.docs.where((element) => element.id != 'userInfo')) {
+          String imageUrl = await FirebaseStorage.instance.ref().child(_userId!).child('${product.id}.jpg').getDownloadURL();
+          print(imageUrl);
           products.add(
             Product(
               id: product.id,

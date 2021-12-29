@@ -1,4 +1,5 @@
 /* Dart */
+import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -16,15 +17,17 @@ import '../screens/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
 /* helpers */
-import '../helpers/sign_in_method.dart';
+import '../enums/sign_in_method.dart';
 
 class MainAppScreen extends StatefulWidget {
-  static const routeName = '/';
+  static const routeName = '/main-app-screen';
   @override
   _ProductsScreenState createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<MainAppScreen> {
+  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper.instance;
+
   /* Variables */
   var _pageIndex = 2;
   final pageController = PageController(initialPage: 2);
@@ -44,7 +47,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     _pages = [
       {
         'page': Center(
-          child: Text(Provider.of<UserInfoProvider>(context, listen: false).displayName ?? "null"),
+          child: Text(firebaseAuthHelper.displayName ?? "null"),
         ),
         'title': "Recipes",
       },

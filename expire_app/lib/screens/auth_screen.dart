@@ -14,7 +14,8 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _formKeySignIn = GlobalKey<FormState>();
   final _formKeySignUp = GlobalKey<FormState>();
-  final pageController = PageController(initialPage: 1);
+  final pageController = PageController(initialPage: 0);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

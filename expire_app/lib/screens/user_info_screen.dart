@@ -1,11 +1,12 @@
 /* dart */
-import 'package:expire_app/helpers/sign_in_method.dart';
+import 'package:expire_app/helpers/firebase_auth_helper.dart';
+
+import '../enums/sign_in_method.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 
 import 'dart:ui' as ui;
-
 
 /* providers */
 import '../providers/auth_provider.dart';
@@ -15,11 +16,7 @@ class UserInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SingleChildScrollView(
-      child: Column(children: <Widget>[
-        HeaderArea(size: size),
-        TitleWithBtn(),
-        AddMemberButton()
-      ]),
+      child: Column(children: <Widget>[HeaderArea(size: size), TitleWithBtn(), AddMemberButton()]),
     );
   }
 }
@@ -41,22 +38,7 @@ class TitleWithBtn extends StatelessWidget {
             child: Text("LOGOUT"),
             onPressed: () async {
               Navigator.of(context).pushReplacementNamed('/');
-              final auth = Provider.of<AuthProvider>(context, listen: false);
-              print(auth.signInMethod);
-              switch (auth.signInMethod) {
-                case SignInMethod.EmailAndPassword:
-                  await auth.logout();
-                  break;
-                case SignInMethod.Google:
-                  auth.googleLogout();
-                  break;
-                case SignInMethod.Facebook:
-                  auth.facebookLogout();
-                  break;
-                default:
-                  print(auth.signInMethod);
-                  throw Exception("Something went wrong during log-out");
-              }
+              FirebaseAuthHelper.instance.logOut();
             },
           ),
         ],
@@ -67,7 +49,8 @@ class TitleWithBtn extends StatelessWidget {
 
 class TitleWithUnderline extends StatelessWidget {
   const TitleWithUnderline({
-    Key? key, required this.text,
+    Key? key,
+    required this.text,
   }) : super(key: key);
 
   final String text;
@@ -80,7 +63,8 @@ class TitleWithUnderline extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(left: 1),
-            child: Text(text,
+            child: Text(
+              text,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
@@ -120,8 +104,7 @@ class HeaderArea extends StatelessWidget {
             children: <Widget>[
               Text(
                 "Hi, Ale!",
-                style: Theme.of(context).textTheme.headline5?.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.headline5?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               Spacer(),
               SizedBox(
@@ -131,8 +114,7 @@ class HeaderArea extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                      backgroundImage:
-                          ExactAssetImage("assets/images/sorre.png"),
+                      backgroundImage: ExactAssetImage("assets/images/sorre.png"),
                     ),
                     //Add this CustomPaint widget to the Widget Tree
                   ],
@@ -146,7 +128,6 @@ class HeaderArea extends StatelessWidget {
   }
 }
 
-
 class AddMemberButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -158,9 +139,8 @@ class AddMemberButton extends StatelessWidget {
       onPressed: () {},
       child: Ink(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")]),
-            borderRadius: BorderRadius.circular(14.0)
-        ),
+            gradient: LinearGradient(colors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")]),
+            borderRadius: BorderRadius.circular(14.0)),
         child: Container(
           padding: const EdgeInsets.all(60),
           constraints: const BoxConstraints(minWidth: 150),
@@ -170,7 +150,6 @@ class AddMemberButton extends StatelessWidget {
     );
   }
 }
-
 
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {

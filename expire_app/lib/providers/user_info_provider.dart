@@ -1,24 +1,17 @@
 /* dart */
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /* helpers */
 import '../helpers/db_helper.dart';
+import '../helpers/firestore_helper.dart';
+import '../helpers/firebase_auth_helper.dart';
 
 class UserInfoProvider extends ChangeNotifier {
-  /* Auth provider */
+  UserInfoProvider() {
+    throw Deprecated("This class has been deprecated and no longer functioning.");
+  }
 
-  /* user info */
-  String? _displayName;
-  String? _userId;
-  String? _familyId;
-
-  /* Firebase */
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  UserInfoProvider(this._userId, this._familyId, this._displayName);
-
-  bool get isNameSet {
+  /*bool get isNameSet {
     return _displayName != null;
   }
 
@@ -85,5 +78,5 @@ class UserInfoProvider extends ChangeNotifier {
     );
 
     notifyListeners();
-  }
+  }*/
 }
