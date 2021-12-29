@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:uuid/uuid.dart';
 
 /* helper */
 import '../helpers/user_info.dart' as userinfo;
@@ -92,14 +95,28 @@ class FirestoreHelper {
     return firestore.collection('families').doc(familyId).collection('products').snapshots();
   }
 
-  Future<void> addProduct(Product product) async {
+  Future<void> addProduct({required Product product, File? image}) async {
     final userInfo = userinfo.UserInfo.instance;
-    final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products').add({
-      'title': product.title,
-      'expiration': product.expiration.toIso8601String(),
-      'creatorId': userInfo.userId,
-      'imageUrl': product.imageUrl,
-    });
+    String? imageUrl;
+    var uuid = Uuid();
+
+    // storing image on firestore if any
+    if (image != null) {
+      final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(uuid.v1());
+      await ref.putFile(image);
+      imageUrl = await ref.getDownloadURL();
+    } else {
+      imageUrl = product.imageUrl;
+    }
+
+    final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products').add(
+      {
+        'title': product.title,
+        'expiration': product.expiration.toIso8601String(),
+        'creatorId': userInfo.userId,
+        'imageUrl': imageUrl,
+      },
+    );
   }
 
   Future<void> deleteProduct(String productId) async {

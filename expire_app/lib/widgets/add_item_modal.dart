@@ -1,5 +1,4 @@
 /* dart */
-import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +22,10 @@ import '../models/product.dart';
 
 /* enums */
 import '../enums/product_insertion_method.dart';
+
+/* firebase */
+
+import 'package:expire_app/helpers/firestore_helper.dart';
 
 class AddItemModal extends StatefulWidget {
   final BuildContext modalContext;
@@ -110,13 +113,14 @@ class _AddItemModalState extends State<AddItemModal> {
 
     try {
       FirestoreHelper.instance.addProduct(
-        Product(
+        product: Product(
           id: '',
           title: _productData['title'] as String,
           expiration: _pickedDate, //_productData['expiration'] as DateTime,
           creatorId: '',
-          imageUrl: null,
+          imageUrl: _imageUrl,
         ),
+        image: _pickedImage,
       );
     } catch (error) {
       const errorMessage = 'Chould not upload product. Please try again later';
@@ -162,13 +166,15 @@ class _AddItemModalState extends State<AddItemModal> {
 
     setState(() {
       _pickedImage = convertedImage;
+      _imageUrl = null;
       productInsertionMethod = ProductInsertionMethod.Manually;
     });
   }
 
   Future<void> _scanBarcode() async {
-    /*try {
-      String scanResult = await FlutterBarcodeScanner.scanBarcode(
+    String? scanResult;
+    try {
+      scanResult = await FlutterBarcodeScanner.scanBarcode(
         '#FF3F51B5',
         'Cancel',
         true,
@@ -179,13 +185,13 @@ class _AddItemModalState extends State<AddItemModal> {
       rethrow;
     }
 
-    if (!mounted) {
+    if (!mounted || scanResult == "-1") {
       return;
     }
 
     this.barcodeString = scanResult;
-    print(this.scanResult);*/
-    this.barcodeString = "8013355998702";
+    print(scanResult);
+    //this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
 
     print("fetching product...");
     final String url = "https://world.openfoodfacts.org/api/v0/product/$barcodeString.json";
@@ -196,6 +202,7 @@ class _AddItemModalState extends State<AddItemModal> {
     setState(() {
       _productNameController.text = decodedResponse['product']["product_name"];
       _imageUrl = decodedResponse['product']['selected_images']['front']['display']['it'];
+      _pickedImage = null;
       productInsertionMethod = ProductInsertionMethod.Scanner;
     });
     print(_imageUrl);

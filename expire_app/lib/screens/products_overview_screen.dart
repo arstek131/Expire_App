@@ -100,7 +100,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                                       title: productDocs[i]['title'],
                                       expiration: DateTime.parse(productDocs[i]['expiration']),
                                       creatorId: productDocs[i]['creatorId'],
-                                      imageUrl: null,
+                                      imageUrl: productDocs[i]['imageUrl'],
                                     );
                                     return ProductListTile(product);
                                   } else {

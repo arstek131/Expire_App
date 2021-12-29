@@ -43,8 +43,6 @@ class ProductListTile extends StatefulWidget {
 }
 
 class _ProductListTileState extends State<ProductListTile> {
-  String _displayName = "";
-
   @override
   Widget build(BuildContext context) {
     return Dismissible(
