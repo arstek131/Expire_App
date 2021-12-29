@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:flutter_lorem/flutter_lorem.dart';
+
 import 'dart:ui' as ui;
 
 /* providers */
@@ -16,7 +19,254 @@ class UserInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SingleChildScrollView(
-      child: Column(children: <Widget>[HeaderArea(size: size), TitleWithBtn(), AddMemberButton()]),
+      child: Column(children: <Widget>[
+        HeaderArea(size: size),
+        TitleWithBtn(),
+        //AddMemberButton(),
+        Row(
+          children: [
+            FirstBtn(size: size),
+            SecondBtn(size: size),
+          ],
+        ),
+        ThirdBtn(size: size),
+        AccountText(),
+        Row(
+          children: [
+            FourthBtn(size: size),
+            FifthBtn(size: size),
+          ],
+        ),
+        LastMenu(
+          text: "Favourite",
+          press: () {},
+        ),
+        LastMenu(
+          text: "Legal Notes",
+          press: () => showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
+        ),
+        LastMenu(
+          text: "Settings and Privacy",
+          press: () {},
+        ),
+        LastMenu(
+          text: "Help",
+          press: () {},
+        ),
+      ]),
+    );
+  }
+}
+
+class LastMenu extends StatelessWidget {
+  const LastMenu({
+    Key? key,
+    required this.text,
+    required this.press,
+  }) : super(key: key);
+
+  final String text;
+  final VoidCallback press;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: TextButton(
+          style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).scaffoldBackgroundColor,
+              padding: EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+          onPressed: press,
+          child: Row(
+            children: [
+              SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.black,
+              )
+            ],
+          )),
+    );
+  }
+}
+
+class FifthBtn extends StatelessWidget {
+  const FifthBtn({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //it will cover 40% of total width
+      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
+      width: size.width * 0.4,
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Number 5"),
+            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
+          ),
+          Container(
+            padding: EdgeInsets.all(20 / 10),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FourthBtn extends StatelessWidget {
+  const FourthBtn({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //it will cover 40% of total width
+      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
+      width: size.width * 0.4,
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Number 4"),
+            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
+          ),
+          Container(
+            padding: EdgeInsets.all(20 / 10),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AccountText extends StatelessWidget {
+  const AccountText({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 24,
+      child: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 1),
+            child: Text(
+              "Account",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ThirdBtn extends StatelessWidget {
+  const ThirdBtn({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //it will cover 40% of total width
+      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
+      width: size.width * 0.4,
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Number 3"),
+            style: ElevatedButton.styleFrom(fixedSize: Size(200, 100)),
+          ),
+          Container(
+            padding: EdgeInsets.all(20 / 10),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SecondBtn extends StatelessWidget {
+  const SecondBtn({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //it will cover 40% of total width
+      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
+      width: size.width * 0.4,
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Number 2"),
+            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
+          ),
+          Container(
+            padding: EdgeInsets.all(20 / 10),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FirstBtn extends StatelessWidget {
+  const FirstBtn({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //it will cover 40% of total width
+      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
+      width: size.width * 0.4,
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Number 1"),
+            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
+          ),
+          Container(
+            padding: EdgeInsets.all(20 / 10),
+          )
+        ],
+      ),
     );
   }
 }

@@ -192,6 +192,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_barcode_scanner
+  flutter_custom_clippers:
+    dependency: "direct main"
+    description:
+      name: flutter_custom_clippers
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
@@ -230,6 +234,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  flutter_lorem:
+    dependency: "direct main"
+    description:
+      name: flutter_lorem
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_svg:
     dependency: "direct main"
     description:
