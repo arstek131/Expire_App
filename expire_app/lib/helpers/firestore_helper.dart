@@ -56,6 +56,21 @@ class FirestoreHelper {
     }
   }
 
+  Future<String?> getImageUrlFromProductId({required String productId}) async {
+    final userInfo = userinfo.UserInfo.instance;
+    final productRef = await firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).get();
+
+    if (productRef.data()!.containsKey("imageUrl")) {
+      return productRef.data()!['imageUrl'];
+    } else {
+      return null;
+    }
+  }
+
+  Stream<QuerySnapshot> getFamilyProductsStream({required String familyId}) {
+    return firestore.collection('families').doc(familyId).collection('products').snapshots();
+  }
+
   /* setters */
   Future<void> setDisplayName({required String userId, required String displayName}) async {
     await firestore.collection('users').doc(userId).set(
@@ -91,10 +106,6 @@ class FirestoreHelper {
     });
   }
 
-  Stream<QuerySnapshot> getFamilyProductsStream({required String familyId}) {
-    return firestore.collection('families').doc(familyId).collection('products').snapshots();
-  }
-
   Future<void> addProduct({required Product product, File? image}) async {
     final userInfo = userinfo.UserInfo.instance;
     String? imageUrl;
@@ -122,6 +133,16 @@ class FirestoreHelper {
   Future<void> deleteProduct(String productId) async {
     final userInfo = userinfo.UserInfo.instance;
 
-    firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).delete();
+    String? imageUrl = await getImageUrlFromProductId(productId: productId);
+
+    // delte product record
+    await firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).delete();
+
+    // delete image
+    if (imageUrl != null) {
+      String filename = FirebaseStorage.instance.refFromURL(imageUrl!).name;
+      final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);
+      await ref.delete();
+    }
   }
 }

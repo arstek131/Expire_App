@@ -150,12 +150,14 @@ class _AddItemModalState extends State<AddItemModal> {
   }
 
   Future<void> _takePicture() async {
+    // todo: dropdown to choose to take picture or upload
     final picker = ImagePicker();
     final imageFile = await picker.pickImage(
       source: ImageSource.camera,
       maxWidth: 300,
+      maxHeight: 300,
       preferredCameraDevice: CameraDevice.front,
-      imageQuality: 80,
+      imageQuality: 90,
     );
 
     if (imageFile == null) {
@@ -173,7 +175,7 @@ class _AddItemModalState extends State<AddItemModal> {
 
   Future<void> _scanBarcode() async {
     String? scanResult;
-    try {
+    /*try {
       scanResult = await FlutterBarcodeScanner.scanBarcode(
         '#FF3F51B5',
         'Cancel',
@@ -190,8 +192,8 @@ class _AddItemModalState extends State<AddItemModal> {
     }
 
     this.barcodeString = scanResult;
-    print(scanResult);
-    //this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
+    print(scanResult);*/
+    this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
 
     print("fetching product...");
     final String url = "https://world.openfoodfacts.org/api/v0/product/$barcodeString.json";

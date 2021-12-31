@@ -43,20 +43,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       height: bottomNavigationSize.height,
       child: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 7,
-              spreadRadius: 3,
-              offset: Offset(0, 5),
-            ),
-          ],
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(12.0),
-          ),
-        ),
+        decoration: bottomNavigationSize.decoration,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -100,13 +87,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                           },
                         );
                       },
-                /*=> Provider.of<ProductsProvider>(context, listen: false).addProduct(
-                          Product(
-                              id: DateTime.now().toString(),
-                              title: 'Porzella esplosiva',
-                              expiration: DateTime.now(),
-                              image: null),
-                        ),*/ //Navigator.of(context).pushNamed(AddProductScreen.routeName),
                 child: widget.pageIndex == 2
                     ? const FittedBox(
                         child: Icon(

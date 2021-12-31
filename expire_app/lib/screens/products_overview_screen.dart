@@ -15,6 +15,7 @@ import '../models/product.dart';
 
 /* widgets */
 import '../widgets/product_list_tile.dart';
+import '../widgets/product_list_tile_placeholder.dart';
 
 /* helpers */
 import '../helpers/user_info.dart' as userinfo;
@@ -60,8 +61,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
               stream: FirestoreHelper.instance.getFamilyProductsStream(familyId: userinfo.UserInfo.instance.familyId!),
               builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> productSnaphshot) {
                 if (productSnaphshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Expanded(
+                    child: ListView(
+                      children: const [
+                        ProductListTilePlaceholder(),
+                        ProductListTilePlaceholder(),
+                      ],
+                    ),
                   );
                 } else {
                   final productDocs = productSnaphshot.data!.docs;
@@ -115,55 +121,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                   );
                 }
               }),
-
-          /*FutureBuilder(
-            future: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts(),
-            builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Consumer<ProductsProvider>(
-                    child: const Text(
-                      "Add some products!",
-                      textAlign: TextAlign.center,
-                    ),
-                    builder: (ctx, productsData, ch) => productsData.items.isEmpty
-                        ? ch!
-                        : Flexible(
-                            child: NotificationListener<ScrollNotification>(
-                              onNotification: (ScrollNotification scrollInfo) {
-                                if (scrollInfo is UserScrollNotification) {
-                                  // scrolling up
-                                  if (scrollInfo.direction == ScrollDirection.forward) {
-                                    Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
-                                  } else if (scrollInfo.direction == ScrollDirection.reverse) {
-                                    // scrolling down
-                                    Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
-                                  }
-                                }
-                                return true;
-                              },
-                              child: RefreshIndicator(
-                                key: _refreshIndicatorKey,
-                                color: Colors.blue,
-                                onRefresh: Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProducts,
-                                child: ListView.builder(
-                                  itemCount: productsData.items.length + 1,
-                                  itemBuilder: (ctx, i) {
-                                    if (i < productsData.items.length) {
-                                      return ProductListTile(productsData.items[i]);
-                                    } else {
-                                      return const SizedBox(
-                                        height: 80,
-                                      );
-                                    }
-                                  }, //product item...
-                                ),
-                              ),
-                            ),
-                          ),
-                  ),
-          ),*/
         ],
       ),
     );
