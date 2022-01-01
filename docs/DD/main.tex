@@ -1,0 +1,87 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} 
+\usepackage[english]{babel} 
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage{tocbibind} 
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{2.5}
+\usepackage{longtable}
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\usepackage{url}							
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{xltabular}
+\usepackage{xcolor}
+\definecolor{green1}{HTML}{85AB67}
+\definecolor{green2}{HTML}{77BC3F}
+\usepackage{pdflscape}
+\usepackage{pdfpages}
+
+
+
+\begin{document}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.1mm}}
+
+\center 
+
+\includegraphics[width=50mm,scale=0.5]{./Images/Logo_Politecnico_Milano.png}\\[0.5cm] 
+
+{\Large Computer Science and Engineering}\\[0.4cm] 
+{\large Design and Implementation of Mobile Applications}\\[0.4cm] 
+{\large Academic year 2021-2022}\\[0.5cm] 
+
+\HRule \\[1 cm]
+{\LARGE \textbf{Design Document}} \\[0.7cm]
+\includegraphics[width=35mm,scale=0.5]{./Images/Logo/DREAM logo.png}\\[0.5cm] 
+{\LARGE Expire App} \\[0.7cm]
+\HRule \\[1cm]
+\raggedright
+
+\begin{minipage}{0.55\textwidth}
+\begin{flushleft} \large
+\emph{Authors:}\\
+Arslan \textsc{Ali}\hfill 10807090 \\
+Alessandro \textsc{Sorrentino}\hfill 10746269 \\
+\end{flushleft}
+\end{minipage}\\[0.7 cm]
+~
+
+\center
+
+%{\large January -, 2022}\\[0.3 cm]
+{\large Version 1.0}\\
+
+\vfill 
+\end{titlepage}
+
+\newpage
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+\tableofcontents
+\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
+\listoftables
+\newpage
+\listoffigures
+\newpage
+
+\include{./Chapters/Chapter1/chapter1}
+\include{./Chapters/Chapter2/chapter2}
+\include{./Chapters/Chapter3/chapter3}
+\include{./Chapters/Chapter4/chapter4}
+\include{./Chapters/Chapter5/chapter5}
+
+
+\end{document}
