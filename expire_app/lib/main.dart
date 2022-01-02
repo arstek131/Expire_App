@@ -5,12 +5,14 @@ import 'package:expire_app/helpers/user_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /* Screens */
 import 'screens/main_app_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/name_input_screen.dart';
 import 'screens/family_id_choice_screen.dart';
+import 'screens/onboarding_page.dart';
 
 /* Providers */
 import 'package:provider/provider.dart';
@@ -23,13 +25,17 @@ import 'helpers/custom_route.dart';
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
 
+bool? seenOnboard;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isIOS) {
     print("initializeApp still not implemented for iOS");
     return;
   }
-
+  //to load on board screen for first time only
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  seenOnboard = pref.getBool('seenOnboard') ?? false; //if null set to false
   await Firebase.initializeApp(); // todo: set for ios
 
   runApp(const MyApp());
@@ -69,7 +75,7 @@ class _MyAppState extends State<MyApp> {
             {
               return firebaseAuthHelper.isDisplayNameSet ? MainAppScreen() : NameInputScreen();
             } else {
-              return AuthScreen();
+              return seenOnboard == true ? AuthScreen() : OnBoardingPage();
             }
           },
         ),

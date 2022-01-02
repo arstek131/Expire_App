@@ -67,6 +67,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^1.3.3
+
+flutter_native_splash:
+  background_image: "assets/images/splash_img.png"
+  android: true
+  ios: true
+  android_gravity: center
+  ios_content_mode: center
+  fullscreen: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -93,6 +102,10 @@ flutter:
     - assets/images/sorre.png
     - assets/icons/user_icon.svg
     - assets/images/missing_image_placeholder.png
+    - assets/images/splash_img.png
+    - assets/images/onboarding_1.png
+    - assets/images/onboarding_2.png
+    - assets/images/onboarding_3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
