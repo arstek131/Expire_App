@@ -1,4 +1,4 @@
-import 'package:expire_app/app_styles.dart';
+import 'package:expire_app/app_styles.dart' as styles;
 import 'package:expire_app/models/onboard_data.dart';
 import 'package:expire_app/size_configs.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +26,13 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       height: 12,
       width: 12,
       decoration: BoxDecoration(
-        color: currentPage == index ? kPrimaryColor : kSecondaryColor,
+        color: currentPage == index ? styles.primaryColor : styles.kSecondaryColor,
         shape: BoxShape.circle,
       ),
     );
   }
 
-  Future setSeenonboard() async{
+  Future setSeenonboard() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Settin seenOnboard true when running onboard page for first time
     seenOnboard = await prefs.setBool("seenOnboard", true);
@@ -73,7 +73,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     ),
                     Text(
                       onboardingContents[index].title,
-                      style: kTitle,
+                      style: styles.kTitle,
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(
@@ -91,19 +91,19 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     ),
                     RichText(
                       textAlign: TextAlign.center,
-                      text: TextSpan(style: kBodyText1, children: [
+                      text: TextSpan(style: styles.kBodyText1, children: [
                         TextSpan(text: "WE CAN "),
                         TextSpan(
                             text: "HELP YOU ",
                             style: TextStyle(
-                              color: kPrimaryColor,
+                              color: styles.primaryColor,
                             )),
                         TextSpan(text: "TO BE A BETTER "),
                         TextSpan(text: "CITIZEN OF "),
                         TextSpan(
                             text: "THIS WORLD ",
                             style: TextStyle(
-                              color: kPrimaryColor,
+                              color: styles.primaryColor,
                             ))
                       ]),
                     ),
@@ -121,14 +121,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   currentPage == onboardingContents.length - 1
                       ? MyTextButton(
                           buttonName: "Get Started!",
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AuthScreen(),
-                                ));
-                          },
-                          bgColor: kPrimaryColor,
+                          onPressed: () => Navigator.of(context).pushReplacementNamed(AuthScreen.routeName),
+                          bgColor: styles.primaryColor,
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -195,7 +189,7 @@ class MyTextButton extends StatelessWidget {
           onPressed: onPressed,
           child: Text(
             buttonName,
-            style: kBodyText1,
+            style: styles.kBodyText1,
           ),
           style: TextButton.styleFrom(
             backgroundColor: bgColor,
@@ -226,7 +220,7 @@ class OnBoardNavBtn extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           child: Text(
             name,
-            style: kBodyText1,
+            style: styles.kBodyText1,
           ),
         ));
   }

@@ -67,6 +67,7 @@ class FirebaseAuthHelper {
     _signInMethod = SignInMethod.EmailAndPassword;
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      print(userCredential);
     } catch (error) {
       rethrow;
     }

@@ -1,7 +1,6 @@
 /* dart libraries */
 import 'dart:io';
 
-import 'package:expire_app/helpers/user_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +24,7 @@ import 'helpers/custom_route.dart';
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
 
-bool? seenOnboard;
+bool? seenOnboard; // put in didchangedependencies with init bool
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,17 +67,17 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.iOS: CustomPageTransitionBuilder(),
           }),
         ),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, userSnapshot) {
-            if (userSnapshot.hasData) // token found
-            {
-              return firebaseAuthHelper.isDisplayNameSet ? MainAppScreen() : NameInputScreen();
-            } else {
-              return seenOnboard == true ? AuthScreen() : OnBoardingPage();
-            }
-          },
-        ),
+        home: seenOnboard == false
+            ? OnBoardingPage()
+            : StreamBuilder(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (ctx, userSnapshot) => userSnapshot.hasData
+                    ? // token found
+                    firebaseAuthHelper.isDisplayNameSet
+                        ? MainAppScreen()
+                        : NameInputScreen()
+                    : AuthScreen(),
+              ),
         routes: {
           //'/': (ctx) => MainAppScreen(),
           AuthScreen.routeName: (ctx) => AuthScreen(),

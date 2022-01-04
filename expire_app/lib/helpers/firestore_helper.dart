@@ -109,7 +109,7 @@ class FirestoreHelper {
   Future<void> addProduct({required Product product, File? image}) async {
     final userInfo = userinfo.UserInfo.instance;
     String? imageUrl;
-    var uuid = Uuid();
+    var uuid = const Uuid();
 
     // storing image on firestore if any
     if (image != null) {
@@ -140,7 +140,7 @@ class FirestoreHelper {
 
     // delete image
     if (imageUrl != null) {
-      String filename = FirebaseStorage.instance.refFromURL(imageUrl!).name;
+      String filename = FirebaseStorage.instance.refFromURL(imageUrl).name;
       final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);
       await ref.delete();
     }

@@ -31,7 +31,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   /* Variables */
   var _pageIndex = 2;
   final pageController = PageController(initialPage: 2);
-  final mainAppScreenPageController = PageController(initialPage: 0);
+
   List<Map<String, dynamic>> _pages = [];
 
   /* Class methods */
@@ -39,7 +39,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
     setState(() {
       _pageIndex = index;
     });
-    pageController.jumpToPage(index);
+    pageController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+    //pageController.jumpToPage(index);
   }
 
   @override
@@ -87,7 +88,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         title: Center(
@@ -104,7 +105,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
             ],
           ),
         ),
-      ),
+      ),*/
       body: FutureBuilder(
         future: initUserInfoProvider,
         builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
@@ -114,12 +115,14 @@ class _ProductsScreenState extends State<MainAppScreen> {
             : Stack(
                 children: [
                   PageView(
-                    physics: BouncingScrollPhysics(),
+                    //physics: BouncingScrollPhysics(),
                     controller: pageController,
                     children: _pages.map<Widget>((pageElement) => pageElement['page']).toList(),
-                    onPageChanged: (value) {
-                      _bottomNavigationBarHandler(value);
-                    },
+                    onPageChanged: (index) => setState(
+                      () {
+                        _pageIndex = index;
+                      },
+                    ),
                   ),
                   SafeArea(
                     child: Align(

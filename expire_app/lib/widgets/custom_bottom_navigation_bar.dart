@@ -13,6 +13,9 @@ import '../widgets/add_item_modal.dart';
 /* models */
 import '../models/product.dart';
 
+/* style */
+import '../app_styles.dart' as styles;
+
 /* screens */
 
 class CustomBottomNavigationBar extends StatefulWidget {
@@ -100,7 +103,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   shape: MaterialStateProperty.all(bottomNavigationSize.outlineBorder),
                   padding: MaterialStateProperty.all(EdgeInsets.all(bottomNavigationSize.mainButtonInternalPadding)),
                   backgroundColor: widget.pageIndex == 2
-                      ? MaterialStateProperty.all(Colors.indigoAccent)
+                      ? MaterialStateProperty.all(styles.primaryColor)
                       : MaterialStateProperty.all(Colors.indigo[400]), // <-- Button color
                 ),
               ),
