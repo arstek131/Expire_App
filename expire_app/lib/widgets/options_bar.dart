@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_styles.dart' as styles;
 
 class OptionsBar extends StatefulWidget {
-  const OptionsBar({Key? key}) : super(key: key);
+  OptionsBar();
 
   @override
   _OptionBarState createState() => _OptionBarState();
@@ -74,6 +74,7 @@ class _OptionBarState extends State<OptionsBar> {
                     FaIcon(
                       FontAwesomeIcons.search,
                       color: styles.ghostWhite,
+                      size: 23,
                     )
                   ],
                 ),
@@ -118,32 +119,6 @@ class _OptionBarState extends State<OptionsBar> {
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.sort,
-                    color: styles.ghostWhite,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Expiring soon",
-                    style: styles.subheading,
-                  )
-                ],
-              ),
-              Icon(
-                Icons.grid_view,
-                color: styles.ghostWhite,
-              ),
-            ],
-          ),
-        )
       ],
     );
   }

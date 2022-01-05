@@ -141,6 +141,7 @@ class FirestoreHelper {
     // delete image
     if (imageUrl != null) {
       String filename = FirebaseStorage.instance.refFromURL(imageUrl).name;
+
       final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);
       await ref.delete();
     }

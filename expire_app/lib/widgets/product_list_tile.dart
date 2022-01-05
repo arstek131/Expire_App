@@ -11,11 +11,17 @@ import 'dart:math' as math;
 /* models */
 import '../models/product.dart';
 
+/* widgets */
+import '../widgets/expire_clip.dart';
+
 /* provider */
 import '../providers/products_provider.dart';
 
 /* helpers */
 import '../enums/expire_status.dart';
+
+/* style */
+import '../app_styles.dart' as styles;
 
 class ProductListTile extends StatefulWidget {
   final Product product;
@@ -49,16 +55,17 @@ class _ProductListTileState extends State<ProductListTile> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 3,
-            spreadRadius: 3,
+            spreadRadius: 6,
             offset: Offset(0, 3),
           ),
         ],
       ),
-      margin: const EdgeInsets.only(bottom: 10.0),
+
+      //margin: const EdgeInsets.only(bottom: 10.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15.0),
         child: Dismissible(
@@ -112,6 +119,7 @@ class _ProductListTileState extends State<ProductListTile> {
             );
           },
           child: Card(
+            color: styles.ghostWhite,
             margin: EdgeInsets.zero,
             //clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
@@ -120,92 +128,99 @@ class _ProductListTileState extends State<ProductListTile> {
             elevation: 8,
             child: Stack(
               children: [
-                Row(
-                  children: <Widget>[
-                    Container(
-                      height: 100,
-                      width: 100,
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          right: BorderSide(width: 2.5, color: Colors.black87),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        height: 100,
+                        width: 100,
+                        /*decoration: const BoxDecoration(
+                          border: Border(
+                            right: BorderSide(width: 2.5, color: Colors.black87),
+                          ),
+                        ),*/
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: widget.product.imageUrl != null
+                              ? Image.network(
+                                  widget.product.imageUrl!,
+                                  fit: BoxFit.cover,
+                                  color: const Color.fromRGBO(255, 255, 255, 0.85),
+                                  colorBlendMode: BlendMode.modulate,
+                                )
+                              : Image.asset(
+                                  "assets/images/missing_image_placeholder.png",
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          bottomLeft: Radius.circular(10.0),
-                        ),
-                        child: widget.product.imageUrl != null
-                            ? Image.network(
-                                widget.product.imageUrl!,
-                                fit: BoxFit.cover,
-                                color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                colorBlendMode: BlendMode.modulate,
-                              )
-                            : Image.asset(
-                                "assets/images/missing_image_placeholder.png",
-                                fit: BoxFit.cover,
-                              ),
+                      const SizedBox(
+                        width: 20,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          widget.product.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        Text(
-                          'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
-                          style: TextStyle(
-                              color: widget.expireStatus == ExpireStatus.Expired
-                                  ? Colors.red
-                                  : widget.expireStatus == ExpireStatus.ExpiringToday
-                                      ? Colors.orange
-                                      : Colors.indigo,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Row(
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            const Icon(
-                              Icons.person,
-                              color: Colors.grey,
-                              size: 20,
+                            Text(
+                              widget.product.title,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            FutureBuilder(
-                              future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
-                              builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
-                                  snapshot.connectionState == ConnectionState.waiting
-                                      ? Shimmer.fromColors(
-                                          baseColor: Colors.grey.shade300,
-                                          highlightColor: Colors.grey.shade100,
-                                          direction: ShimmerDirection.ltr,
-                                          child: Container(
-                                            width: 40.0,
-                                            height: 15.0,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10.0),
-                                              color: Colors.white,
+                            Text(
+                              'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
+                              style: TextStyle(
+                                  color: widget.expireStatus == ExpireStatus.Expired
+                                      ? Colors.red
+                                      : widget.expireStatus == ExpireStatus.ExpiringToday
+                                          ? Colors.orange
+                                          : Colors.indigo,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.person,
+                                  color: Colors.grey,
+                                  size: 20,
+                                ),
+                                FutureBuilder(
+                                  future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
+                                  builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
+                                      snapshot.connectionState == ConnectionState.waiting
+                                          ? Shimmer.fromColors(
+                                              baseColor: Colors.grey.shade300,
+                                              highlightColor: Colors.grey.shade100,
+                                              direction: ShimmerDirection.ltr,
+                                              child: Container(
+                                                width: 40.0,
+                                                height: 15.0,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            )
+                                          : Text(
+                                              snapshot.data ?? "UNKNOWN",
+                                              style: const TextStyle(color: Colors.grey, fontSize: 14),
                                             ),
-                                          ),
-                                        )
-                                      : Text(
-                                          snapshot.data ?? "UNKNOWN",
-                                          style: const TextStyle(color: Colors.grey, fontSize: 14),
-                                        ),
-                            )
+                                )
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-                if (widget.expireStatus == ExpireStatus.Expired)
-                  Positioned(
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: ExpireClip(widget.expireStatus!, widget.product.expiration),
+                ),
+                /*Positioned(
                     top: 10,
                     right: -5,
                     child: Align(
@@ -221,7 +236,7 @@ class _ProductListTileState extends State<ProductListTile> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
               ],
             ),
           ),

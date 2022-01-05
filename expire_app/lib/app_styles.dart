@@ -29,7 +29,7 @@ const TextStyle subheading = TextStyle(
 );
 
 /* colors */
-const Color primaryColor = Color(0xFF666AF6);
+const Color primaryColor = Color(0xFF5353FF);
 const Color kSecondaryColor = Colors.black;
 const Color kTertiaryColor = Colors.indigo;
 const Color ghostWhite = Color(0xFFF8F8FF);

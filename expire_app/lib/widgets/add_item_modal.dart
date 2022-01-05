@@ -157,7 +157,7 @@ class _AddItemModalState extends State<AddItemModal> {
       maxWidth: 300,
       maxHeight: 300,
       preferredCameraDevice: CameraDevice.front,
-      imageQuality: 90,
+      //imageQuality: 90,
     );
 
     if (imageFile == null) {
@@ -213,8 +213,8 @@ class _AddItemModalState extends State<AddItemModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.topCenter,
-      height: MediaQuery.of(context).size.height * 0.8,
+      //alignment: Alignment.bottomCenter,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: Stack(
         children: [
           Column(
