@@ -33,8 +33,8 @@ void main() async {
     return;
   }
   //to load on board screen for first time only
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  seenOnboard = pref.getBool('seenOnboard') ?? false; //if null set to false
+  //SharedPreferences pref = await SharedPreferences.getInstance();
+  //seenOnboard = pref.getBool('seenOnboard') ?? false; //if null set to false
   await Firebase.initializeApp(); // todo: set for ios
 
   runApp(const MyApp());
@@ -67,17 +67,18 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.iOS: CustomPageTransitionBuilder(),
           }),
         ),
-        home: seenOnboard == false
+        home: /*seenOnboard == false
             ? OnBoardingPage()
-            : StreamBuilder(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (ctx, userSnapshot) => userSnapshot.hasData
-                    ? // token found
-                    firebaseAuthHelper.isDisplayNameSet
-                        ? MainAppScreen()
-                        : NameInputScreen()
-                    : AuthScreen(),
-              ),
+            : */
+            StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) => userSnapshot.hasData
+              ? // token found
+              firebaseAuthHelper.isDisplayNameSet
+                  ? MainAppScreen()
+                  : NameInputScreen()
+              : AuthScreen(),
+        ),
         routes: {
           //'/': (ctx) => MainAppScreen(),
           AuthScreen.routeName: (ctx) => AuthScreen(),
