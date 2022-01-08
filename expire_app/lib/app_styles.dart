@@ -28,6 +28,13 @@ const TextStyle subheading = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const TextStyle robotoMedium16 = TextStyle(
+  color: Colors.black,
+  fontFamily: 'Roboto',
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+);
+
 /* colors */
 const Color primaryColor = Color(0xFF5353FF);
 const Color kSecondaryColor = Colors.black;

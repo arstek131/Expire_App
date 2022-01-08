@@ -101,6 +101,7 @@ flutter:
     - assets/images/auth_signup_img.png
     - assets/images/sorre.png
     - assets/icons/user_icon.svg
+    - assets/icons/
     - assets/images/missing_image_placeholder.png
     - assets/images/splash_img.png
     - assets/images/onboarding_1.png

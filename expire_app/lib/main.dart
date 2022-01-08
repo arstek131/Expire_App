@@ -28,6 +28,7 @@ bool? seenOnboard; // put in didchangedependencies with init bool
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   if (Platform.isIOS) {
     print("initializeApp still not implemented for iOS");
     return;

@@ -1,5 +1,9 @@
 /* dart */
+import 'dart:ffi';
+
+import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../enums/sign_in_method.dart';
 import 'package:flutter/material.dart';
@@ -18,42 +22,126 @@ class UserInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      child: Column(children: <Widget>[
-        HeaderArea(size: size),
-        TitleWithBtn(),
-        //AddMemberButton(),
-        Row(
-          children: [
-            FirstBtn(size: size),
-            SecondBtn(size: size),
-          ],
-        ),
-        ThirdBtn(size: size),
-        AccountText(),
-        Row(
-          children: [
-            FourthBtn(size: size),
-            FifthBtn(size: size),
-          ],
-        ),
-        LastMenu(
-          text: "Favourite",
-          press: () {},
-        ),
-        LastMenu(
-          text: "Legal Notes",
-          press: () => showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
-        ),
-        LastMenu(
-          text: "Settings and Privacy",
-          press: () {},
-        ),
-        LastMenu(
-          text: "Help",
-          press: () {},
-        ),
-      ]),
+    double contextWidth = size.width;
+    double width = (contextWidth - 53 - 10 - 10) / 2;
+    double height = 152;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(27, 10, 26, 10),
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            actions: [
+              SizedBox(
+                height: 70,
+                width: 70,
+                child: CircleAvatar(
+                  backgroundImage: ExactAssetImage("assets/images/sorre.png"),
+                ),
+              ),
+            ],
+            leading: Text(
+              "Hi, Ale!",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(30),
+              child: Align(
+                child: Text('vaffancul@mail.com'),
+                alignment: Alignment.centerLeft,
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Div(
+                    text: 'Family',
+                    subtext: 'Manage synchronization with family members'),
+                SizedBox(height: 5),
+                //AddMemberButton(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 3),
+                    CustomBtn(
+                        buttonHeight: height,
+                        buttonWidth: width,
+                        imageWidth: 75,
+                        imageHeigth: 70,
+                        gradientColors: [
+                          HexColor("#6DB5CB"),
+                          HexColor("#7DC8E7")
+                        ],
+                        text: 'Add member',
+                        imagePath: 'assets/icons/imac_icon.png'),
+                    SizedBox(width: 10),
+                    CustomBtn(
+                      buttonHeight: 140,
+                      buttonWidth: width,
+                      imageWidth: 28,
+                      imageHeigth: 28,
+                      gradientColors: [
+                        HexColor("#FE7235"),
+                        HexColor("#F97D47")
+                      ],
+                      text: 'Delete member',
+                      imagePath: 'assets/icons/Close_Square.png',
+                    ),
+                    SizedBox(width: 3),
+                  ],
+                ),
+                SizedBox(height: 10),
+                CustomBtn(
+                  margin: EdgeInsets.symmetric(horizontal: 3),
+                  buttonHeight: 120,
+                  // TODO set heigth
+                  buttonWidth: (contextWidth - 63),
+                  imageWidth: 28,
+                  imageHeigth: 28,
+                  gradientColors: [HexColor("##5751FF"), HexColor("##5751FF")],
+                  text: 'Change family\nmember names',
+                  imagePath: 'assets/icons/time_Square.png',
+                ),
+                SizedBox(height: 30),
+                Div(
+                    text: 'Account',
+                    subtext: 'Adjust account settings to your needs'),
+                LastMenu(
+                  text: "Favourite",
+                  press: () {},
+                ),
+                LastMenu(
+                  text: "Legal Notes",
+                  press: () => showAboutDialog(
+                      context: context,
+                      applicationVersion: "1.0",
+                      applicationLegalese: lorem(words: 30)),
+                ),
+                LastMenu(
+                  text: "Settings and Privacy",
+                  press: () {},
+                ),
+                LastMenu(
+                  text: "Help",
+                  press: () {},
+                ),
+                ElevatedButton(
+                  child: Text("LOGOUT"),
+                  onPressed: () async {
+                    Navigator.of(context).pushReplacementNamed('/');
+                    FirebaseAuthHelper.instance.logOut();
+                  },
+                ),
+                SizedBox(height: 100,),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -70,252 +158,64 @@ class LastMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: TextButton(
-          style: ElevatedButton.styleFrom(
-              primary: Theme.of(context).scaffoldBackgroundColor,
-              padding: EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-          onPressed: press,
-          child: Row(
-            children: [
-              SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.black,
-              )
-            ],
-          )),
-    );
-  }
-}
-
-class FifthBtn extends StatelessWidget {
-  const FifthBtn({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //it will cover 40% of total width
-      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
-      width: size.width * 0.4,
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Number 5"),
-            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
-          ),
-          Container(
-            padding: EdgeInsets.all(20 / 10),
-          )
-        ],
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      onTap: press,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14.0),
+      ),
+      title: Text(
+        text,
+        style: TextStyle(color: Colors.black),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.black,
+        size: 13,
       ),
     );
   }
 }
 
-class FourthBtn extends StatelessWidget {
-  const FourthBtn({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
 
-  final Size size;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //it will cover 40% of total width
-      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
-      width: size.width * 0.4,
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Number 4"),
-            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
-          ),
-          Container(
-            padding: EdgeInsets.all(20 / 10),
-          )
-        ],
-      ),
-    );
-  }
-}
+class Div extends StatelessWidget {
+  final String text;
+  final String subtext;
 
-class AccountText extends StatelessWidget {
-  const AccountText({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 24,
-      child: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 1),
-            child: Text(
-              "Account",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ThirdBtn extends StatelessWidget {
-  const ThirdBtn({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //it will cover 40% of total width
-      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
-      width: size.width * 0.4,
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Number 3"),
-            style: ElevatedButton.styleFrom(fixedSize: Size(200, 100)),
-          ),
-          Container(
-            padding: EdgeInsets.all(20 / 10),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class SecondBtn extends StatelessWidget {
-  const SecondBtn({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //it will cover 40% of total width
-      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
-      width: size.width * 0.4,
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Number 2"),
-            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
-          ),
-          Container(
-            padding: EdgeInsets.all(20 / 10),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class FirstBtn extends StatelessWidget {
-  const FirstBtn({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //it will cover 40% of total width
-      margin: EdgeInsets.only(left: 20, top: 20 / 2, bottom: 20 * 2.5),
-      width: size.width * 0.4,
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Number 1"),
-            style: ElevatedButton.styleFrom(fixedSize: Size(100, 100)),
-          ),
-          Container(
-            padding: EdgeInsets.all(20 / 10),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class TitleWithBtn extends StatelessWidget {
-  const TitleWithBtn({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: <Widget>[
-          TitleWithUnderline(text: "Family"),
-          Spacer(),
-          ElevatedButton(
-            child: Text("LOGOUT"),
-            onPressed: () async {
-              Navigator.of(context).pushReplacementNamed('/');
-              FirebaseAuthHelper.instance.logOut();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class TitleWithUnderline extends StatelessWidget {
-  const TitleWithUnderline({
+  const Div({
     Key? key,
     required this.text,
+    required this.subtext,
   }) : super(key: key);
-
-  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 24,
-      child: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 1),
+      height: 45,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: HexColor('#12175E'),
+            ),
+          ),
+          Flexible(
             child: Text(
-              text,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              subtext,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: robotoMedium16.copyWith(
+                color: HexColor('#575757'),
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+              ),
             ),
           ),
         ],
@@ -350,56 +250,13 @@ class HeaderArea extends StatelessWidget {
                 bottomLeft: Radius.circular(36),
                 bottomRight: Radius.circular(36),
               )),
-          child: Row(
-            children: <Widget>[
-              Text(
-                "Hi, Ale!",
-                style: Theme.of(context).textTheme.headline5?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              SizedBox(
-                height: 70,
-                width: 70,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: ExactAssetImage("assets/images/sorre.png"),
-                    ),
-                    //Add this CustomPaint widget to the Widget Tree
-                  ],
-                ),
-              ),
-            ],
-          ),
+          child: Container(),
         )
       ]),
     );
   }
 }
 
-class AddMemberButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(0.0),
-        elevation: 3,
-      ),
-      onPressed: () {},
-      child: Ink(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")]),
-            borderRadius: BorderRadius.circular(14.0)),
-        child: Container(
-          padding: const EdgeInsets.all(60),
-          constraints: const BoxConstraints(minWidth: 150),
-          child: const Text('Add member', textAlign: TextAlign.center),
-        ),
-      ),
-    );
-  }
-}
 
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
@@ -411,4 +268,91 @@ class HexColor extends Color {
   }
 
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+}
+
+class CustomBtn extends StatelessWidget {
+  final List<Color> gradientColors;
+  final Color bgcolor;
+  final String text;
+  final double imageWidth;
+  final double imageHeigth;
+  final double buttonWidth;
+  final double buttonHeight;
+  final String imagePath;
+  final EdgeInsets margin;
+
+  const CustomBtn({
+    Key? key,
+    this.bgcolor = Colors.transparent,
+    required this.text,
+    required this.imageHeigth,
+    required this.imageWidth,
+    required this.buttonWidth,
+    required this.buttonHeight,
+    required this.imagePath,
+    this.margin = EdgeInsets.zero,
+    this.gradientColors = const [],
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        print('prova');
+      },
+      highlightColor: Colors.white,
+      child: Container(
+        margin: margin,
+        height: buttonHeight,
+        width: buttonWidth,
+        padding: EdgeInsets.fromLTRB(14, 21, 7.5, 21),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(14.0)),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: gradientColors,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 0),
+            )
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Spacer(),
+                  Container(
+                    height: imageHeigth,
+                    width: imageWidth,
+                    child: Image.asset(imagePath),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    text,
+                    style: robotoMedium16.copyWith(color: Colors.white),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ),
+            SizedBox(width: 12),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

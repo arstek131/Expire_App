@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Iconly/Curved/Close Square</title>
+    <g id="Add-element" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Ale_Profile" transform="translate(-233.000000, -266.000000)">
+            <g id="Family" transform="translate(52.000000, 187.000000)">
+                <g id="Delete-member" transform="translate(166.000000, 64.000000)">
+                    <g id="Iconly/Curved/Close-Square" transform="translate(15.000000, 15.000000)">
+                        <path d="M0,0 L28,0 L28,28 L0,28 L0,0 Z" id="Iconly/Curved/Close-Square-(Background)"></path>
+                        <g id="Close-Square" transform="translate(3.208496, 3.208984)" stroke="#FFFFFF" stroke-dasharray="0,0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75000012">
+                            <line x1="13.5848069" y1="7.98632812" x2="7.99414062" y2="13.5769944" id="Stroke-1"></line>
+                            <line x1="13.5916996" y1="13.5843754" x2="7.99169922" y2="7.984375" id="Stroke-2"></line>
+                            <path d="M10.791667,21.583334 C18.8848337,21.583334 21.583334,18.8848337 21.583334,10.791667 C21.583334,2.69850032 18.8848337,0 10.791667,0 C2.69850032,0 0,2.69850032 0,10.791667 C0,18.8848337 2.69850032,21.583334 10.791667,21.583334 Z" id="Stroke-3"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
