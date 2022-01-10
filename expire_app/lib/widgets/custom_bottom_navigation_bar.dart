@@ -1,4 +1,5 @@
 /* dart */
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -52,7 +53,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           children: [
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 0,
-              icon: const Icon(Icons.restaurant_menu),
+              icon: const FaIcon(FontAwesomeIcons.utensils), //Icon(Icons.restaurant_menu),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {
@@ -61,7 +62,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             ),
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 1,
-              icon: const Icon(Icons.format_list_bulleted),
+              icon: const FaIcon(FontAwesomeIcons.shoppingBag),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {
@@ -92,12 +93,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                       },
                 child: widget.pageIndex == 2
                     ? const FittedBox(
-                        child: Icon(
-                          Icons.add,
+                        child: FaIcon(
+                          FontAwesomeIcons.plus,
                         ),
                       )
                     : const FittedBox(
-                        child: Icon(Icons.home_filled),
+                        child: FaIcon(FontAwesomeIcons.elementor),
                       ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(bottomNavigationSize.outlineBorder),
@@ -110,7 +111,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             ),
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 3,
-              icon: const Icon(Icons.auto_graph),
+              icon: const FaIcon(FontAwesomeIcons.chartPie),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {
@@ -119,7 +120,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             ),
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 4,
-              icon: const Icon(Icons.supervisor_account),
+              icon: const FaIcon(FontAwesomeIcons.users),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {

@@ -94,24 +94,6 @@ class _ProductsScreenState extends State<MainAppScreen> {
         child: SafeArea(
           top: true,
           child: Scaffold(
-            /*appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
-              centerTitle: true,
-              title: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const FlutterLogo(
-                      size: 30,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 5),
-                      child: Text(_pages.elementAt(_pageIndex)['title']),
-                    )
-                  ],
-                ),
-              ),
-            ),*/
             body: FutureBuilder(
               future: initUserInfoProvider,
               builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting

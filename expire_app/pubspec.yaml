@@ -129,6 +129,13 @@ flutter:
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
+    - family: Circular
+      fonts:
+        - asset: assets/fonts/CircularStd-Medium.otf
+        - asset: assets/fonts/CircularStd-Light.otf
+          weight: 100
+        - asset: assets/fonts/CircularStd-Bold.otf
+          weight: 500
 
     # - family: Schyler
     #   fonts:

@@ -8,6 +8,7 @@ import '../main.dart';
 import 'auth_screen.dart';
 
 class OnBoardingPage extends StatefulWidget {
+  static const routeName = '/onboarding-page';
   const OnBoardingPage({Key? key}) : super(key: key);
 
   @override
@@ -32,17 +33,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     );
   }
 
-  Future setSeenonboard() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Settin seenOnboard true when running onboard page for first time
-    seenOnboard = await prefs.setBool("seenOnboard", true);
-  }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    setSeenonboard();
   }
 
   @override
@@ -121,7 +114,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   currentPage == onboardingContents.length - 1
                       ? MyTextButton(
                           buttonName: "Get Started!",
-                          onPressed: () => Navigator.of(context).pushReplacementNamed(AuthScreen.routeName),
+                          onPressed: () => Navigator.of(context).pop(),
                           bgColor: styles.primaryColor,
                         )
                       : Row(

@@ -1,7 +1,10 @@
 /* dart */
+import 'dart:io';
+
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -120,6 +123,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
             ),
             StreamBuilder(
               // todo: don't user streambuilder but products provider with listener on all products to store locally
+              // or update here local DB + local data in products provider and then show local
               stream: FirestoreHelper.instance.getFamilyProductsStream(familyId: familyId!),
               builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> productSnaphshot) {
                 if (productSnaphshot.connectionState == ConnectionState.waiting) {
@@ -128,12 +132,19 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                       children: const [
                         ProductListTilePlaceholder(),
                         ProductListTilePlaceholder(),
+                        ProductListTilePlaceholder(),
                       ],
                     ),
                   );
                 } else {
                   final productDocs = productSnaphshot.data!.docs;
-
+                  // for each change update local DB
+                  // provider...addProduct() {
+                  // items.add if not exists,
+                  // add to SQL db without waiting }
+                  productSnaphshot.data!.docChanges.forEach((element) {
+                    print(element.doc['title']);
+                  });
                   return Flexible(
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification scrollInfo) {
@@ -155,97 +166,161 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                           return Future.value(true);
                         },
                         child: !productSnaphshot.hasData || productDocs.isEmpty
-                            ? Column(
+                            ? Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Image.asset(
-                                    "./assets/images/empty_list_products.png",
-                                    fit: BoxFit.contain,
-                                    color: Color(0xFFFFFF).withOpacity(0.9),
-                                    colorBlendMode: BlendMode.modulate,
+                                  Positioned.fill(
+                                    right: -300,
+                                    top: 300,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        boxShadow: customShadow,
+                                        shape: BoxShape.circle,
+                                        color: Colors.white12,
+                                      ),
+                                    ),
                                   ),
-                                  Text(
-                                    "Add a product to start!",
-                                    style: styles.subheading,
+                                  Positioned.fill(
+                                    right: -600,
+                                    top: -100,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        boxShadow: customShadow,
+                                        shape: BoxShape.circle,
+                                        color: Colors.white12,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned.fill(
+                                    top: 200,
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "Click the  ",
+                                            style: styles.subheading,
+                                          ),
+                                          WidgetSpan(
+                                            child: FaIcon(
+                                              FontAwesomeIcons.plusCircle,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: "  button to start adding products!",
+                                            style: styles.subheading,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   )
                                 ],
                               )
-                            : _productsViewMode == ProductsViewMode.List
-                                ? ListView.builder(
-                                    itemCount: productDocs.length + 1,
-                                    itemBuilder: (ctx, i) {
-                                      if (i < productDocs.length) {
-                                        Product product = Product(
-                                          id: productDocs[i].id,
-                                          title: productDocs[i]['title'],
-                                          expiration: DateTime.parse(productDocs[i]['expiration']),
-                                          creatorId: productDocs[i]['creatorId'],
-                                          imageUrl: productDocs[i]['imageUrl'],
-                                        );
-                                        return Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: ProductListTile(product),
-                                        );
-                                      } else {
-                                        return const SizedBox(
-                                          height: 80,
-                                        );
-                                      }
-                                    }, //product item...
-                                  )
-                                : _productsViewMode == ProductsViewMode.Grid
-                                    ? GridView.builder(
-                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
-
-                                          //childAspectRatio: 1,
-                                        ),
-                                        itemCount: productDocs.length + 1,
-                                        itemBuilder: (ctx, i) {
-                                          if (i < productDocs.length) {
-                                            Product product = Product(
-                                              id: productDocs[i].id,
-                                              title: productDocs[i]['title'],
-                                              expiration: DateTime.parse(productDocs[i]['expiration']),
-                                              creatorId: productDocs[i]['creatorId'],
-                                              imageUrl: productDocs[i]['imageUrl'],
-                                            );
-                                            return Padding(
-                                              padding: (i % 2 == 0)
-                                                  ? const EdgeInsets.only(left: 10)
-                                                  : const EdgeInsets.only(right: 10),
-                                              child: ProductGridTile(product),
-                                            );
-                                          } else {
-                                            return SizedBox(
-                                              height: 0, // ???
-                                            );
-                                          }
-                                        },
-                                      )
-                                    : GridView.builder(
-                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                          mainAxisSpacing: 10,
-                                          crossAxisCount: 1,
-                                          //childAspectRatio: 1,
-                                        ),
-                                        itemCount: productDocs.length + 1,
-                                        itemBuilder: (ctx, i) {
-                                          if (i < productDocs.length) {
-                                            Product product = Product(
-                                              id: productDocs[i].id,
-                                              title: productDocs[i]['title'],
-                                              expiration: DateTime.parse(productDocs[i]['expiration']),
-                                              creatorId: productDocs[i]['creatorId'],
-                                              imageUrl: productDocs[i]['imageUrl'],
-                                            );
-                                            return ProductSingleGridTile(product);
-                                          } else {
-                                            return SizedBox(
-                                              height: 0, // ???
-                                            );
-                                          }
-                                        },
+                            : Stack(
+                                children: [
+                                  Positioned.fill(
+                                    right: -300,
+                                    top: 300,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        boxShadow: customShadow,
+                                        shape: BoxShape.circle,
+                                        color: Colors.white12,
                                       ),
+                                    ),
+                                  ),
+                                  Positioned.fill(
+                                    right: -600,
+                                    top: -100,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        boxShadow: customShadow,
+                                        shape: BoxShape.circle,
+                                        color: Colors.white12,
+                                      ),
+                                    ),
+                                  ),
+                                  if (_productsViewMode == ProductsViewMode.List)
+                                    ListView.builder(
+                                      itemCount: productDocs.length + 1,
+                                      itemBuilder: (ctx, i) {
+                                        if (i < productDocs.length) {
+                                          Product product = Product(
+                                            id: productDocs[i].id,
+                                            title: productDocs[i]['title'],
+                                            expiration: DateTime.parse(productDocs[i]['expiration']),
+                                            creatorId: productDocs[i]['creatorId'],
+                                            imageUrl: productDocs[i]['imageUrl'],
+                                          );
+                                          return Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: ProductListTile(product),
+                                          );
+                                        } else {
+                                          return const SizedBox(
+                                            height: 80,
+                                          );
+                                        }
+                                      }, //product item...
+                                    )
+                                  else if (_productsViewMode == ProductsViewMode.Grid)
+                                    GridView.builder(
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
+
+                                        //childAspectRatio: 1,
+                                      ),
+                                      itemCount: productDocs.length + 1,
+                                      itemBuilder: (ctx, i) {
+                                        if (i < productDocs.length) {
+                                          Product product = Product(
+                                            id: productDocs[i].id,
+                                            title: productDocs[i]['title'],
+                                            expiration: DateTime.parse(productDocs[i]['expiration']),
+                                            creatorId: productDocs[i]['creatorId'],
+                                            imageUrl: productDocs[i]['imageUrl'],
+                                          );
+                                          return Padding(
+                                            padding:
+                                                (i % 2 == 0) ? const EdgeInsets.only(left: 10) : const EdgeInsets.only(right: 10),
+                                            child: ProductGridTile(product),
+                                          );
+                                        } else {
+                                          return SizedBox(
+                                            height: 0, // ???
+                                          );
+                                        }
+                                      },
+                                    )
+                                  else if (_productsViewMode == ProductsViewMode.ListGrid)
+                                    GridView.builder(
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        mainAxisSpacing: 10,
+                                        crossAxisCount: 1,
+                                        //childAspectRatio: 1,
+                                      ),
+                                      itemCount: productDocs.length + 1,
+                                      itemBuilder: (ctx, i) {
+                                        if (i < productDocs.length) {
+                                          Product product = Product(
+                                            id: productDocs[i].id,
+                                            title: productDocs[i]['title'],
+                                            expiration: DateTime.parse(productDocs[i]['expiration']),
+                                            creatorId: productDocs[i]['creatorId'],
+                                            imageUrl: productDocs[i]['imageUrl'],
+                                          );
+                                          return ProductSingleGridTile(product);
+                                        } else {
+                                          return SizedBox(
+                                            height: 0, // ???
+                                          );
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ),
                       ),
                     ),
                   );
@@ -257,4 +332,19 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
       ),
     );
   }
+
+  List<BoxShadow> customShadow = [
+    BoxShadow(
+      color: Colors.indigoAccent.withOpacity(0.5),
+      spreadRadius: -5,
+      offset: Offset(-5, -5),
+      blurRadius: 30,
+    ),
+    BoxShadow(
+      color: Colors.indigo.shade900.withOpacity(0.2),
+      spreadRadius: 2,
+      offset: Offset(7, 7),
+      blurRadius: 20,
+    )
+  ];
 }

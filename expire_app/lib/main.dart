@@ -24,8 +24,6 @@ import 'helpers/custom_route.dart';
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
 
-bool? seenOnboard; // put in didchangedependencies with init bool
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,9 +31,6 @@ void main() async {
     print("initializeApp still not implemented for iOS");
     return;
   }
-  //to load on board screen for first time only
-  //SharedPreferences pref = await SharedPreferences.getInstance();
-  //seenOnboard = pref.getBool('seenOnboard') ?? false; //if null set to false
   await Firebase.initializeApp(); // todo: set for ios
 
   runApp(const MyApp());
@@ -50,6 +45,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper.instance;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -68,10 +64,7 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.iOS: CustomPageTransitionBuilder(),
           }),
         ),
-        home: /*seenOnboard == false
-            ? OnBoardingPage()
-            : */
-            StreamBuilder(
+        home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (ctx, userSnapshot) => userSnapshot.hasData
               ? // token found
@@ -82,6 +75,7 @@ class _MyAppState extends State<MyApp> {
         ),
         routes: {
           //'/': (ctx) => MainAppScreen(),
+          OnBoardingPage.routeName: (ctx) => OnBoardingPage(),
           AuthScreen.routeName: (ctx) => AuthScreen(),
           NameInputScreen.routeName: (ctx) => NameInputScreen(),
           MainAppScreen.routeName: (ctx) => MainAppScreen(),

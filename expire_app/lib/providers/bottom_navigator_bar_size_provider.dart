@@ -4,7 +4,7 @@ import 'products_provider.dart';
 
 class BottomNavigationBarSizeProvider extends ChangeNotifier {
   double _height = 75.0;
-  double _bottomPadding = 40.0;
+  double _bottomPadding = 20.0;
   double _mainButtonInternalPadding = 15;
   double _iconSizeOffset = 0;
   OutlinedBorder _outlineBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)); //const CircleBorder();
@@ -49,7 +49,7 @@ class BottomNavigationBarSizeProvider extends ChangeNotifier {
 
   void notifyShrink() {
     _height = 65.0;
-    _bottomPadding = 20;
+    _bottomPadding = 10;
     _mainButtonInternalPadding = 13;
     _iconSizeOffset = 3;
     _outlineBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(500));
@@ -72,7 +72,7 @@ class BottomNavigationBarSizeProvider extends ChangeNotifier {
 
   void notifyGrow() {
     _height = 75.0;
-    _bottomPadding = 40;
+    _bottomPadding = 20;
     _mainButtonInternalPadding = 15;
     _iconSizeOffset = 0;
     _outlineBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)); //CircleBorder();

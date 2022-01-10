@@ -102,9 +102,9 @@ class _OptionBarState extends State<OptionsBar> {
                         label: Text(
                           _choicesList[i]['title'] as String,
                           style: const TextStyle(
-                            fontFamily: 'SanFrancisco',
+                            fontFamily: styles.currentFontFamily,
                             fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             color: styles.ghostWhite,
                           ),
                         ),

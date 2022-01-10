@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/bottom_navigator_bar_size_provider.dart';
 
 class CustomBottomNavigationBarItem extends StatelessWidget {
-  final Icon icon;
+  final Widget icon;
   final double selectedSize;
   final double unselectedSize;
   final VoidCallback onTap;
