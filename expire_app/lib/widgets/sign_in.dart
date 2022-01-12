@@ -9,6 +9,9 @@ import '../models/http_exception.dart';
 import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/* styles */
+import '../app_styles.dart' as styles;
+
 class SignIn extends StatefulWidget {
   const SignIn({
     Key? key,
@@ -104,7 +107,7 @@ class _SignInState extends State<SignIn> {
                   fontWeight: FontWeight.bold,
                   fontSize: 30,
                   color: Colors.white,
-                  fontFamily: 'SanFrancisco',
+                  fontFamily: styles.currentFontFamily,
                 ),
               ),
               IconButton(
@@ -207,7 +210,7 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 20),
+                          margin: EdgeInsets.only(top: 10),
                           width: double.infinity,
                           height: 60,
                           child: ElevatedButton(
@@ -240,19 +243,28 @@ class _SignInState extends State<SignIn> {
                                   )
                                 : const Text(
                                     'Submit',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
                                   ),
                           ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
+                        const Text(
+                          'CONTINUE WITHOUT REGISTRATION',
+                          style: TextStyle(
+                            fontFamily: styles.currentFontFamily,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text(
                               "Or sign in with:",
-                              style: TextStyle(fontFamily: 'SanFrancisco'),
+                              style: TextStyle(fontFamily: styles.currentFontFamily),
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 10),
@@ -282,7 +294,7 @@ class _SignInState extends State<SignIn> {
                                     ),
                                     Text(
                                       'Sign-in using Apple',
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
                                     ),
                                   ],
                                 ),
@@ -316,7 +328,7 @@ class _SignInState extends State<SignIn> {
                                     ),
                                     Text(
                                       'Sign-in using Google',
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
                                     ),
                                   ],
                                 ),
@@ -350,7 +362,7 @@ class _SignInState extends State<SignIn> {
                                     ),
                                     Text(
                                       'Sign-in using Facebook',
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
                                     ),
                                   ],
                                 ),
@@ -366,10 +378,10 @@ class _SignInState extends State<SignIn> {
                           text: TextSpan(
                             style: const TextStyle(color: Colors.grey, fontSize: 12.0),
                             children: <TextSpan>[
-                              const TextSpan(text: 'Not a member? '),
+                              const TextSpan(text: 'Not a member? ', style: TextStyle(fontFamily: styles.currentFontFamily)),
                               TextSpan(
                                 text: 'Sign up',
-                                style: const TextStyle(color: Colors.blue),
+                                style: const TextStyle(color: Colors.blue, fontFamily: styles.currentFontFamily),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     widget._pageController

@@ -1,6 +1,7 @@
 /* dart libraries */
 import 'dart:io';
 
+import 'package:expire_app/screens/product_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/main_app_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/name_input_screen.dart';
-import 'screens/family_id_choice_screen.dart';
+
 import 'screens/onboarding_page.dart';
 
 /* Providers */
@@ -53,6 +54,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => BottomNavigationBarSizeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => ProductsProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Expire app',
@@ -79,7 +83,7 @@ class _MyAppState extends State<MyApp> {
           AuthScreen.routeName: (ctx) => AuthScreen(),
           NameInputScreen.routeName: (ctx) => NameInputScreen(),
           MainAppScreen.routeName: (ctx) => MainAppScreen(),
-          FamilyIdChoiceScreen.routeName: (ctx) => FamilyIdChoiceScreen(),
+          ProductDetails.routeName: (ctx) => ProductDetails(),
         },
       ),
     );

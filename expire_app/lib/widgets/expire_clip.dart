@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 /* enum */
 import '../enums/expire_status.dart';
 
+/* styles */
+import '../app_styles.dart' as styles;
+
 class ExpireClip extends StatelessWidget {
   ExpireStatus expireStatus;
   DateTime expiration;
@@ -29,7 +32,7 @@ class ExpireClip extends StatelessWidget {
                 ? Colors.yellow.withOpacity(0.7)
                 : Colors.grey.withOpacity(0.7),
       ),
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      padding: EdgeInsets.symmetric(vertical: 1, horizontal: 15),
       child: FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(
@@ -38,7 +41,7 @@ class ExpireClip extends StatelessWidget {
               : expireStatus == ExpireStatus.ExpiringToday
                   ? "Expiring today"
                   : 'Exp: ${DateFormat('dd MMM yyyy').format(expiration)}',
-          style: TextStyle(color: Colors.black87),
+          style: TextStyle(color: Colors.black87, fontFamily: styles.currentFontFamily),
         ),
       ),
     );

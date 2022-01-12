@@ -62,7 +62,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             ),
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 1,
-              icon: const FaIcon(FontAwesomeIcons.shoppingBag),
+              icon: const FaIcon(FontAwesomeIcons.elementor),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {
@@ -98,7 +98,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                         ),
                       )
                     : const FittedBox(
-                        child: FaIcon(FontAwesomeIcons.elementor),
+                        child: FaIcon(FontAwesomeIcons.home),
                       ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(bottomNavigationSize.outlineBorder),

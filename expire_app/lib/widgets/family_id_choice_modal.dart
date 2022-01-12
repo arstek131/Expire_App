@@ -1,17 +1,21 @@
 /* dart */
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 /* helpers */
 import '../helpers/firestore_helper.dart';
 
-class FamilyIdChoiceScreen extends StatefulWidget {
-  static const routeName = "/family-id-choice";
+/* styles */
+import '../app_styles.dart' as styles;
+
+class FamilyIdChoiceModal extends StatefulWidget {
   @override
-  _FamilyIdChoiceScreenState createState() => _FamilyIdChoiceScreenState();
+  _FamilyIdChoiceModalState createState() => _FamilyIdChoiceModalState();
 }
 
-class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
+class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
   var screenHeight = window.physicalSize.height / window.devicePixelRatio;
   var screenWidth = window.physicalSize.width / window.devicePixelRatio;
 
@@ -23,11 +27,10 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
   bool _isLoading = false;
   bool _isValid = false;
 
-  List<String> listOfUsersName = [];
+  var _controller = TextEditingController();
 
   Future<void> _submit() async {
-    listOfUsersName = [];
-    var userIDs = [];
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _isLoading = true;
     });
@@ -54,6 +57,39 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
     }
   }
 
+  Future<void> _scanFamilyQrCode() async {
+    String? scanResult;
+    FocusScope.of(context).unfocus();
+
+    try {
+      scanResult = await FlutterBarcodeScanner.scanBarcode(
+        '#FF3F51B5',
+        'Cancel',
+        true,
+        ScanMode.QR,
+      );
+      print(scanResult);
+    } on BarcodeException {
+      rethrow;
+    }
+
+    if (!mounted || scanResult == "-1") {
+      return;
+    }
+
+    _controller.text = scanResult;
+
+    referenceId = scanResult;
+
+    setState(() {
+      _firstCheck = false;
+    });
+
+    if (_formKey.currentState!.validate()) {
+      _submit();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -66,20 +102,26 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
 
         return false;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.indigo,
-          shadowColor: Colors.transparent,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeOutCirc,
+        padding: EdgeInsets.only(
+          left: 10,
+          right: 10,
+          top: 30,
+          bottom: 30 + MediaQuery.of(context).viewInsets.bottom,
         ),
-        backgroundColor: Colors.indigo,
-        body: Column(
+        color: styles.primaryColor,
+        //height: 200,
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 "Indicate your family ID below",
-                style: TextStyle(fontSize: 20, fontFamily: "SanFrancisco", color: Colors.white),
+                style: styles.subtitle,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -92,11 +134,11 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
               height: 20,
             ),
             Card(
-              elevation: 10,
-              margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+              elevation: 5,
+              color: styles.ghostWhite,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(25),
+                  Radius.circular(15),
                 ),
               ),
               child: Padding(
@@ -110,7 +152,24 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
                           Stack(
                             children: <Widget>[
                               TextFormField(
+                                controller: _controller,
+                                autofocus: true,
                                 decoration: InputDecoration(
+                                  suffixIcon: (!_isLoading && _firstCheck)
+                                      ? Container(
+                                          margin: EdgeInsets.only(right: 4),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.qr_code_scanner,
+                                              size: 25,
+                                            ),
+                                            color: Colors.black,
+                                            onPressed: () async {
+                                              await _scanFamilyQrCode();
+                                            },
+                                          ),
+                                        )
+                                      : null,
                                   hintText: 'Family ID',
                                   prefixIcon: const Icon(
                                     Icons.family_restroom,
@@ -163,6 +222,24 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
                                   }
                                 },
                               ),
+                              /*if (_firstCheck)
+                                Positioned(
+                                  top: 10,
+                                  right: 25,
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: Center(
+                                      child: IconButton(
+                                        icon: Icon(Icons.qr_code_scanner),
+                                        color: Colors.black,
+                                        onPressed: () {
+                                          print("scanner");
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),*/
                               if (!_firstCheck)
                                 _isLoading
                                     ? const Positioned(
@@ -210,9 +287,10 @@ class _FamilyIdChoiceScreenState extends State<FamilyIdChoiceScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    if (!_firstCheck)
+                      const SizedBox(
+                        height: 10,
+                      ),
                     if (!_firstCheck)
                       _isValid
                           ? const Text(

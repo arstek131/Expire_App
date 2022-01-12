@@ -99,7 +99,23 @@ class _AddItemModalState extends State<AddItemModal> {
       _isLoading = true;
     });
 
-    // todo: if _pickedImage == null, use dummy image
+    try {
+      await Provider.of<ProductsProvider>(context, listen: false).addProduct(
+        Product(
+          id: null,
+          title: _productData['title'] as String,
+          expiration: _pickedDate, //_productData['expiration'] as DateTime,
+          creatorId: '',
+          image: productInsertionMethod == ProductInsertionMethod.Manually ? _pickedImage : _imageUrl,
+        ),
+      );
+    } catch (error) {
+      const errorMessage = 'Chould not upload product. Please try again later';
+
+      _showErrorDialog(errorMessage);
+
+      print(error);
+    }
 
     /* add product locally */
     // local storage
@@ -109,26 +125,6 @@ class _AddItemModalState extends State<AddItemModal> {
 
     // local DB (image path)
 
-    /* add product remotely */
-
-    try {
-      FirestoreHelper.instance.addProduct(
-        product: Product(
-          id: '',
-          title: _productData['title'] as String,
-          expiration: _pickedDate, //_productData['expiration'] as DateTime,
-          creatorId: '',
-          imageUrl: _imageUrl,
-        ),
-        image: _pickedImage,
-      );
-    } catch (error) {
-      const errorMessage = 'Chould not upload product. Please try again later';
-
-      _showErrorDialog(errorMessage);
-
-      print(error);
-    }
     setState(() {
       _isLoading = false;
     });

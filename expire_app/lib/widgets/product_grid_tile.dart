@@ -51,9 +51,9 @@ class _ProductGridTileState extends State<ProductGridTile> {
           borderRadius: BorderRadius.circular(10.0),
           child: GridTile(
             key: ValueKey(widget.product.id),
-            child: widget.product.imageUrl != null
+            child: widget.product.image != null
                 ? Image.network(
-                    widget.product.imageUrl!,
+                    widget.product.image!,
                     fit: BoxFit.fill,
                     color: const Color.fromRGBO(255, 255, 255, 0.85),
                     colorBlendMode: BlendMode.modulate,
@@ -127,7 +127,7 @@ class _ProductGridTileState extends State<ProductGridTile> {
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
-                            FirestoreHelper.instance.deleteProduct(widget.product.id); //Todo: not working.
+                            FirestoreHelper.instance.deleteProduct(widget.product.id!); //Todo: not working.
                             Navigator.of(ctx).pop(true);
                           },
                           child: const Text("DELETE"),

@@ -67,6 +67,24 @@ class FirestoreHelper {
     }
   }
 
+  Future<List<Product>> getProductsFromFamilyId(String familyId) async {
+    List<Product> products = [];
+
+    final productsRef = await firestore.collection('families').doc(familyId).collection('products').get();
+
+    for (var product in productsRef.docs) {
+      products.add(
+        Product(
+            id: product.id,
+            title: product['title'],
+            expiration: DateTime.parse(product['expiration']),
+            creatorId: product['creatorId'],
+            image: product['imageUrl']),
+      );
+    }
+    return products;
+  }
+
   Stream<QuerySnapshot> getFamilyProductsStream({required String familyId}) {
     return firestore.collection('families').doc(familyId).collection('products').snapshots();
   }
@@ -106,28 +124,36 @@ class FirestoreHelper {
     });
   }
 
-  Future<void> addProduct({required Product product, File? image}) async {
+  Future<String?> addProduct({required Product product, File? image}) async {
     final userInfo = userinfo.UserInfo.instance;
     String? imageUrl;
     var uuid = const Uuid();
 
     // storing image on firestore if any
-    if (image != null) {
+    if (image != null && !(image is String)) {
       final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(uuid.v1());
       await ref.putFile(image);
       imageUrl = await ref.getDownloadURL();
     } else {
-      imageUrl = product.imageUrl;
+      imageUrl = product.image;
     }
 
-    final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products').add(
-      {
-        'title': product.title,
-        'expiration': product.expiration.toIso8601String(),
-        'creatorId': userInfo.userId,
-        'imageUrl': imageUrl,
-      },
-    );
+    final data = {
+      'title': product.title,
+      'expiration': product.expiration.toIso8601String(),
+      'creatorId': product.creatorId,
+      'imageUrl': imageUrl,
+    };
+
+    final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products');
+
+    if (product.id != null) {
+      productRef.doc(product.id).set(data);
+      return null;
+    } else {
+      productRef.add(data);
+      return productRef.id;
+    }
   }
 
   Future<void> deleteProduct(String productId) async {

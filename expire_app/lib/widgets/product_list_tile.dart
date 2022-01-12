@@ -3,6 +3,7 @@ import 'package:expire_app/helpers/db_helper.dart';
 import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:expire_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -99,19 +100,59 @@ class _ProductListTileState extends State<ProductListTile> {
               context: context,
               builder: (BuildContext ctx) {
                 return AlertDialog(
-                  title: const Text("Confirm"),
-                  content: const Text("Are you sure you wish to delete this item?"),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                  title: const Text(
+                    "Confirm",
+                  ),
+                  content: const Text(
+                    "Are you sure you wish to delete this item?",
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceAround,
+                  titleTextStyle: TextStyle(
+                    fontFamily: styles.currentFontFamily,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                  contentTextStyle: TextStyle(
+                    fontFamily: styles.currentFontFamily,
+                    fontSize: 16,
+                  ),
+                  backgroundColor: styles.primaryColor,
                   actions: <Widget>[
-                    TextButton(
+                    TextButton.icon(
+                      icon: FaIcon(
+                        FontAwesomeIcons.trashAlt,
+                        color: Colors.redAccent,
+                      ),
                       onPressed: () {
-                        FirestoreHelper.instance.deleteProduct(widget.product.id); //Todo: not working.
+                        Provider.of<ProductsProvider>(context, listen: false).deleteProduct(widget.product.id!);
                         Navigator.of(ctx).pop(true);
                       },
-                      child: const Text("DELETE"),
+                      label: Text(
+                        "DELETE",
+                        style: TextStyle(
+                          fontFamily: styles.currentFontFamily,
+                          color: Colors.redAccent,
+                        ),
+                      ),
                     ),
-                    TextButton(
+                    TextButton.icon(
+                      icon: FaIcon(
+                        FontAwesomeIcons.undoAlt,
+                        color: styles.ghostWhite,
+                      ),
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text("CANCEL"),
+                      label: const Text(
+                        "CANCEL",
+                        style: TextStyle(
+                          fontFamily: styles.currentFontFamily,
+                          color: styles.ghostWhite,
+                        ),
+                      ),
                     ),
                   ],
                 );
@@ -129,30 +170,40 @@ class _ProductListTileState extends State<ProductListTile> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        height: 100,
-                        width: 100,
+                        height: 120,
+                        width: 120,
                         /*decoration: const BoxDecoration(
                           border: Border(
                             right: BorderSide(width: 2.5, color: Colors.black87),
                           ),
                         ),*/
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: widget.product.imageUrl != null
-                              ? Image.network(
-                                  widget.product.imageUrl!,
-                                  fit: BoxFit.cover,
-                                  color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                  colorBlendMode: BlendMode.modulate,
-                                )
-                              : Image.asset(
-                                  "assets/images/missing_image_placeholder.png",
-                                  fit: BoxFit.cover,
-                                ),
+                        child: Hero(
+                          tag: 'produt-image',
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: widget.product.image != null
+                                ? widget.product.image is String
+                                    ? Image.network(
+                                        widget.product.image!,
+                                        fit: BoxFit.cover,
+                                        color: const Color.fromRGBO(255, 255, 255, 0.85),
+                                        colorBlendMode: BlendMode.modulate,
+                                      )
+                                    : Image.file(
+                                        widget.product.image!,
+                                        fit: BoxFit.cover,
+                                        color: const Color.fromRGBO(255, 255, 255, 0.85),
+                                        colorBlendMode: BlendMode.modulate,
+                                      )
+                                : Image.asset(
+                                    "assets/images/missing_image_placeholder.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -165,18 +216,26 @@ class _ProductListTileState extends State<ProductListTile> {
                           children: [
                             Text(
                               widget.product.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 17,
+                                fontFamily: styles.currentFontFamily,
+                                color: Colors.black,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
                               style: TextStyle(
-                                  color: widget.expireStatus == ExpireStatus.Expired
-                                      ? Colors.red
-                                      : widget.expireStatus == ExpireStatus.ExpiringToday
-                                          ? Colors.orange
-                                          : Colors.indigo,
-                                  fontWeight: FontWeight.bold),
+                                fontFamily: styles.currentFontFamily,
+                                fontSize: 14,
+                                color: widget.expireStatus == ExpireStatus.Expired
+                                    ? Colors.red
+                                    : widget.expireStatus == ExpireStatus.ExpiringToday
+                                        ? Colors.orange
+                                        : Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Row(
                               children: [
@@ -204,7 +263,8 @@ class _ProductListTileState extends State<ProductListTile> {
                                             )
                                           : Text(
                                               snapshot.data ?? "UNKNOWN",
-                                              style: const TextStyle(color: Colors.grey, fontSize: 14),
+                                              style: const TextStyle(
+                                                  color: Colors.grey, fontSize: 15, fontFamily: styles.currentFontFamily),
                                             ),
                                 )
                               ],
