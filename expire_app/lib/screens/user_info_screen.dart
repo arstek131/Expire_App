@@ -61,7 +61,7 @@ class UserInfoScreen extends StatelessWidget {
                 Div(
                     text: 'Family',
                     subtext: 'Manage synchronization with family members'),
-                SizedBox(height: 5),
+                SizedBox(height: 20),
                 //AddMemberButton(),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ class UserInfoScreen extends StatelessWidget {
                         imagePath: 'assets/icons/imac_icon.png'),
                     SizedBox(width: 10),
                     CustomBtn(
-                      buttonHeight: 140,
+                      buttonHeight: 116,
                       buttonWidth: width,
                       imageWidth: 28,
                       imageHeigth: 28,
@@ -102,7 +102,7 @@ class UserInfoScreen extends StatelessWidget {
                   buttonWidth: (contextWidth - 63),
                   imageWidth: 28,
                   imageHeigth: 28,
-                  gradientColors: [HexColor("##5751FF"), HexColor("##5751FF")],
+                  gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
                   text: 'Change family\nmember names',
                   imagePath: 'assets/icons/time_Square.png',
                 ),
@@ -110,6 +110,49 @@ class UserInfoScreen extends StatelessWidget {
                 Div(
                     text: 'Account',
                     subtext: 'Adjust account settings to your needs'),
+                SizedBox(height: 20),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 3),
+                    CustomBtn2(
+                      buttonHeight: height,
+                      buttonWidth: width,
+                      imageWidth: 75,
+                      imageHeigth: 70,
+                      txtcolor: Colors.black,
+                      gradientColors: [
+                        HexColor("#7DC8E7"),
+                        HexColor("#7DC8E7")
+                      ],
+                      text: 'Completed',
+                      imagePath: 'assets/icons/imac_icon.png',
+                      alB: Alignment.centerLeft,
+                      alE: Alignment.centerRight,
+                    ),
+                    SizedBox(width: 10),
+                    CustomBtn2(
+                      buttonHeight: 116,
+                      buttonWidth: width,
+                      imageWidth: 28,
+                      imageHeigth: 28,
+                      txtcolor: Colors.white,
+                      gradientColors: [
+                        HexColor("##7D88E7"),
+                        HexColor("#7D88E7").withAlpha(74)
+                      ],
+                      text: 'Pendin',
+                      imagePath: 'assets/icons/time_Square.png',
+                      //45 degrees gradient
+                      alB: Alignment(-1.0, -4.0),
+                      alE: Alignment(1.0, 4.0),
+                    ),
+                    SizedBox(width: 3),
+                  ],
+                ),
+                SizedBox(
+                  height: 60,
+                ),
                 LastMenu(
                   text: "Favourite",
                   press: () {},
@@ -136,7 +179,9 @@ class UserInfoScreen extends StatelessWidget {
                     FirebaseAuthHelper.instance.logOut();
                   },
                 ),
-                SizedBox(height: 100,),
+                SizedBox(
+                  height: 100,
+                ),
               ],
             ),
           )
@@ -176,8 +221,6 @@ class LastMenu extends StatelessWidget {
     );
   }
 }
-
-
 
 class Div extends StatelessWidget {
   final String text;
@@ -256,7 +299,6 @@ class HeaderArea extends StatelessWidget {
     );
   }
 }
-
 
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
@@ -349,6 +391,99 @@ class CustomBtn extends StatelessWidget {
             Icon(
               Icons.arrow_forward_rounded,
               color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomBtn2 extends StatelessWidget {
+  final List<Color> gradientColors;
+  final Color bgcolor;
+  final Color txtcolor;
+  final String text;
+  final double imageWidth;
+  final double imageHeigth;
+  final double buttonWidth;
+  final double buttonHeight;
+  final String imagePath;
+  final EdgeInsets margin;
+  final AlignmentGeometry alB;
+  final AlignmentGeometry alE;
+
+  const CustomBtn2({
+    Key? key,
+    this.bgcolor = Colors.transparent,
+    required this.text,
+    required this.imageHeigth,
+    required this.imageWidth,
+    required this.buttonWidth,
+    required this.buttonHeight,
+    required this.imagePath,
+    this.margin = EdgeInsets.zero,
+    this.gradientColors = const [],
+    required this.alB,
+    required this.alE,
+    required this.txtcolor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        print('prova');
+      },
+      highlightColor: Colors.white,
+      child: Container(
+        margin: margin,
+        height: buttonHeight,
+        width: buttonWidth,
+        padding: EdgeInsets.fromLTRB(14, 21, 7.5, 21),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(14.0)),
+          gradient: LinearGradient(
+            begin: alB,
+            end: alE,
+            colors: gradientColors,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 0),
+            )
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Spacer(),
+                  Container(
+                    height: imageHeigth,
+                    width: imageWidth,
+                    child: Image.asset(imagePath),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    text,
+                    style: robotoMedium16.copyWith(color: txtcolor),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ),
+            SizedBox(width: 12),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.black,
             ),
           ],
         ),
