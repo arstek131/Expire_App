@@ -149,11 +149,13 @@ class _ProductsContainerState extends State<ProductsContainer> {
                               creatorId: data.items[i].creatorId,
                               image: data.items[i].image,
                             );
+                            bool first = (i == 0);
+                            bool last = (i == data.items.length - 1);
                             return GestureDetector(
                               onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
-                                child: ProductListTile(product),
+                                padding: const EdgeInsets.symmetric(vertical: 0.6, horizontal: 10),
+                                child: ProductListTile(product, first, last),
                               ),
                             );
                           } else {

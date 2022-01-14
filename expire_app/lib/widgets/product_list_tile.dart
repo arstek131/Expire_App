@@ -27,8 +27,10 @@ import '../app_styles.dart' as styles;
 class ProductListTile extends StatefulWidget {
   final Product product;
   ExpireStatus? expireStatus;
+  bool first = true;
+  bool last = true;
 
-  ProductListTile(this.product) {
+  ProductListTile(this.product, this.first, this.last) {
     DateTime today = DateTime.now();
 
     int dateDifferenceInDays = DateTime(product.expiration.year, product.expiration.month, product.expiration.day)
@@ -54,21 +56,26 @@ class _ProductListTileState extends State<ProductListTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      /*decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 3,
+            blurRadius: 4,
             spreadRadius: 6,
             offset: Offset(0, 3),
           ),
         ],
-      ),
+      ),*/
 
       //margin: const EdgeInsets.only(bottom: 10.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(widget.first ? 15.0 : 0.0),
+          topRight: Radius.circular(widget.first ? 15.0 : 0.0),
+          bottomLeft: Radius.circular(widget.last ? 15.0 : 0.0),
+          bottomRight: Radius.circular(widget.last ? 15.0 : 0.0),
+        ),
         child: Dismissible(
           key: UniqueKey(), //ValueKey(product.id), since so far everything has same id for testing
           onDismissed: (direction) {
@@ -160,7 +167,7 @@ class _ProductListTileState extends State<ProductListTile> {
             );
           },
           child: Card(
-            color: styles.ghostWhite,
+            color: Color(0xFF023e7d).withOpacity(0.754), //styles.ghostWhite,
             margin: EdgeInsets.zero,
             //clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
@@ -182,7 +189,7 @@ class _ProductListTileState extends State<ProductListTile> {
                           ),
                         ),*/
                         child: Hero(
-                          tag: 'produt-image',
+                          tag: 'produt-image${widget.product.id}',
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
                             child: widget.product.image != null
@@ -211,18 +218,21 @@ class _ProductListTileState extends State<ProductListTile> {
                       ),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
                               widget.product.title,
                               style: const TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w300,
                                 fontSize: 17,
                                 fontFamily: styles.currentFontFamily,
-                                color: Colors.black,
+                                color: styles.ghostWhite, //Colors.black,
                               ),
                               overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(
+                              height: 5,
                             ),
                             Text(
                               'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
@@ -237,38 +247,6 @@ class _ProductListTileState extends State<ProductListTile> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.person,
-                                  color: Colors.grey,
-                                  size: 20,
-                                ),
-                                FutureBuilder(
-                                  future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
-                                  builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
-                                      snapshot.connectionState == ConnectionState.waiting
-                                          ? Shimmer.fromColors(
-                                              baseColor: Colors.grey.shade300,
-                                              highlightColor: Colors.grey.shade100,
-                                              direction: ShimmerDirection.ltr,
-                                              child: Container(
-                                                width: 40.0,
-                                                height: 15.0,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10.0),
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            )
-                                          : Text(
-                                              snapshot.data ?? "UNKNOWN",
-                                              style: const TextStyle(
-                                                  color: Colors.grey, fontSize: 15, fontFamily: styles.currentFontFamily),
-                                            ),
-                                )
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -280,6 +258,48 @@ class _ProductListTileState extends State<ProductListTile> {
                   right: 5,
                   child: ExpireClip(widget.expireStatus!, widget.product.expiration),
                 ),
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    width: 200,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.person,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                        FutureBuilder(
+                          future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
+                          builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
+                              snapshot.connectionState == ConnectionState.waiting
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      direction: ShimmerDirection.ltr,
+                                      child: Container(
+                                        width: 40.0,
+                                        height: 15.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      snapshot.data ?? "UNKNOWN",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          color: styles.ghostWhite, fontSize: 15, fontFamily: styles.currentFontFamily),
+                                    ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
                 /*Positioned(
                     top: 10,
                     right: -5,

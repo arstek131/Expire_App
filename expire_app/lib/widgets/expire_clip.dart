@@ -25,7 +25,7 @@ class ExpireClip extends StatelessWidget {
                     ? Colors.yellow.shade400
                     : Colors.black,
             width: 1),
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(5.0),
         color: expireStatus == ExpireStatus.Expired
             ? Colors.redAccent.withOpacity(0.7)
             : expireStatus == ExpireStatus.ExpiringToday
@@ -37,7 +37,7 @@ class ExpireClip extends StatelessWidget {
         fit: BoxFit.fitWidth,
         child: Text(
           expireStatus == ExpireStatus.Expired
-              ? "EXPIRED"
+              ? "Expired"
               : expireStatus == ExpireStatus.ExpiringToday
                   ? "Expiring today"
                   : 'Exp: ${DateFormat('dd MMM yyyy').format(expiration)}',

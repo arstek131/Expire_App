@@ -8,11 +8,13 @@ const sanFrancisco = 'SanFrancisco';
 const currentFontFamily = circular;
 
 /* colors */
-const Color primaryColor = Color(0xFF5353FF);
+const Color ghostWhite = Color(0xFFF8F8FF);
+const Color catchyBlue = Color(0xFF5353FF);
+
+const Color primaryColor = catchyBlue;
 const Color secondaryColor = Color(0xFFEF9079);
 const Color kSecondaryColor = Colors.black;
 const Color kTertiaryColor = Colors.indigo;
-const Color ghostWhite = Color(0xFFF8F8FF);
 
 /* text styles */
 final kTitle = TextStyle(
