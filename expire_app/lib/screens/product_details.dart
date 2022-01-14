@@ -28,7 +28,7 @@ class _ProductDetailsState extends State<ProductDetails> {
           width: 300,
           child: FittedBox(
             child: Hero(
-              tag: 'produt-image',
+              tag: 'produt-image${_product.id}',
               child: _product.image != null
                   ? _product.image is String
                       ? Image.network(

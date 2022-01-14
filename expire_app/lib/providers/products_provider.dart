@@ -51,6 +51,8 @@ class ProductsProvider extends ChangeNotifier {
         },
       );
     }
+    await Future.delayed(Duration(milliseconds: 300));
+    notifyListeners();
   }
 
   Future<void> addProduct(Product product) async {
