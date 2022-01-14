@@ -138,7 +138,7 @@ class UserInfoScreen extends StatelessWidget {
                           print(familyid);
                           MaterialPageRoute materialPageRoute =
                               new MaterialPageRoute(
-                            builder: (context) => Mytry(
+                            builder: (context) => ShareFamFun(
                               familyid: familyid!,
                             ),
                           );
@@ -163,8 +163,23 @@ class UserInfoScreen extends StatelessWidget {
                       text: 'Leave family',
                       //TODO evaluate whether to show dynamically
                       imagePath: 'assets/icons/Close_Square.png',
-                      callback: () {
-                        print("un cazz");
+                      callback: () async {
+                        try {
+                          String? familyid = await FirestoreHelper.instance
+                              .getFamilyIdFromUserId(
+                                  userId: FirebaseAuthHelper.instance.userId!);
+                          List? familyUsrs = await FirestoreHelper.instance
+                              .getUsersFromFamilyId(familyId: familyid!);
+                          print(familyUsrs.length);
+
+                          familyUsrs.length >= 2
+                              ? print("Able to leave family")
+                              : print("You aren't part of a family");
+                        } catch (error) {
+                          const errorMessage =
+                              'An error occured.. Please try again later';
+                          print(errorMessage);
+                        }
                       },
                     ),
                     SizedBox(width: 3),
@@ -186,8 +201,29 @@ class UserInfoScreen extends StatelessWidget {
                       ],
                       text: 'Family info',
                       imagePath: 'assets/icons/Close_Square.png',
-                      callback: () {
-                        print("un cazz2");
+                      callback: () async {
+                        try {
+                          String? familyid = await FirestoreHelper.instance
+                              .getFamilyIdFromUserId(
+                                  userId: FirebaseAuthHelper.instance.userId!);
+                          List? familyUsrs = await FirestoreHelper.instance
+                              .getUsersFromFamilyId(familyId: familyid!);
+                          if (familyUsrs.length >= 2) {
+                            MaterialPageRoute materialPageRoute =
+                                new MaterialPageRoute(
+                              builder: (context) => DisplayFamFun(
+                                famusrs: familyUsrs,
+                              ),
+                            );
+                            Navigator.of(context).push(materialPageRoute);
+                          } else {
+                            print("You aren't part of a family");
+                          }
+                        } catch (error) {
+                          const errorMessage =
+                              'An error occured.. Please try again later';
+                          print(errorMessage);
+                        }
                       },
                     ),
                     SizedBox(width: 10),
@@ -203,6 +239,7 @@ class UserInfoScreen extends StatelessWidget {
                       text: 'Join family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () {
+                        //Screen iniziale che permette di Joinare una famiglia (tramite id o scan qr)
                         print("un cazz3");
                       },
                     ),
@@ -261,16 +298,16 @@ class UserInfoScreen extends StatelessWidget {
   }
 }
 
-class Mytry extends StatelessWidget {
+class ShareFamFun extends StatelessWidget {
   final String familyid;
 
-  const Mytry({Key? key, required this.familyid}) : super(key: key);
+  const ShareFamFun({Key? key, required this.familyid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Codice qr"),
+        title: Text("Qr code"),
         centerTitle: true,
       ),
       body: Center(
@@ -296,12 +333,59 @@ class Mytry extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Text(
               familyid,
               style: robotoMedium16,
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class DisplayFamFun extends StatelessWidget {
+  final List famusrs;
+
+  const DisplayFamFun({
+    Key? key,
+    required this.famusrs,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Family users"),
+        centerTitle: true,
+      ),
+      body: Container(
+        child: ListView.builder(
+          itemCount: famusrs.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {},
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              title: Text(famusrs[index]),
+              leading: Container(
+                color: Colors.white,
+                width: 60,
+                height: 60,
+                child: const FlutterLogo(),
+              ),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.black,
+                size: 13,
+              ),
+            );
+          },
         ),
       ),
     );
