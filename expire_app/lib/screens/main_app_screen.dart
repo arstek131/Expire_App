@@ -14,7 +14,7 @@ import '../helpers/user_info.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
-import '../screens/user_info_screen.dart';
+import 'userinfo/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
 /* helpers */

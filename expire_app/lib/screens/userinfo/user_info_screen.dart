@@ -1,11 +1,12 @@
 /* dart */
 import 'dart:ffi';
 
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../enums/sign_in_method.dart';
+import '../../enums/sign_in_method.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
@@ -16,7 +17,9 @@ import 'package:flutter_lorem/flutter_lorem.dart';
 import 'dart:ui' as ui;
 
 /* providers */
-import '../providers/auth_provider.dart';
+import '../../providers/auth_provider.dart';
+
+import '../../helpers/firestore_helper.dart';
 
 class UserInfoScreen extends StatelessWidget {
   @override
@@ -58,55 +61,9 @@ class UserInfoScreen extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                Div(
-                    text: 'Family',
-                    subtext: 'Manage synchronization with family members'),
-                SizedBox(height: 20),
-                //AddMemberButton(),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(width: 3),
-                    CustomBtn(
-                        buttonHeight: height,
-                        buttonWidth: width,
-                        imageWidth: 75,
-                        imageHeigth: 70,
-                        gradientColors: [
-                          HexColor("#6DB5CB"),
-                          HexColor("#7DC8E7")
-                        ],
-                        text: 'Add member',
-                        imagePath: 'assets/icons/imac_icon.png'),
-                    SizedBox(width: 10),
-                    CustomBtn(
-                      buttonHeight: 116,
-                      buttonWidth: width,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      gradientColors: [
-                        HexColor("#FE7235"),
-                        HexColor("#F97D47")
-                      ],
-                      text: 'Delete member',
-                      imagePath: 'assets/icons/Close_Square.png',
-                    ),
-                    SizedBox(width: 3),
-                  ],
+                SizedBox(
+                  height: 10,
                 ),
-                SizedBox(height: 10),
-                CustomBtn(
-                  margin: EdgeInsets.symmetric(horizontal: 3),
-                  buttonHeight: 120,
-                  // TODO set heigth
-                  buttonWidth: (contextWidth - 63),
-                  imageWidth: 28,
-                  imageHeigth: 28,
-                  gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
-                  text: 'Change family\nmember names',
-                  imagePath: 'assets/icons/time_Square.png',
-                ),
-                SizedBox(height: 30),
                 Div(
                     text: 'Account',
                     subtext: 'Adjust account settings to your needs'),
@@ -141,7 +98,7 @@ class UserInfoScreen extends StatelessWidget {
                         HexColor("##7D88E7"),
                         HexColor("#7D88E7").withAlpha(74)
                       ],
-                      text: 'Pendin',
+                      text: 'Change name',
                       imagePath: 'assets/icons/time_Square.png',
                       //45 degrees gradient
                       alB: Alignment(-1.0, -4.0),
@@ -151,7 +108,120 @@ class UserInfoScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 60,
+                  height: 30,
+                ),
+                Div(
+                    text: 'Family',
+                    subtext: 'Manage synchronization with family members'),
+                SizedBox(height: 20),
+                //AddMemberButton(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 3),
+                    CustomBtn(
+                      buttonHeight: height,
+                      buttonWidth: width,
+                      imageWidth: 75,
+                      imageHeigth: 70,
+                      gradientColors: [
+                        HexColor("#6DB5CB"),
+                        HexColor("#7DC8E7")
+                      ],
+                      text: 'Share family',
+                      imagePath: 'assets/icons/imac_icon.png',
+                      callback: () async {
+                        try {
+                          String? familyid = await FirestoreHelper.instance
+                              .getFamilyIdFromUserId(
+                                  userId: FirebaseAuthHelper.instance.userId!);
+                          print(familyid);
+                          MaterialPageRoute materialPageRoute =
+                              new MaterialPageRoute(
+                            builder: (context) => Mytry(
+                              familyid: familyid!,
+                            ),
+                          );
+                          Navigator.of(context).push(materialPageRoute);
+                        } catch (error) {
+                          const errorMessage =
+                              'Could not generate QR.. Please try again later';
+                          print(errorMessage);
+                        }
+                      },
+                    ),
+                    SizedBox(width: 10),
+                    CustomBtn(
+                      buttonHeight: 116,
+                      buttonWidth: width,
+                      imageWidth: 28,
+                      imageHeigth: 28,
+                      gradientColors: [
+                        HexColor("#FE7235"),
+                        HexColor("#F97D47")
+                      ],
+                      text: 'Leave family',
+                      //TODO evaluate whether to show dynamically
+                      imagePath: 'assets/icons/Close_Square.png',
+                      callback: () {
+                        print("un cazz");
+                      },
+                    ),
+                    SizedBox(width: 3),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 3),
+                    CustomBtn(
+                      buttonHeight: height,
+                      buttonWidth: width,
+                      imageWidth: 28,
+                      imageHeigth: 28,
+                      gradientColors: [
+                        HexColor("#5751FF"),
+                        HexColor("#5751FF")
+                      ],
+                      text: 'Family info',
+                      imagePath: 'assets/icons/Close_Square.png',
+                      callback: () {
+                        print("un cazz2");
+                      },
+                    ),
+                    SizedBox(width: 10),
+                    CustomBtn(
+                      buttonHeight: height,
+                      buttonWidth: width,
+                      imageWidth: 75,
+                      imageHeigth: 70,
+                      gradientColors: [
+                        HexColor("#5751FF"),
+                        HexColor("#5751FF")
+                      ],
+                      text: 'Join family',
+                      imagePath: 'assets/icons/imac_icon.png',
+                      callback: () {
+                        print("un cazz3");
+                      },
+                    ),
+                    SizedBox(width: 3),
+                  ],
+                ),
+                /*CustomBtn(
+                  margin: EdgeInsets.symmetric(horizontal: 3),
+                  buttonHeight: 120,
+                  // TODO set heigth
+                  buttonWidth: (contextWidth - 63),
+                  imageWidth: 28,
+                  imageHeigth: 28,
+                  gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
+                  text: 'Change family\nmember names',
+                  imagePath: 'assets/icons/time_Square.png',
+                ),*/
+                SizedBox(
+                  height: 40,
                 ),
                 LastMenu(
                   text: "Favourite",
@@ -186,6 +256,53 @@ class UserInfoScreen extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class Mytry extends StatelessWidget {
+  final String familyid;
+
+  const Mytry({Key? key, required this.familyid}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Codice qr"),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                BarcodeWidget(
+                  barcode: Barcode.qrCode(
+                    errorCorrectLevel: BarcodeQRCorrectionLevel.high,
+                  ),
+                  data: familyid,
+                  width: 200,
+                  height: 200,
+                ),
+                Container(
+                  color: Colors.white,
+                  width: 60,
+                  height: 60,
+                  child: const FlutterLogo(),
+                ),
+              ],
+            ),
+            SizedBox(height: 20,),
+            Text(
+              familyid,
+              style: robotoMedium16,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -322,6 +439,7 @@ class CustomBtn extends StatelessWidget {
   final double buttonHeight;
   final String imagePath;
   final EdgeInsets margin;
+  final VoidCallback callback;
 
   const CustomBtn({
     Key? key,
@@ -334,14 +452,19 @@ class CustomBtn extends StatelessWidget {
     required this.imagePath,
     this.margin = EdgeInsets.zero,
     this.gradientColors = const [],
+    required this.callback,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      /*onTap: () async {
         print('prova');
+        String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
+        print(familyid);
       },
+       */
+      onTap: callback,
       highlightColor: Colors.white,
       child: Container(
         margin: margin,
