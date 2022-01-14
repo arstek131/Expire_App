@@ -2,13 +2,17 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+//import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_scandit/flutter_scandit.dart';
 
 /* helpers */
 import '../helpers/firestore_helper.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+
+/* const */
+import '../constants.dart';
 
 class FamilyIdChoiceModal extends StatefulWidget {
   @override
@@ -61,7 +65,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
     String? scanResult;
     FocusScope.of(context).unfocus();
 
-    try {
+    /*try {
       scanResult = await FlutterBarcodeScanner.scanBarcode(
         '#FF3F51B5',
         'Cancel',
@@ -71,9 +75,31 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
       print(scanResult);
     } on BarcodeException {
       rethrow;
+    }*/
+
+    try {
+      BarcodeResult result = await FlutterScandit(symbologies: [
+        Symbology.EAN13_UPCA,
+        Symbology.EAN8,
+        Symbology.QR,
+        Symbology.UPCE,
+        Symbology.UPCE,
+      ], licenseKey: SCANDIT_API_KEY)
+          .scanBarcode();
+
+      scanResult = result.data;
+    } on BarcodeScanException catch (error) {
+      print(error);
+      rethrow;
+    } on BarcodeException catch (error) {
+      print(error);
+      rethrow;
+    } catch (error) {
+      print(error);
+      rethrow;
     }
 
-    if (!mounted || scanResult == "-1") {
+    if (!mounted || scanResult == null) {
       return;
     }
 

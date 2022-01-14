@@ -23,32 +23,33 @@ class _ProductDetailsState extends State<ProductDetails> {
       color: styles.primaryColor,
       child: SafeArea(
         child: Container(
-          alignment: Alignment.topCenter,
-          height: 200,
-          width: 300,
-          child: FittedBox(
-            child: Hero(
-              tag: 'produt-image${_product.id}',
-              child: _product.image != null
-                  ? _product.image is String
-                      ? Image.network(
-                          _product.image!,
-                          fit: BoxFit.cover,
-                          color: const Color.fromRGBO(255, 255, 255, 0.85),
-                          colorBlendMode: BlendMode.modulate,
-                        )
-                      : Image.file(
-                          _product.image!,
-                          fit: BoxFit.cover,
-                          color: const Color.fromRGBO(255, 255, 255, 0.85),
-                          colorBlendMode: BlendMode.modulate,
-                        )
-                  : Image.asset(
-                      "assets/images/missing_image_placeholder.png",
-                      fit: BoxFit.cover,
-                    ),
-            ),
+          height: 120,
+          width: 120,
+          color: Colors.red,
+          /*child: Hero(
+          tag: 'produt-image${_product.id}',
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: _product.image != null
+                ? _product.image is String
+                    ? Image.network(
+                        _product.image!,
+                        fit: BoxFit.cover,
+                        color: const Color.fromRGBO(255, 255, 255, 0.85),
+                        colorBlendMode: BlendMode.modulate,
+                      )
+                    : Image.file(
+                        _product.image!,
+                        fit: BoxFit.cover,
+                        color: const Color.fromRGBO(255, 255, 255, 0.85),
+                        colorBlendMode: BlendMode.modulate,
+                      )
+                : Image.asset(
+                    "assets/images/missing_image_placeholder.png",
+                    fit: BoxFit.cover,
+                  ),
           ),
+        ),*/
         ),
       ),
     );

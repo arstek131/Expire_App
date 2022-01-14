@@ -14,10 +14,15 @@ import '../models/product.dart';
 import '../helpers/user_info.dart' as userInfo;
 import '../helpers/db_helper.dart';
 
+/* enums */
+import '../enums/ordering.dart';
+
 class ProductsProvider extends ChangeNotifier {
   ProductsProvider();
 
   bool initProvider = true;
+  Ordering _ordering = Ordering.ExpiringSoon;
+
   List<Product> _items = [];
 
   List<Product> get items {
@@ -69,7 +74,7 @@ class ProductsProvider extends ChangeNotifier {
     );
 
     _items.add(newProduct);
-    _items.sort((a, b) => a.expiration.compareTo(b.expiration));
+    sortProducts(_ordering);
 
     notifyListeners();
 
@@ -117,5 +122,23 @@ class ProductsProvider extends ChangeNotifier {
 
     /* remote delete */
     FirestoreHelper.instance.deleteProduct(productId);
+  }
+
+  void sortProducts(Ordering ordering) {
+    _ordering = ordering;
+
+    switch (ordering) {
+      case Ordering.ExpiringSoon:
+        _items.sort((a, b) => a.expiration.compareTo(b.expiration));
+        break;
+      case Ordering.ExpiringLast:
+        _items.sort((a, b) => a.expiration.compareTo(b.expiration));
+        _items = _items.reversed.toList();
+        break;
+      default:
+        break;
+    }
+
+    notifyListeners();
   }
 }

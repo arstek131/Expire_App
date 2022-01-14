@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
+import 'package:flutter_scandit/flutter_scandit.dart';
 
 /* provider */
 import 'package:provider/provider.dart';
@@ -24,8 +25,10 @@ import '../models/product.dart';
 import '../enums/product_insertion_method.dart';
 
 /* firebase */
-
 import 'package:expire_app/helpers/firestore_helper.dart';
+
+/* constants */
+import '../constants.dart';
 
 class AddItemModal extends StatefulWidget {
   final BuildContext modalContext;
@@ -189,9 +192,27 @@ class _AddItemModalState extends State<AddItemModal> {
 
     this.barcodeString = scanResult;
     print(scanResult);*/
-    this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
+    //this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
+
+    try {
+      BarcodeResult result = await FlutterScandit(symbologies: [
+        Symbology.EAN13_UPCA,
+        Symbology.EAN8,
+        Symbology.QR,
+        Symbology.UPCE,
+        Symbology.UPCE,
+      ], licenseKey: SCANDIT_API_KEY)
+          .scanBarcode();
+      String barcodeData = result.data;
+      print(barcodeData);
+    } on BarcodeScanException catch (error) {
+      print(error);
+      rethrow;
+    }
 
     print("fetching product...");
+    return;
+
     final String url = "https://world.openfoodfacts.org/api/v0/product/$barcodeString.json";
 
     final response = await http.get(Uri.parse(url));

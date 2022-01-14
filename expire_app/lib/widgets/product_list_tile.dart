@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:math' as math;
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 /* models */
 import '../models/product.dart';
@@ -79,92 +80,118 @@ class _ProductListTileState extends State<ProductListTile> {
         child: Dismissible(
           key: UniqueKey(), //ValueKey(product.id), since so far everything has same id for testing
           onDismissed: (direction) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "Product '${widget.product.title}' deleted",
-                  textAlign: TextAlign.center,
+            if (direction == DismissDirection.endToStart) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "Product '${widget.product.title}' deleted",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "'${widget.product.title}' +1 in shopping list",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
           },
-          direction: DismissDirection.endToStart,
+          //direction: DismissDirection.endToStart,
           dismissThresholds: const {
             DismissDirection.endToStart: 0.4,
           },
-          background: Container(
+          secondaryBackground: Container(
             color: Colors.red,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: AlignmentDirectional.centerEnd,
             child: const Icon(
               Icons.delete,
               color: Colors.white,
-              size: 35,
+              size: 40,
+            ),
+          ),
+          background: Container(
+            color: Colors.green,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            alignment: AlignmentDirectional.centerStart,
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 40,
             ),
           ),
           confirmDismiss: (DismissDirection direction) async {
-            return await showDialog(
-              context: context,
-              builder: (BuildContext ctx) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                  title: const Text(
-                    "Confirm",
-                  ),
-                  content: const Text(
-                    "Are you sure you wish to delete this item?",
-                  ),
-                  actionsAlignment: MainAxisAlignment.spaceAround,
-                  titleTextStyle: TextStyle(
-                    fontFamily: styles.currentFontFamily,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),
-                  contentTextStyle: TextStyle(
-                    fontFamily: styles.currentFontFamily,
-                    fontSize: 16,
-                  ),
-                  backgroundColor: styles.primaryColor,
-                  actions: <Widget>[
-                    TextButton.icon(
-                      icon: FaIcon(
-                        FontAwesomeIcons.trashAlt,
-                        color: Colors.redAccent,
+            Vibrate.feedback(FeedbackType.selection);
+            if (direction == DismissDirection.endToStart) {
+              return await showDialog(
+                context: context,
+                builder: (BuildContext ctx) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
                       ),
-                      onPressed: () {
-                        Provider.of<ProductsProvider>(context, listen: false).deleteProduct(widget.product.id!);
-                        Navigator.of(ctx).pop(true);
-                      },
-                      label: Text(
-                        "DELETE",
-                        style: TextStyle(
-                          fontFamily: styles.currentFontFamily,
+                    ),
+                    title: const Text(
+                      "Confirm",
+                    ),
+                    content: const Text(
+                      "Are you sure you wish to delete this item?",
+                    ),
+                    actionsAlignment: MainAxisAlignment.spaceAround,
+                    titleTextStyle: TextStyle(
+                      fontFamily: styles.currentFontFamily,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
+                    contentTextStyle: TextStyle(
+                      fontFamily: styles.currentFontFamily,
+                      fontSize: 16,
+                    ),
+                    backgroundColor: styles.primaryColor,
+                    actions: <Widget>[
+                      TextButton.icon(
+                        icon: FaIcon(
+                          FontAwesomeIcons.trashAlt,
                           color: Colors.redAccent,
                         ),
-                      ),
-                    ),
-                    TextButton.icon(
-                      icon: FaIcon(
-                        FontAwesomeIcons.undoAlt,
-                        color: styles.ghostWhite,
-                      ),
-                      onPressed: () => Navigator.of(ctx).pop(false),
-                      label: const Text(
-                        "CANCEL",
-                        style: TextStyle(
-                          fontFamily: styles.currentFontFamily,
-                          color: styles.ghostWhite,
+                        onPressed: () {
+                          Provider.of<ProductsProvider>(context, listen: false).deleteProduct(widget.product.id!);
+                          Navigator.of(ctx).pop(true);
+                        },
+                        label: Text(
+                          "DELETE",
+                          style: TextStyle(
+                            fontFamily: styles.currentFontFamily,
+                            color: Colors.redAccent,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            );
+                      TextButton.icon(
+                        icon: FaIcon(
+                          FontAwesomeIcons.undoAlt,
+                          color: styles.ghostWhite,
+                        ),
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                        label: const Text(
+                          "CANCEL",
+                          style: TextStyle(
+                            fontFamily: styles.currentFontFamily,
+                            color: styles.ghostWhite,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              return false;
+            }
           },
           child: Card(
             color: Color(0xFF023e7d).withOpacity(0.754), //styles.ghostWhite,

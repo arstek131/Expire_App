@@ -13,6 +13,7 @@ import '../widgets/product_list_tile_placeholder.dart';
 
 /* enums */
 import '../enums/products_view_mode.dart';
+import '../enums/ordering.dart';
 
 /* helpers */
 import '../helpers/user_info.dart' as userinfo;
@@ -34,6 +35,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
   @override
   bool get wantKeepAlive => true;
 
+  Ordering _ordering = Ordering.ExpiringSoon;
+
   void _toggleProductsViewMode() {
     setState(() {
       if (_productsViewMode == ProductsViewMode.List) {
@@ -44,6 +47,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
         _productsViewMode = ProductsViewMode.List;
       }
     });
+  }
+
+  void _toggleOrdering() {
+    switch (_ordering) {
+      case Ordering.ExpiringSoon:
+        setState(() {
+          _ordering = Ordering.ExpiringLast;
+        });
+        break;
+      case Ordering.ExpiringLast:
+        setState(() {
+          _ordering = Ordering.ExpiringSoon;
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   @override
@@ -67,7 +87,10 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: null,
+                    onTap: () {
+                      _toggleOrdering();
+                      Provider.of<ProductsProvider>(context, listen: false).sortProducts(_ordering);
+                    },
                     child: Row(
                       children: [
                         FaIcon(
@@ -76,7 +99,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                         ),
                         SizedBox(width: 10),
                         Text(
-                          "Expiring soon",
+                          _ordering == Ordering.ExpiringSoon ? "Expiring soon" : "Expiring last",
                           style: styles.subheading,
                         )
                       ],
@@ -112,10 +135,10 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Expanded(
                       child: ListView(
-                        children: const [
+                        children: [
+                          ProductListTilePlaceholder(first: true),
                           ProductListTilePlaceholder(),
-                          ProductListTilePlaceholder(),
-                          ProductListTilePlaceholder(),
+                          ProductListTilePlaceholder(last: true),
                         ],
                       ),
                     );
