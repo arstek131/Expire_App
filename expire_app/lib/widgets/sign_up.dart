@@ -10,12 +10,18 @@ import '../providers/auth_provider.dart';
 /* models */
 import '../models/http_exception.dart';
 
+/* widgets */
+import '../widgets/family_id_choice_modal.dart';
+
 /* screens */
-import '../screens/family_id_choice_screen.dart';
+import 'family_id_choice_modal.dart';
 
 /* firebase */
 import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+/* styles */
+import '../app_styles.dart' as styles;
 
 class SignUp extends StatefulWidget {
   SignUp({
@@ -124,7 +130,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.bold,
                     fontSize: 30,
                     color: Colors.white,
-                    fontFamily: 'SanFrancisco',
+                    fontFamily: styles.currentFontFamily,
                   ),
                 ),
               ),
@@ -252,7 +258,21 @@ class _SignUpState extends State<SignUp> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
+                            //var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
+                            String? familyId = await showModalBottomSheet<String?>(
+                              isScrollControlled: true,
+                              enableDrag: true,
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              builder: (BuildContext ctx) {
+                                return FamilyIdChoiceModal();
+                              },
+                            );
                             if (familyId != null) {
                               _authData['familyId'] = familyId as String?;
                               setState(() {
@@ -269,7 +289,11 @@ class _SignUpState extends State<SignUp> {
                               children: [
                                 TextSpan(
                                   text: _isFamilyIdSet ? "Valid family ID " : "I have a family ID ",
-                                  style: TextStyle(color: _isFamilyIdSet ? Colors.green : Colors.blue),
+                                  style: TextStyle(
+                                    color: _isFamilyIdSet ? Colors.green : Colors.blue,
+                                    fontFamily: styles.currentFontFamily,
+                                    fontSize: 15,
+                                  ),
                                 ),
                                 WidgetSpan(
                                   child: _isFamilyIdSet
@@ -285,7 +309,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 20),
+                          margin: EdgeInsets.only(top: 10),
                           width: double.infinity,
                           height: 55,
                           child: ElevatedButton(
@@ -317,7 +341,7 @@ class _SignUpState extends State<SignUp> {
                                   )
                                 : const Text(
                                     'Submit',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
                                   ),
                           ),
                         ),
@@ -327,7 +351,7 @@ class _SignUpState extends State<SignUp> {
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: TextStyle(color: Colors.grey, fontSize: 12.0),
+                            style: TextStyle(color: Colors.grey, fontSize: 13.0, fontFamily: styles.currentFontFamily),
                             children: <TextSpan>[
                               TextSpan(text: 'By clicking Sign Up, you agree to our '),
                               TextSpan(

@@ -136,7 +136,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () {
-                                                FirestoreHelper.instance.deleteProduct(widget.product.id);
+                                                FirestoreHelper.instance.deleteProduct(widget.product.id!);
 
                                                 Navigator.of(ctx).pop(true);
                                                 Navigator.of(modalContext).pop(true);
@@ -180,9 +180,9 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
                   color: Colors.black54,
                 )),
           ),
-          child: widget.product.imageUrl != null
+          child: widget.product.image != null
               ? Image.network(
-                  widget.product.imageUrl!,
+                  widget.product.image!,
                   fit: BoxFit.cover,
                   color: const Color.fromRGBO(255, 255, 255, 0.85),
                   colorBlendMode: BlendMode.modulate,

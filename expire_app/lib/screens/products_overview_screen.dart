@@ -1,28 +1,15 @@
 /* dart */
-import 'dart:io';
-
-import 'package:expire_app/helpers/firebase_auth_helper.dart';
-import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/rendering.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /* providers */
+import 'package:provider/provider.dart';
 import '../providers/products_provider.dart';
-import '../providers/bottom_navigator_bar_size_provider.dart';
-
-/* models */
-import '../models/product.dart';
 
 /* widgets */
-import '../widgets/product_list_tile.dart';
-import '../widgets/product_grid_tile.dart';
-import '../widgets/product_single_grid_tile.dart';
-import '../widgets/product_list_tile_placeholder.dart';
 import '../widgets/options_bar.dart';
+import '../widgets/products_container.dart';
+import '../widgets/product_list_tile_placeholder.dart';
 
 /* enums */
 import '../enums/products_view_mode.dart';
@@ -41,7 +28,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     with AutomaticKeepAliveClientMixin<ProductsOverviewScreen> {
   String? familyId = userinfo.UserInfo.instance.familyId;
-  ProductsViewMode _productsViewMode = ProductsViewMode.Grid;
+  ProductsViewMode _productsViewMode = ProductsViewMode.List;
 
   // Keep page state alive
   @override
@@ -62,8 +49,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
     return Container(
       height: double.infinity,
@@ -121,9 +106,25 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                 ],
               ),
             ),
-            StreamBuilder(
-              // todo: don't user streambuilder but products provider with listener on all products to store locally
-              // or update here local DB + local data in products provider and then show local
+            FutureBuilder(
+                future: Provider.of<ProductsProvider>(context, listen: false).fetchProducts(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Expanded(
+                      child: ListView(
+                        children: const [
+                          ProductListTilePlaceholder(),
+                          ProductListTilePlaceholder(),
+                          ProductListTilePlaceholder(),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return ProductsContainer(_productsViewMode);
+                  }
+                }),
+
+            /*StreamBuilder(
               stream: FirestoreHelper.instance.getFamilyProductsStream(familyId: familyId!),
               builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> productSnaphshot) {
                 if (productSnaphshot.connectionState == ConnectionState.waiting) {
@@ -136,151 +137,179 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                       ],
                     ),
                   );
-                } else {
-                  final productDocs = productSnaphshot.data!.docs;
-                  // for each change update local DB
-                  // provider...addProduct() {
-                  // items.add if not exists,
-                  // add to SQL db without waiting }
-                  productSnaphshot.data!.docChanges.forEach((element) {
-                    print(element.doc['title']);
-                  });
-                  return Flexible(
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (scrollInfo is UserScrollNotification) {
-                          // scrolling up
-                          if (scrollInfo.direction == ScrollDirection.forward) {
-                            Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
-                          } else if (scrollInfo.direction == ScrollDirection.reverse) {
-                            // scrolling down
-                            Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
+                } else if (productSnaphshot.connectionState == ConnectionState.active) {
+                  final changedDocs = productSnaphshot.data!.docChanges;
+
+                  for (var changedDoc in changedDocs) {
+                    Product tmp = Product(
+                      id: changedDoc.doc.id,
+                      title: changedDoc.doc['title'],
+                      expiration: DateTime.parse(changedDoc.doc['expiration']),
+                      creatorId: changedDoc.doc['creatorId'],
+                      image: changedDoc.doc['imageUrl'],
+                    );
+                    Provider.of<ProductsProvider>(context, listen: false).modifyProduct(tmp);
+                    //print(productData.doc['title']);
+                  }
+
+                  return Consumer<ProductsProvider>(
+                    builder: (_, data, __) => Flexible(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (scrollInfo is UserScrollNotification) {
+                            // scrolling up
+                            if (scrollInfo.direction == ScrollDirection.forward) {
+                              Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
+                            } else if (scrollInfo.direction == ScrollDirection.reverse) {
+                              // scrolling down
+                              Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
+                            }
                           }
-                        }
-                        return true;
-                      },
-                      child: RefreshIndicator(
-                        key: _refreshIndicatorKey,
-                        color: Colors.blue,
-                        onRefresh: () {
-                          return Future.value(true);
+                          return true;
                         },
-                        child: !productSnaphshot.hasData || productDocs.isEmpty
-                            ? Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Positioned.fill(
-                                    right: -300,
-                                    top: 300,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: customShadow,
-                                        shape: BoxShape.circle,
-                                        color: Colors.white12,
+                        child: RefreshIndicator(
+                          key: _refreshIndicatorKey,
+                          color: Colors.blue,
+                          onRefresh: () {
+                            return Future.value(true);
+                          },
+                          child: data.items.isEmpty //!productSnaphshot.hasData || changedDocs.isEmpty
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Positioned.fill(
+                                      right: -300,
+                                      top: 300,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          boxShadow: customShadow,
+                                          shape: BoxShape.circle,
+                                          color: Colors.white12,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned.fill(
-                                    right: -600,
-                                    top: -100,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: customShadow,
-                                        shape: BoxShape.circle,
-                                        color: Colors.white12,
+                                    Positioned.fill(
+                                      right: -600,
+                                      top: -100,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          boxShadow: customShadow,
+                                          shape: BoxShape.circle,
+                                          color: Colors.white12,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned.fill(
-                                    top: 200,
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: "Click the  ",
-                                            style: styles.subheading,
-                                          ),
-                                          WidgetSpan(
-                                            child: FaIcon(
-                                              FontAwesomeIcons.plusCircle,
-                                              size: 16,
-                                              color: Colors.white,
+                                    Positioned.fill(
+                                      top: 200,
+                                      child: RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "Click the  ",
+                                              style: styles.subheading,
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: "  button to start adding products!",
-                                            style: styles.subheading,
-                                          ),
-                                        ],
+                                            WidgetSpan(
+                                              child: FaIcon(
+                                                FontAwesomeIcons.plusCircle,
+                                                size: 16,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: "  button to start adding products!",
+                                              style: styles.subheading,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            : Stack(
-                                children: [
-                                  Positioned.fill(
-                                    right: -300,
-                                    top: 300,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: customShadow,
-                                        shape: BoxShape.circle,
-                                        color: Colors.white12,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned.fill(
-                                    right: -600,
-                                    top: -100,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: customShadow,
-                                        shape: BoxShape.circle,
-                                        color: Colors.white12,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_productsViewMode == ProductsViewMode.List)
-                                    ListView.builder(
-                                      itemCount: productDocs.length + 1,
-                                      itemBuilder: (ctx, i) {
-                                        if (i < productDocs.length) {
-                                          Product product = Product(
-                                            id: productDocs[i].id,
-                                            title: productDocs[i]['title'],
-                                            expiration: DateTime.parse(productDocs[i]['expiration']),
-                                            creatorId: productDocs[i]['creatorId'],
-                                            imageUrl: productDocs[i]['imageUrl'],
-                                          );
-                                          return Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: ProductListTile(product),
-                                          );
-                                        } else {
-                                          return const SizedBox(
-                                            height: 80,
-                                          );
-                                        }
-                                      }, //product item...
                                     )
-                                  else if (_productsViewMode == ProductsViewMode.Grid)
+                                  ],
+                                )
+                              : Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      right: -300,
+                                      top: 300,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          boxShadow: customShadow,
+                                          shape: BoxShape.circle,
+                                          color: Colors.white12,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned.fill(
+                                      right: -600,
+                                      top: -100,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          boxShadow: customShadow,
+                                          shape: BoxShape.circle,
+                                          color: Colors.white12,
+                                        ),
+                                      ),
+                                    ),
+                                    if (_productsViewMode == ProductsViewMode.List)
+                                      ListView.builder(
+                                          itemCount: data.items.length + 1,
+                                          itemBuilder: (ctx, i) {
+                                            if (i < data.items.length) {
+                                              Product product = Product(
+                                                id: data.items[i].id,
+                                                title: data.items[i].title,
+                                                expiration: data.items[i].expiration,
+                                                creatorId: data.items[i].creatorId,
+                                                image: data.items[i].image,
+                                              );
+                                              return Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: ProductListTile(product),
+                                              );
+                                            } else {
+                                              return const SizedBox(
+                                                height: 80,
+                                              );
+                                            }
+                                          }
+                                          /*itemCount: productDocs.length + 1,
+                                              itemBuilder: (ctx, i) {
+                                                if (i < productDocs.length) {
+                                                  Product product = Product(
+                                                    id: productDocs[i].id,
+                                                    title: productDocs[i]['title'],
+                                                    expiration: DateTime.parse(productDocs[i]['expiration']),
+                                                    creatorId: productDocs[i]['creatorId'],
+                                                    imageUrl: productDocs[i]['imageUrl'],
+                                                  );
+                                                  return Padding(
+                                                    padding: const EdgeInsets.all(10.0),
+                                                    child: ProductListTile(product),
+                                                  );
+                                                } else {
+                                                  return const SizedBox(
+                                                    height: 80,
+                                                  );
+                                                }
+                                              },*/ //product item...
+                                          ),
+
+                                    /*else if (_productsViewMode == ProductsViewMode.Grid)
                                     GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
 
                                         //childAspectRatio: 1,
                                       ),
-                                      itemCount: productDocs.length + 1,
+                                      itemCount: changedDocs.length + 1,
                                       itemBuilder: (ctx, i) {
-                                        if (i < productDocs.length) {
+                                        if (i < changedDocs.length) {
                                           Product product = Product(
-                                            id: productDocs[i].id,
-                                            title: productDocs[i]['title'],
-                                            expiration: DateTime.parse(productDocs[i]['expiration']),
-                                            creatorId: productDocs[i]['creatorId'],
-                                            imageUrl: productDocs[i]['imageUrl'],
+                                            id: changedDocs[i].id,
+                                            title: changedDocs[i]['title'],
+                                            expiration: DateTime.parse(changedDocs[i]['expiration']),
+                                            creatorId: changedDocs[i]['creatorId'],
+                                            imageUrl: changedDocs[i]['imageUrl'],
                                           );
                                           return Padding(
                                             padding:
@@ -301,15 +330,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                                         crossAxisCount: 1,
                                         //childAspectRatio: 1,
                                       ),
-                                      itemCount: productDocs.length + 1,
+                                      itemCount: changedDocs.length + 1,
                                       itemBuilder: (ctx, i) {
-                                        if (i < productDocs.length) {
+                                        if (i < changedDocs.length) {
                                           Product product = Product(
-                                            id: productDocs[i].id,
-                                            title: productDocs[i]['title'],
-                                            expiration: DateTime.parse(productDocs[i]['expiration']),
-                                            creatorId: productDocs[i]['creatorId'],
-                                            imageUrl: productDocs[i]['imageUrl'],
+                                            id: changedDocs[i].id,
+                                            title: changedDocs[i]['title'],
+                                            expiration: DateTime.parse(changedDocs[i]['expiration']),
+                                            creatorId: changedDocs[i]['creatorId'],
+                                            imageUrl: changedDocs[i]['imageUrl'],
                                           );
                                           return ProductSingleGridTile(product);
                                         } else {
@@ -318,33 +347,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                                           );
                                         }
                                       },
-                                    ),
-                                ],
-                              ),
+                                    ),*/
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
                   );
+                } else {
+                  return Center(
+                    child: Text("Something went wrong"),
+                  );
                 }
               },
-            ),
+            ),*/
           ],
         ),
       ),
     );
   }
-
-  List<BoxShadow> customShadow = [
-    BoxShadow(
-      color: Colors.indigoAccent.withOpacity(0.5),
-      spreadRadius: -5,
-      offset: Offset(-5, -5),
-      blurRadius: 30,
-    ),
-    BoxShadow(
-      color: Colors.indigo.shade900.withOpacity(0.2),
-      spreadRadius: 2,
-      offset: Offset(7, 7),
-      blurRadius: 20,
-    )
-  ];
 }

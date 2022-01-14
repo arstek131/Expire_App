@@ -9,6 +9,7 @@ const currentFontFamily = circular;
 
 /* colors */
 const Color primaryColor = Color(0xFF5353FF);
+const Color secondaryColor = Color(0xFFEF9079);
 const Color kSecondaryColor = Colors.black;
 const Color kTertiaryColor = Colors.indigo;
 const Color ghostWhite = Color(0xFFF8F8FF);
@@ -29,6 +30,13 @@ final kBodyText1 = TextStyle(
 const TextStyle title = TextStyle(
   color: ghostWhite,
   fontSize: 30,
+  fontFamily: currentFontFamily,
+  fontWeight: FontWeight.bold,
+);
+
+const TextStyle subtitle = TextStyle(
+  color: ghostWhite,
+  fontSize: 24,
   fontFamily: currentFontFamily,
   fontWeight: FontWeight.bold,
 );

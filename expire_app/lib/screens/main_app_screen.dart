@@ -3,6 +3,8 @@ import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path/path.dart';
+import 'dart:math' as math;
 
 /* Widgets */
 import '../widgets/custom_bottom_navigation_bar.dart';
@@ -36,12 +38,19 @@ class _ProductsScreenState extends State<MainAppScreen> {
   List<Map<String, dynamic>> _pages = [];
 
   /* Class methods */
-  void _bottomNavigationBarHandler(index) {
+  void _bottomNavigationBarHandler(int newIndex) {
+    int oldIndex = _pageIndex;
+
     setState(() {
-      _pageIndex = index;
+      _pageIndex = newIndex;
     });
-    pageController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-    //pageController.jumpToPage(index);
+
+    // avoid long sliding between pageviews
+    if ((newIndex - oldIndex).abs() == 1) {
+      pageController.animateToPage(newIndex, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+    } else {
+      pageController.jumpToPage(newIndex);
+    }
   }
 
   @override
