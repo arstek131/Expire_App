@@ -301,6 +301,7 @@ class _SignUpState extends State<SignUp> {
                                           Icons.check_circle_outline_outlined,
                                           color: Colors.green,
                                           size: 16,
+
                                         )
                                       : const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
                                 ),
