@@ -4,6 +4,9 @@ import 'dart:ffi';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/screens/userinfo/family_info_screen.dart';
+import 'package:expire_app/widgets/family_id_choice_modal.dart';
+import 'package:expire_app/widgets/sign_up.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../enums/sign_in_method.dart';
@@ -131,23 +134,7 @@ class UserInfoScreen extends StatelessWidget {
                       text: 'Share family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () async {
-                        try {
-                          String? familyid = await FirestoreHelper.instance
-                              .getFamilyIdFromUserId(
-                                  userId: FirebaseAuthHelper.instance.userId!);
-                          print(familyid);
-                          MaterialPageRoute materialPageRoute =
-                              new MaterialPageRoute(
-                            builder: (context) => ShareFamFun(
-                              familyid: familyid!,
-                            ),
-                          );
-                          Navigator.of(context).push(materialPageRoute);
-                        } catch (error) {
-                          const errorMessage =
-                              'Could not generate QR.. Please try again later';
-                          print(errorMessage);
-                        }
+                        _shareFamily(context);
                       },
                     ),
                     SizedBox(width: 10),
@@ -202,27 +189,21 @@ class UserInfoScreen extends StatelessWidget {
                       text: 'Family info',
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        try {
-                          String? familyid = await FirestoreHelper.instance
-                              .getFamilyIdFromUserId(
-                                  userId: FirebaseAuthHelper.instance.userId!);
-                          List? familyUsrs = await FirestoreHelper.instance
-                              .getUsersFromFamilyId(familyId: familyid!);
-                          if (familyUsrs.length >= 2) {
-                            MaterialPageRoute materialPageRoute =
-                                new MaterialPageRoute(
-                              builder: (context) => DisplayFamFun(
-                                famusrs: familyUsrs,
-                              ),
-                            );
-                            Navigator.of(context).push(materialPageRoute);
-                          } else {
-                            print("You aren't part of a family");
-                          }
-                        } catch (error) {
-                          const errorMessage =
-                              'An error occured.. Please try again later';
-                          print(errorMessage);
+                        dynamic resultant =
+                            await FamilyInfoScreen.getFamilyList();
+                        if (resultant is bool) {
+                          print('No famiglia io povero');
+                        } else {
+                          Map<String, dynamic> res =
+                              resultant as Map<String, dynamic>;
+                          MaterialPageRoute materialPageRoute =
+                              new MaterialPageRoute(
+                            builder: (context) => FamilyInfoScreen(
+                              famusers: res['users'],
+                              familyid: res['familyid'],
+                            ),
+                          );
+                          Navigator.of(context).push(materialPageRoute);
                         }
                       },
                     ),
@@ -238,25 +219,19 @@ class UserInfoScreen extends StatelessWidget {
                       ],
                       text: 'Join family',
                       imagePath: 'assets/icons/imac_icon.png',
-                      callback: () {
-                        //Screen iniziale che permette di Joinare una famiglia (tramite id o scan qr)
-                        print("un cazz3");
-                      },
+                      callback: () => SignUp.showFamilyRedeemModal(
+                          context,
+                          {
+                            'email': '',
+                            'password': '',
+                            'familyId': null,
+                          },
+                          () {},
+                          () {}),
                     ),
                     SizedBox(width: 3),
                   ],
                 ),
-                /*CustomBtn(
-                  margin: EdgeInsets.symmetric(horizontal: 3),
-                  buttonHeight: 120,
-                  // TODO set heigth
-                  buttonWidth: (contextWidth - 63),
-                  imageWidth: 28,
-                  imageHeigth: 28,
-                  gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
-                  text: 'Change family\nmember names',
-                  imagePath: 'assets/icons/time_Square.png',
-                ),*/
                 SizedBox(
                   height: 40,
                 ),
@@ -296,21 +271,61 @@ class UserInfoScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _shareFamily(BuildContext context) async {
+    String? familyid = await FirestoreHelper.instance
+        .getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
+    //print(familyid);
+    if (familyid == null) {
+      UserInfoScreen.showErrorDialog(
+          context, "Ops..........", 'Could not find your family dimmerd');
+    } else {
+      showDialog(
+        barrierColor: Colors.black.withOpacity(0.9),
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return ShareFamFunQR(familyid: familyid);
+        },
+      );
+    }
+  }
+
+  static showErrorDialog(BuildContext context, String msg, String title,
+      {bool shouldLeave = false}) {
+    Widget dismissBtn = TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          if (shouldLeave) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Text('Dismiss'));
+    //TODO manage platform specific error dialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(msg),
+      actions: [dismissBtn],
+    );
+
+    showDialog(context: context, builder: (context) => alert);
+  }
 }
 
-class ShareFamFun extends StatelessWidget {
+class ShareFamFunQR extends StatelessWidget {
   final String familyid;
 
-  const ShareFamFun({Key? key, required this.familyid}) : super(key: key);
+  const ShareFamFunQR({Key? key, required this.familyid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Qr code"),
-        centerTitle: true,
-      ),
-      body: Center(
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(25.0)),
+        height: 300,
+        padding: EdgeInsets.symmetric(vertical: 30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -35,6 +35,35 @@ class SignUp extends StatefulWidget {
   final GlobalKey<FormState> _formKey;
   final PageController _pageController;
 
+  static void showFamilyRedeemModal(
+      BuildContext context,
+      Map<String, String?> authData,
+      VoidCallback ifOk,
+      VoidCallback ifNotOk,
+      ) async {
+    //var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
+    String? familyId = await showModalBottomSheet<String?>(
+      isScrollControlled: true,
+      enableDrag: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      builder: (BuildContext ctx) {
+        return FamilyIdChoiceModal();
+      },
+    );
+    if (familyId != null) {
+      authData['familyId'] = familyId as String?;
+      ifOk();
+    } else {
+      ifNotOk();
+    }
+  }
+
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -53,9 +82,14 @@ class _SignUpState extends State<SignUp> {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(title: Text("An error occurred"), content: Text(message), actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Okay")),
-      ]),
+      builder: (ctx) => AlertDialog(
+          title: Text("An error occurred"),
+          content: Text(message),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text("Okay")),
+          ]),
     );
   }
 
@@ -114,8 +148,9 @@ class _SignUpState extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                onPressed: () =>
-                    widget._pageController.animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut),
+                onPressed: () => widget._pageController.animateToPage(0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut),
                 icon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
@@ -163,7 +198,8 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 20.0),
                   child: Form(
                     key: widget._formKey,
                     child: Column(
@@ -174,7 +210,8 @@ class _SignUpState extends State<SignUp> {
                             keyboardType: TextInputType.emailAddress,
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.person, color: Colors.indigoAccent),
+                              prefixIcon: Icon(Icons.person,
+                                  color: Colors.indigoAccent),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15),
@@ -207,7 +244,8 @@ class _SignUpState extends State<SignUp> {
                           child: TextFormField(
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.password, color: Colors.indigoAccent),
+                              prefixIcon: Icon(Icons.password,
+                                  color: Colors.indigoAccent),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15),
@@ -236,7 +274,8 @@ class _SignUpState extends State<SignUp> {
                           child: TextFormField(
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.check, color: Colors.indigoAccent),
+                              prefixIcon:
+                                  Icon(Icons.check, color: Colors.indigoAccent),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15),
@@ -257,40 +296,27 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () async {
-                            //var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
-                            String? familyId = await showModalBottomSheet<String?>(
-                              isScrollControlled: true,
-                              enableDrag: true,
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              builder: (BuildContext ctx) {
-                                return FamilyIdChoiceModal();
-                              },
-                            );
-                            if (familyId != null) {
-                              _authData['familyId'] = familyId as String?;
-                              setState(() {
-                                _isFamilyIdSet = true;
-                              });
-                            } else {
-                              setState(() {
-                                _isFamilyIdSet = false;
-                              });
-                            }
-                          },
+                          onTap: () =>
+                              SignUp.showFamilyRedeemModal(context, _authData, () {
+                            setState(() {
+                              _isFamilyIdSet = true;
+                            });
+                          }, () {
+                            setState(() {
+                              _isFamilyIdSet = false;
+                            });
+                          }),
                           child: RichText(
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: _isFamilyIdSet ? "Valid family ID " : "I have a family ID ",
+                                  text: _isFamilyIdSet
+                                      ? "Valid family ID "
+                                      : " I have a family ID ",
                                   style: TextStyle(
-                                    color: _isFamilyIdSet ? Colors.green : Colors.blue,
+                                    color: _isFamilyIdSet
+                                        ? Colors.green
+                                        : Colors.blue,
                                     fontFamily: styles.currentFontFamily,
                                     fontSize: 15,
                                   ),
@@ -301,9 +327,9 @@ class _SignUpState extends State<SignUp> {
                                           Icons.check_circle_outline_outlined,
                                           color: Colors.green,
                                           size: 16,
-
                                         )
-                                      : const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
+                                      : const Icon(Icons.arrow_forward_ios,
+                                          size: 16, color: Colors.blue),
                                 ),
                               ],
                             ),
@@ -315,7 +341,8 @@ class _SignUpState extends State<SignUp> {
                           height: 55,
                           child: ElevatedButton(
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14.0),
                                 ),
@@ -342,7 +369,9 @@ class _SignUpState extends State<SignUp> {
                                   )
                                 : const Text(
                                     'Submit',
-                                    style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: styles.currentFontFamily),
                                   ),
                           ),
                         ),
@@ -352,9 +381,14 @@ class _SignUpState extends State<SignUp> {
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: TextStyle(color: Colors.grey, fontSize: 13.0, fontFamily: styles.currentFontFamily),
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13.0,
+                                fontFamily: styles.currentFontFamily),
                             children: <TextSpan>[
-                              TextSpan(text: 'By clicking Sign Up, you agree to our '),
+                              TextSpan(
+                                  text:
+                                      'By clicking Sign Up, you agree to our '),
                               TextSpan(
                                   text: 'Terms of Service',
                                   style: TextStyle(color: Colors.blue),
@@ -379,7 +413,8 @@ class _SignUpState extends State<SignUp> {
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: TextStyle(color: Colors.grey, fontSize: 12.0),
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 12.0),
                             children: <TextSpan>[
                               TextSpan(text: 'Already a member? '),
                               TextSpan(
@@ -387,8 +422,10 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(color: Colors.blue),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    widget._pageController
-                                        .animateToPage(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+                                    widget._pageController.animateToPage(0,
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        curve: Curves.easeInOut);
                                   },
                               ),
                             ],
@@ -405,4 +442,6 @@ class _SignUpState extends State<SignUp> {
       ],
     );
   }
+
+
 }
