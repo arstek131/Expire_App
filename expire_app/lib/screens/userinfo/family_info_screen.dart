@@ -10,20 +10,13 @@ class FamilyInfoScreen extends StatefulWidget {
   final List<String> famusers;
   final String familyid;
 
-  const FamilyInfoScreen(
-      {Key? key, required this.famusers, required this.familyid})
-      : super(key: key);
+  const FamilyInfoScreen({Key? key, required this.famusers, required this.familyid}) : super(key: key);
 
   static Future<dynamic> getFamilyList() async {
-    String? familyid = await FirestoreHelper.instance
-        .getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
-    List<dynamic>? familyUsers = await FirestoreHelper.instance
-        .getUsersFromFamilyId(familyId: familyid!);
+    String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
+    List<dynamic>? familyUsers = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: familyid!);
     if (familyUsers.length >= 2) {
-      return {
-        'users': List<String>.from(familyUsers, growable: true),
-        'familyid': familyid as String
-      };
+      return {'users': List<String>.from(familyUsers, growable: true), 'familyid': familyid as String};
     } else {
       return false;
     }
@@ -97,8 +90,7 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
     List<String> displayNames = [];
 
     for (int i = 0; i < savedUsersid.length; ++i) {
-      String? tmp = await FirestoreHelper.instance
-          .getDisplayNameFromUserId(userId: savedUsersid[i]);
+      String? tmp = await FirestoreHelper.instance.getDisplayNameFromUserId(userId: savedUsersid[i]);
       if (tmp != null) {
         displayNames.add(tmp);
       }

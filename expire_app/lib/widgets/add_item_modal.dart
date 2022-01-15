@@ -14,7 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
 import 'package:flutter_scandit/flutter_scandit.dart';
-import 'package:camera/camera.dart';
 import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
@@ -73,8 +72,6 @@ class _AddItemModalState extends State<AddItemModal> {
   String? _imageUrl;
   ProductInsertionMethod productInsertionMethod = ProductInsertionMethod.None;
 
-  CameraController? _cameraController;
-
   Nutriments _nutriments = new Nutriments();
   String? _ingredientsText;
   String? _nutriscore;
@@ -82,19 +79,6 @@ class _AddItemModalState extends State<AddItemModal> {
   @override
   initState() {
     super.initState();
-
-    /*_cameraController = CameraController(
-      cameras!.first,
-      ResolutionPreset.medium,
-      imageFormatGroup: ImageFormatGroup.yuv420,
-    );
-    _cameraController!.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {});
-    });*/
   }
 
   @override
