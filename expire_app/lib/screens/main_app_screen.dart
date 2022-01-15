@@ -16,6 +16,7 @@ import '../helpers/user_info.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
+import 'recipe_screen.dart';
 import 'userinfo/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
@@ -57,9 +58,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
   void initState() {
     _pages = [
       {
-        'page': Center(
-          child: Text(firebaseAuthHelper.displayName ?? "null"),
-        ),
+        'page': RecipeScreen(),
         'title': "Recipes",
       },
       {
@@ -73,8 +72,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Products",
       },
       {
-        'page': const Center(
-          child: Text("test3"),
+        'page':  Center(
+          child: Text(firebaseAuthHelper.displayName ?? "null"),
         ),
         'title': "Analytics",
       },
