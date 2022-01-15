@@ -10,9 +10,11 @@ const currentFontFamily = circular;
 /* colors */
 const Color ghostWhite = Color(0xFFF8F8FF);
 const Color catchyBlue = Color(0xFF5353FF);
+const Color deepIndigo = Color(0xFF023e7d);
 
 const Color primaryColor = catchyBlue;
-const Color secondaryColor = Color(0xFFEF9079);
+const Color secondaryColor = Colors.indigoAccent;
+const Color tertiaryColor = Colors.amber;
 const Color kSecondaryColor = Colors.black;
 const Color kTertiaryColor = Colors.indigo;
 
@@ -41,6 +43,13 @@ const TextStyle subtitle = TextStyle(
   fontSize: 24,
   fontFamily: currentFontFamily,
   fontWeight: FontWeight.bold,
+);
+
+const TextStyle heading = TextStyle(
+  color: ghostWhite,
+  fontSize: 20,
+  fontFamily: currentFontFamily,
+  fontWeight: FontWeight.w200,
 );
 
 const TextStyle subheading = TextStyle(

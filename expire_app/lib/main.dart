@@ -1,11 +1,11 @@
 /* dart libraries */
 import 'dart:io';
-
 import 'package:expire_app/screens/product_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:camera/camera.dart';
 
 /* Screens */
 import 'screens/main_app_screen.dart';
@@ -25,6 +25,8 @@ import 'helpers/custom_route.dart';
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
 
+List<CameraDescription>? cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,6 +35,8 @@ void main() async {
     return;
   }
   await Firebase.initializeApp(); // todo: set for ios
+
+  cameras = await availableCameras();
 
   runApp(const MyApp());
 }

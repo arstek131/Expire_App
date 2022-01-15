@@ -1,11 +1,32 @@
 import 'dart:io';
+import 'package:openfoodfacts/model/Nutriments.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
 
 class Product {
+  /* product info */
   String? id;
   String title;
-  DateTime expiration;
-  String creatorId;
   dynamic image;
+  Nutriments? nutriments;
+  String? ingredientsText;
+  String? nutriscore;
 
-  Product({required this.id, required this.title, required this.expiration, required this.creatorId, this.image});
+  /* current product instance info */
+  DateTime expiration;
+
+  /* product metadata */
+  String creatorId;
+  String creatorName;
+
+  Product({
+    required this.id,
+    required this.title,
+    required this.expiration,
+    required this.creatorId,
+    required this.creatorName,
+    this.image,
+    this.nutriments,
+    this.ingredientsText,
+    this.nutriscore,
+  });
 }

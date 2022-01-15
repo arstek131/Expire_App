@@ -1,4 +1,5 @@
 /* dart */
+import 'package:expire_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -6,12 +7,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:openfoodfacts/model/Nutriments.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
 import 'package:flutter_scandit/flutter_scandit.dart';
+import 'package:camera/camera.dart';
+import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 /* provider */
 import 'package:provider/provider.dart';
@@ -30,6 +35,9 @@ import 'package:expire_app/helpers/firestore_helper.dart';
 /* constants */
 import '../constants.dart';
 
+/* styles */
+import '../app_styles.dart' as styles;
+
 class AddItemModal extends StatefulWidget {
   final BuildContext modalContext;
 
@@ -44,6 +52,8 @@ class _AddItemModalState extends State<AddItemModal> {
   final TextEditingController _productNameController = TextEditingController();
 
   bool _isLoading = false;
+  bool _isFetchingProduct = false;
+
   final List<Map<String, Object>> _choicesList = [
     {"title": "MEAT", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
     {"title": "FISH", "icon": const FaIcon(FontAwesomeIcons.fish)},
@@ -63,15 +73,35 @@ class _AddItemModalState extends State<AddItemModal> {
   String? _imageUrl;
   ProductInsertionMethod productInsertionMethod = ProductInsertionMethod.None;
 
+  CameraController? _cameraController;
+
+  Nutriments _nutriments = new Nutriments();
+  String? _ingredientsText;
+  String? _nutriscore;
+
   @override
   initState() {
     super.initState();
+
+    /*_cameraController = CameraController(
+      cameras!.first,
+      ResolutionPreset.medium,
+      imageFormatGroup: ImageFormatGroup.yuv420,
+    );
+    _cameraController!.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {});
+    });*/
   }
 
   @override
   void dispose() {
-    _productNameController.dispose();
     super.dispose();
+    _productNameController.dispose();
+    //_cameraController!.dispose();
   }
 
   void _chipSelectionHandler(int index, selected) {
@@ -109,15 +139,21 @@ class _AddItemModalState extends State<AddItemModal> {
           title: _productData['title'] as String,
           expiration: _pickedDate, //_productData['expiration'] as DateTime,
           creatorId: '',
+          creatorName: '',
           image: productInsertionMethod == ProductInsertionMethod.Manually ? _pickedImage : _imageUrl,
+          nutriments: _nutriments,
+          ingredientsText: _ingredientsText,
+          nutriscore: _nutriscore,
         ),
       );
-    } catch (error) {
+    } catch (error, stacktrace) {
       const errorMessage = 'Chould not upload product. Please try again later';
 
       _showErrorDialog(errorMessage);
 
       print(error);
+      print('Exception: ' + error.toString());
+      print('Stacktrace: ' + stacktrace.toString());
     }
 
     /* add product locally */
@@ -150,13 +186,25 @@ class _AddItemModalState extends State<AddItemModal> {
 
   Future<void> _takePicture() async {
     // todo: dropdown to choose to take picture or upload
+
+    // todo bug on oneplus 6T, not working
+    /*try {
+      if (!_cameraController!.value.isInitialized) {
+        throw Exception("prova");
+      }
+      CameraPreview(_cameraController!);
+      _cameraController!.takePicture();
+    } catch (error) {
+      print(error);
+      rethrow;
+    }*/
+
     final picker = ImagePicker();
     final imageFile = await picker.pickImage(
       source: ImageSource.camera,
-      maxWidth: 300,
-      maxHeight: 300,
+      maxHeight: 480,
+      maxWidth: 640,
       preferredCameraDevice: CameraDevice.front,
-      //imageQuality: 90,
     );
 
     if (imageFile == null) {
@@ -172,27 +220,14 @@ class _AddItemModalState extends State<AddItemModal> {
     });
   }
 
+  //TODO: push and get nutritionscore and ingredientText to server + use consumer on health
+
   Future<void> _scanBarcode() async {
+    // todo: set meat, fish, vegetarian etc... automatically
+
     String? scanResult;
-    /*try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-        '#FF3F51B5',
-        'Cancel',
-        true,
-        ScanMode.BARCODE,
-      );
-      print(scanResult);
-    } on PlatformException {
-      rethrow;
-    }
 
-    if (!mounted || scanResult == "-1") {
-      return;
-    }
-
-    this.barcodeString = scanResult;
-    print(scanResult);*/
-    //this.barcodeString = "8013355998702"; // LEAVE FOR TESTING
+    //scanResult = "8013355998702"; // LEAVE FOR TESTING
 
     try {
       BarcodeResult result = await FlutterScandit(symbologies: [
@@ -203,28 +238,116 @@ class _AddItemModalState extends State<AddItemModal> {
         Symbology.UPCE,
       ], licenseKey: SCANDIT_API_KEY)
           .scanBarcode();
-      String barcodeData = result.data;
-      print(barcodeData);
+
+      if (result.data == null) {
+        return;
+      }
+
+      Vibrate.feedback(FeedbackType.success);
+
+      scanResult = result.data;
+      print(scanResult);
     } on BarcodeScanException catch (error) {
       print(error);
       rethrow;
     }
 
     print("fetching product...");
-    return;
-
-    final String url = "https://world.openfoodfacts.org/api/v0/product/$barcodeString.json";
-
-    final response = await http.get(Uri.parse(url));
-    final decodedResponse = json.decode(response.body);
 
     setState(() {
-      _productNameController.text = decodedResponse['product']["product_name"];
-      _imageUrl = decodedResponse['product']['selected_images']['front']['display']['it'];
-      _pickedImage = null;
-      productInsertionMethod = ProductInsertionMethod.Scanner;
+      _isFetchingProduct = true;
     });
-    print(_imageUrl);
+
+    await Future.delayed(Duration(seconds: 1)); // faking user interaction
+
+    openfoodfacts.ProductQueryConfiguration configuration = openfoodfacts.ProductQueryConfiguration(scanResult,
+        /*language: openfoodfacts.OpenFoodFactsLanguage.GERMAN,*/ fields: [openfoodfacts.ProductField.ALL]);
+    openfoodfacts.ProductResult result = await openfoodfacts.OpenFoodAPIClient.getProduct(configuration);
+
+    if (result.status == 1) {
+      /*print(result.product?.productName); // name of product
+      print(result.product?.nutriments); // get list of nutriments, null if not there
+      print(result.product?.ingredients); // list of ingredient objects
+      print(result.product?.ingredientsTags); // list of ingredient tags
+      print(result.product?.ingredientsText); // Stringa degli ingredienti
+      print(result.product?.ingredientsAnalysisTags?.veganStatus); // check if vegan or something
+      print(result.product?.images?[2].url);*/
+
+      // extracting product name
+      _productNameController.text = result.product?.productName ?? '';
+
+      // extract nutriments
+      final resultNutriments = result.product?.nutriments;
+      _nutriments.energyKcal = resultNutriments?.energyKcal;
+      _nutriments.fat = resultNutriments?.fat;
+      _nutriments.saturatedFat = resultNutriments?.saturatedFat;
+      _nutriments.carbohydrates = resultNutriments?.carbohydrates;
+      _nutriments.sugars = resultNutriments?.sugars;
+      _nutriments.fiber = resultNutriments?.fiber;
+      _nutriments.proteins = resultNutriments?.proteins;
+      _nutriments.salt = resultNutriments?.salt;
+
+      // extract ingredients
+      _ingredientsText = result.product?.ingredientsText;
+
+      // extract nutriscore
+      _nutriscore = result.product?.nutriscore;
+
+      // extract product image
+      final images = result.product?.images;
+      String? imageUrl;
+      if (images != null && images.isNotEmpty) {
+        imageUrl = images.firstWhere((element) => element.size == openfoodfacts.ImageSize.DISPLAY).url ??
+            result.product?.images?.firstWhere((element) => element.size == openfoodfacts.ImageSize.SMALL).url;
+      }
+
+      setState(() {
+        _pickedImage = null;
+        _imageUrl = imageUrl;
+        productInsertionMethod = ProductInsertionMethod.Scanner;
+      });
+    } else {
+      Vibrate.feedback(FeedbackType.error);
+
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(ctx).pop(true);
+          });
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10.0),
+              ),
+            ),
+            alignment: Alignment.center,
+            title: const Text(
+              "Not found",
+              textAlign: TextAlign.center,
+            ),
+            content: const Text(
+              "No product was found with scanned barcode. Try to scan it again or insert it manually.",
+              textAlign: TextAlign.center,
+            ),
+            titleTextStyle: TextStyle(
+              fontFamily: styles.currentFontFamily,
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ),
+            contentTextStyle: TextStyle(
+              fontFamily: styles.currentFontFamily,
+              fontSize: 16,
+            ),
+            backgroundColor: styles.primaryColor,
+          );
+        },
+      );
+    }
+
+    setState(() {
+      _isFetchingProduct = false;
+    });
   }
 
   @override
@@ -235,6 +358,7 @@ class _AddItemModalState extends State<AddItemModal> {
       child: Stack(
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 5, bottom: 10),
@@ -261,8 +385,7 @@ class _AddItemModalState extends State<AddItemModal> {
                         const Text(
                           "Category:",
                           style: TextStyle(
-                            color: Colors.grey,
-                            fontFamily: 'SanFrancisco',
+                            fontFamily: styles.sanFrancisco,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
@@ -286,7 +409,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                 label: Text(
                                   _choicesList[i]['title'] as String,
                                   style: const TextStyle(
-                                    fontFamily: 'SanFrancisco',
+                                    fontFamily: styles.currentFontFamily,
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -298,57 +421,10 @@ class _AddItemModalState extends State<AddItemModal> {
                             scrollDirection: Axis.horizontal,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: _takePicture,
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.indigo,
-                              ),
-                            ),
-                            child: productInsertionMethod == ProductInsertionMethod.None
-                                ? const Text(
-                                    "Click to add image",
-                                    textAlign: TextAlign.center,
-                                  )
-                                : productInsertionMethod == ProductInsertionMethod.Scanner
-                                    ? Image.network(
-                                        _imageUrl!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.file(
-                                        _pickedImage!,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                      ),
-                            /*_pickedImage != null
-                                ? Image.file(
-                                    _pickedImage!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                  )
-                                : _imageUrl != null
-                                    ? Image.network(
-                                        _imageUrl!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Text(
-                                        "Click to add image",
-                                        textAlign: TextAlign.center,
-                                      ),*/
-                            alignment: Alignment.center,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         const Text(
-                          "PRODUCT NAME:",
+                          "Product:",
                           style: TextStyle(
-                            color: Colors.grey,
-                            fontFamily: 'SanFrancisco',
+                            fontFamily: styles.sanFrancisco,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
@@ -359,7 +435,8 @@ class _AddItemModalState extends State<AddItemModal> {
                         ),
                         TextFormField(
                           controller: _productNameController,
-                          style: const TextStyle(color: Colors.black),
+                          style: const TextStyle(
+                              color: Colors.indigo, fontFamily: styles.currentFontFamily, fontWeight: FontWeight.bold),
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.red),
@@ -386,15 +463,66 @@ class _AddItemModalState extends State<AddItemModal> {
                         const SizedBox(
                           height: 10,
                         ),
+                        GestureDetector(
+                          onTap: _takePicture,
+                          child: Container(
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: styles.ghostWhite.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(13.0),
+                              child: Center(
+                                child: productInsertionMethod == ProductInsertionMethod.None
+                                    ? const Text(
+                                        "Click to add image",
+                                        textAlign: TextAlign.center,
+                                      )
+                                    : productInsertionMethod == ProductInsertionMethod.Scanner
+                                        ? _imageUrl == null
+                                            ? Image.asset(
+                                                "assets/images/missing_image_placeholder.png",
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(
+                                                _imageUrl!,
+                                                fit: BoxFit.cover,
+                                              )
+                                        : _pickedImage == null
+                                            ? Image.asset(
+                                                "assets/images/missing_image_placeholder.png",
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.file(
+                                                _pickedImage!,
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                              ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: [
                             Expanded(
                               child: TextButton.icon(
-                                icon: Icon(Icons.calendar_today_rounded),
-                                label: Text(
-                                  DateFormat('dd MMMM yyyy').format(_pickedDate),
-                                  style: const TextStyle(fontSize: 18),
+                                icon: FaIcon(
+                                  FontAwesomeIcons.calendarAlt,
+                                  size: 23,
                                 ),
+                                label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: styles.currentFontFamily,
+                                    )),
                                 style: ButtonStyle(
                                   padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.symmetric(vertical: 15),
@@ -402,7 +530,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
-                                      side: BorderSide(color: Colors.indigoAccent),
+                                      side: BorderSide(color: Colors.grey),
                                     ),
                                   ),
                                 ),
@@ -434,7 +562,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                 ? CircularProgressIndicator()
                                 : const Text(
                                     'Submit',
-                                    style: TextStyle(fontSize: 16),
+                                    style: styles.subheading,
                                   ),
                           ),
                         ),
@@ -451,18 +579,21 @@ class _AddItemModalState extends State<AddItemModal> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const Text(
-                  "Scan barcode ",
+                  "Scan barcode  ",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontFamily: "SanFrancisco",
+                    fontFamily: styles.sanFrancisco,
                   ),
                 ),
                 Ink(
-                  decoration: const ShapeDecoration(
+                  decoration: ShapeDecoration(
                     color: Colors.black87,
-                    shape: CircleBorder(),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ), //CircleBorder(),
                   ),
                   child: IconButton(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
                     icon: const FaIcon(
                       FontAwesomeIcons.barcode,
                       size: 27,
@@ -474,6 +605,27 @@ class _AddItemModalState extends State<AddItemModal> {
               ],
             ),
           ),
+          if (_isFetchingProduct)
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.black45,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: styles.ghostWhite,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Fetching product...",
+                    style: styles.subtitle,
+                  ),
+                ],
+              ),
+            )
         ],
       ),
     );

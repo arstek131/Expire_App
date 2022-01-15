@@ -194,7 +194,7 @@ class _ProductListTileState extends State<ProductListTile> {
             }
           },
           child: Card(
-            color: Color(0xFF023e7d).withOpacity(0.754), //styles.ghostWhite,
+            color: styles.deepIndigo.withOpacity(0.754), //styles.ghostWhite,
             margin: EdgeInsets.zero,
             //clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
@@ -270,7 +270,7 @@ class _ProductListTileState extends State<ProductListTile> {
                                     ? Colors.red
                                     : widget.expireStatus == ExpireStatus.ExpiringToday
                                         ? Colors.orange
-                                        : Colors.black,
+                                        : styles.ghostWhite,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -287,7 +287,7 @@ class _ProductListTileState extends State<ProductListTile> {
                 ),
                 Positioned(
                   bottom: 5,
-                  right: 5,
+                  right: 10,
                   child: Container(
                     alignment: Alignment.centerRight,
                     width: 200,
@@ -299,51 +299,19 @@ class _ProductListTileState extends State<ProductListTile> {
                           color: Colors.grey,
                           size: 20,
                         ),
-                        FutureBuilder(
-                          future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
-                          builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
-                              snapshot.connectionState == ConnectionState.waiting
-                                  ? Shimmer.fromColors(
-                                      baseColor: Colors.grey.shade300,
-                                      highlightColor: Colors.grey.shade100,
-                                      direction: ShimmerDirection.ltr,
-                                      child: Container(
-                                        width: 40.0,
-                                        height: 15.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    )
-                                  : Text(
-                                      snapshot.data ?? "UNKNOWN",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          color: styles.ghostWhite, fontSize: 15, fontFamily: styles.currentFontFamily),
-                                    ),
+                        Text(
+                          widget.product.creatorName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: styles.ghostWhite,
+                            fontSize: 15,
+                            fontFamily: styles.currentFontFamily,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 )
-                /*Positioned(
-                    top: 10,
-                    right: -5,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Transform.rotate(
-                        angle: 40 / 180 * math.pi,
-                        child: Container(
-                          height: 30,
-                          width: 70,
-                          alignment: Alignment.center,
-                          color: Colors.red,
-                          child: Text("EXPIRED"),
-                        ),
-                      ),
-                    ),
-                  ),*/
               ],
             ),
           ),

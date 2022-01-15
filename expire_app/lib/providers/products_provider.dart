@@ -32,6 +32,7 @@ class ProductsProvider extends ChangeNotifier {
   Future<void> fetchProducts() async {
     // todo: take images from url and save them locally!
     _items = await FirestoreHelper.instance.getProductsFromFamilyId(userInfo.UserInfo.instance.familyId!);
+    sortProducts(_ordering);
 
     if (this.initProvider) {
       this.initProvider = false;
@@ -41,15 +42,18 @@ class ProductsProvider extends ChangeNotifier {
           FirebaseFirestore.instance.collection('families').doc(userInfo.UserInfo.instance.familyId!).collection('products');
       reference.snapshots().listen(
         (querySnapshot) {
-          querySnapshot.docChanges.forEach((change) {
+          querySnapshot.docChanges.forEach((change) async {
             modifyProduct(
               Product(
-                id: change.doc.id,
-                title: change.doc['title'],
-                expiration: DateTime.parse(change.doc['expiration']),
-                creatorId: change.doc['creatorId'],
-                image: change.doc['imageUrl'],
-              ),
+                  id: change.doc.id,
+                  title: change.doc['title'],
+                  expiration: DateTime.parse(change.doc['expiration']),
+                  creatorId: change.doc['creatorId'],
+                  image: change.doc['imageUrl'],
+                  creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
+                  nutriments: FirestoreHelper.instance.parseNutriments(
+                    change.doc['nutriments'],
+                  )),
             );
             print("Something changed for: ${change.doc.id}");
           });
@@ -70,7 +74,9 @@ class ProductsProvider extends ChangeNotifier {
       title: product.title,
       expiration: product.expiration,
       creatorId: userInfo.UserInfo.instance.userId!,
+      creatorName: userInfo.UserInfo.instance.displayName!,
       image: product.image,
+      nutriments: product.nutriments,
     );
 
     _items.add(newProduct);
@@ -140,5 +146,9 @@ class ProductsProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Product getItemFromId(String productId) {
+    return _items.firstWhere((element) => element.id == productId);
   }
 }
