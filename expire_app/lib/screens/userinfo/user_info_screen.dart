@@ -148,24 +148,15 @@ class UserInfoScreen extends StatelessWidget {
                         HexColor("#F97D47")
                       ],
                       text: 'Leave family',
-                      //TODO evaluate whether to show dynamically
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        try {
-                          String? familyid = await FirestoreHelper.instance
-                              .getFamilyIdFromUserId(
-                                  userId: FirebaseAuthHelper.instance.userId!);
-                          List? familyUsrs = await FirestoreHelper.instance
-                              .getUsersFromFamilyId(familyId: familyid!);
-                          print(familyUsrs.length);
-
-                          familyUsrs.length >= 2
-                              ? print("Able to leave family")
-                              : print("You aren't part of a family");
-                        } catch (error) {
-                          const errorMessage =
-                              'An error occured.. Please try again later';
-                          print(errorMessage);
+                        dynamic resultant =
+                        await FamilyInfoScreen.getFamilyList();
+                        if (resultant is bool) {
+                          showErrorDialog(context, 'You don\'t belong to any family, so you can\'t leave!', 'Attention');
+                        } else {
+                          //TODO implement
+                          print('Able to leave family');
                         }
                       },
                     ),
@@ -192,7 +183,7 @@ class UserInfoScreen extends StatelessWidget {
                         dynamic resultant =
                             await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
-                          print('No famiglia io povero');
+                          showErrorDialog(context, 'You don\'t have a family!', 'Attention');
                         } else {
                           Map<String, dynamic> res =
                               resultant as Map<String, dynamic>;
@@ -219,15 +210,23 @@ class UserInfoScreen extends StatelessWidget {
                       ],
                       text: 'Join family',
                       imagePath: 'assets/icons/imac_icon.png',
-                      callback: () => SignUp.showFamilyRedeemModal(
-                          context,
-                          {
-                            'email': '',
-                            'password': '',
-                            'familyId': null,
-                          },
-                          () {},
-                          () {}),
+                      callback: () async {
+                        dynamic resultant =
+                            await FamilyInfoScreen.getFamilyList();
+                        if (resultant is bool) {
+                          SignUp.showFamilyRedeemModal(
+                              context,
+                              {
+                                'email': '',
+                                'password': '',
+                                'familyId': null,
+                              },
+                                  () {},
+                                  () {});
+                        } else {
+                          showErrorDialog(context, 'You can\'t join another family!', 'Attention');
+                        }
+                      },
                     ),
                     SizedBox(width: 3),
                   ],
@@ -356,51 +355,6 @@ class ShareFamFunQR extends StatelessWidget {
               style: robotoMedium16,
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class DisplayFamFun extends StatelessWidget {
-  final List famusrs;
-
-  const DisplayFamFun({
-    Key? key,
-    required this.famusrs,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Family users"),
-        centerTitle: true,
-      ),
-      body: Container(
-        child: ListView.builder(
-          itemCount: famusrs.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: () {},
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              title: Text(famusrs[index]),
-              leading: Container(
-                color: Colors.white,
-                width: 60,
-                height: 60,
-                child: const FlutterLogo(),
-              ),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-                size: 13,
-              ),
-            );
-          },
         ),
       ),
     );
