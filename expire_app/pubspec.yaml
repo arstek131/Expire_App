@@ -43,6 +43,9 @@ dependencies:
   flutter_scandit: ^0.1.0+2
   flutter_vibrate: ^1.3.0
   pull_to_refresh: ^2.0.0
+  sliding_up_panel: ^2.0.0+1
+  flutter_icons: ^1.1.0
+  tab_indicator_styler: ^2.0.0
 
   
   flutter_svg: ^1.0.0
@@ -117,7 +120,11 @@ flutter:
     - assets/images/name_input_image.png
     - assets/images/name_input_animated.gif
     - assets/images/empty_list_products.png
-    - assets/images/image_loading_placeholder.png
+    - assets/images/mock_img1.png
+    - assets/images/mock_img2.png
+    - assets/images/mock_img3.png
+    - assets/images/mock_img4.png
+    - assets/images/mock_img5.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
