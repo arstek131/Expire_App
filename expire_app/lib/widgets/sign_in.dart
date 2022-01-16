@@ -236,10 +236,9 @@ class _SignInState extends State<SignIn> {
                               }
                             },
                             child: _isLoading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.amber,
-                                    backgroundColor: Colors.grey,
+                                ? const CircularProgressIndicator.adaptive(
                                     strokeWidth: 2,
+                                    backgroundColor: styles.ghostWhite,
                                   )
                                 : const Text(
                                     'Submit',

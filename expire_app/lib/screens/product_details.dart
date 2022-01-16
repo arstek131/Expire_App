@@ -1,12 +1,15 @@
 import 'package:expire_app/enums/expire_status.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/providers/products_provider.dart';
+import 'package:expire_app/widgets/eco_product_detail.dart';
 import 'package:expire_app/widgets/expire_clip.dart';
 import 'package:expire_app/widgets/health_product_detail.dart';
+import 'package:expire_app/widgets/shopping_list_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 /* styles */
@@ -30,7 +33,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     String productId = ModalRoute.of(context)?.settings.arguments as String;
-    Product? _product = Provider.of<ProductsProvider>(context).getItemFromId(productId); //
+    Product _product = Provider.of<ProductsProvider>(context).getItemFromId(productId);
 
     return Scaffold(
       appBar: AppBar(
@@ -78,6 +81,73 @@ class _ProductDetailsState extends State<ProductDetails> {
                   [
                     Card(
                       elevation: 5,
+                      color: styles.deepIndigo.withOpacity(0.9),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: styles.primaryColor,
+                              radius: 35,
+                              //foregroundImage: , todo: take image of user and insert here
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  'User',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: styles.ghostWhite,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: styles.currentFontFamily,
+                                  ),
+                                ),
+                                Text(
+                                  _product.creatorName,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: styles.ghostWhite,
+                                    fontSize: 16,
+                                    fontFamily: styles.currentFontFamily,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  'Uploaded on date',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: styles.ghostWhite,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: styles.currentFontFamily,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('dd MMM yyyy').format(_product.dateAdded),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: styles.ghostWhite,
+                                    fontSize: 14,
+                                    fontFamily: styles.currentFontFamily,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 5,
                       color: styles.deepIndigo.withOpacity(0.9), //styles.secondaryColor,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -91,8 +161,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 }),
                                 icon: FaIcon(
                                   FontAwesomeIcons.heartbeat,
-                                  size: 30,
-                                  color: _page == Pages.Health ? styles.tertiaryColor : Colors.grey.shade300,
+                                  size: 32,
+                                  color: _page == Pages.Health ? Colors.red.shade700 : Colors.grey.shade300,
                                 ),
                               ),
                               IconButton(
@@ -102,7 +172,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 icon: FaIcon(
                                   FontAwesomeIcons.leaf,
                                   size: 30,
-                                  color: _page == Pages.Eco ? styles.tertiaryColor : Colors.grey.shade300,
+                                  color: _page == Pages.Eco ? Colors.green : Colors.grey.shade300,
                                 ),
                               ),
                               IconButton(
@@ -110,9 +180,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   _page = Pages.ShoppingList;
                                 }),
                                 icon: FaIcon(
-                                  FontAwesomeIcons.stream,
+                                  FontAwesomeIcons.receipt,
                                   size: 30,
-                                  color: _page == Pages.ShoppingList ? styles.tertiaryColor : Colors.grey.shade300,
+                                  color: _page == Pages.ShoppingList ? Colors.lightBlue.shade300 : Colors.grey.shade300,
                                 ),
                               ),
                               IconButton(
@@ -120,7 +190,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   _page = Pages.Score;
                                 }),
                                 icon: FaIcon(
-                                  FontAwesomeIcons.appleAlt,
+                                  FontAwesomeIcons.font,
                                   size: 30,
                                   color: _page == Pages.Score ? styles.tertiaryColor : Colors.grey.shade300,
                                 ),
@@ -136,16 +206,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                               product: _product,
                             ),
                           if (_page == Pages.Eco)
-                            Container(
-                              height: 200,
-                              color: Colors.green,
+                            EcoProductDetail(
+                              product: _product,
                             ),
                           if (_page == Pages.ShoppingList)
                             // add to some shopping list
-                            Container(
-                              height: 200,
-                              color: Colors.orange,
-                            ),
+                            ShoppingListDetail(),
                           if (_page == Pages.Score)
                             // add to some shopping list
                             Container(
@@ -291,9 +357,11 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                       children: [
                         Hero(
                           tag: 'produt-image${product.id}',
-                          child: SizedBox(
-                            height: max(120 * percent, 40),
-                            width: max(120 * percent, 40),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 5),
+                            //color: Colors.red,
+                            //height: max(115 * percent, 40),
+                            width: max(110 * percent, 40),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: product.image != null
@@ -317,29 +385,54 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 200,
-                                child: Text(
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            margin: EdgeInsets.only(top: 20 * percent),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  product.brandName ?? 'No brand',
+                                  style: TextStyle(
+                                      fontFamily: styles.currentFontFamily,
+                                      color: styles.ghostWhite.withOpacity(0.8),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
                                   product.title,
-                                  style: styles.heading,
+
+                                  style: TextStyle(
+                                    height: 0.96,
+                                    fontFamily: styles.currentFontFamily,
+                                    color: styles.ghostWhite,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ), //styles.heading,
                                   maxLines: 2,
+
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Expiration: ${DateFormat('dd MMMM yyyy').format(product.expiration)}',
-                                style: styles.subheading,
-                              ),
-                            ],
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
+                                  'Expiration: ${DateFormat('dd MMMM yyyy').format(product.expiration)}',
+                                  style: styles.subheading,
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
+                                  product.quantity ?? '',
+                                  style: styles.subheading,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -354,36 +447,6 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
             top: 15,
             child: ExpireClip(_checkExpireStatus(product.expiration), product.expiration),
           ),
-          Positioned(
-            right: 20,
-            bottom: 10,
-            child: Opacity(
-              opacity: percent,
-              child: Container(
-                alignment: Alignment.centerRight,
-                width: 200,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Icon(
-                      Icons.person,
-                      color: styles.tertiaryColor,
-                      size: 24,
-                    ),
-                    Text(
-                      product.creatorName,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: styles.ghostWhite,
-                        fontSize: 16,
-                        fontFamily: styles.currentFontFamily,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

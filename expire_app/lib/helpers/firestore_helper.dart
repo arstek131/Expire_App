@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,10 +85,22 @@ class FirestoreHelper {
           id: product.id,
           title: product['title'],
           expiration: DateTime.parse(product['expiration']),
+          dateAdded: DateTime.parse(product['dateAdded']),
           creatorId: product['creatorId'],
           creatorName: (await getDisplayNameFromUserId(userId: product['creatorId']))!,
           image: product['imageUrl'],
           nutriments: nutriments,
+          ingredientsText: product['ingredientsText'],
+          nutriscore: product['nutriscore'],
+          allergens: product['allergens'] == null ? null : List<String>.from(product['allergens']),
+          ecoscore: product['ecoscore'],
+          packaging: product['packaging'],
+          ingredientLevels: product['ingredientLevels'],
+          isPalmOilFree: product['isPalmOilFree'],
+          isVegetarian: product['isVegetarian'],
+          isVegan: product['isVegan'],
+          brandName: product['brandName'],
+          quantity: product['quantity'],
         ),
       );
     }
@@ -149,9 +163,21 @@ class FirestoreHelper {
     final data = {
       'title': product.title,
       'expiration': product.expiration.toIso8601String(),
+      'dateAdded': product.dateAdded.toIso8601String(),
       'creatorId': product.creatorId,
       'imageUrl': imageUrl,
       'nutriments': product.nutriments?.toJson(),
+      'nutriscore': product.nutriscore,
+      'ingredientsText': product.ingredientsText,
+      'allergens': product.allergens,
+      'ecoscore': product.ecoscore,
+      'packaging': product.packaging,
+      'ingredientLevels': product.ingredientLevels,
+      'isPalmOilFree': product.isPalmOilFree,
+      'isVegetarian': product.isVegetarian,
+      'isVegan': product.isVegan,
+      'brandName': product.brandName,
+      'quantity': product.quantity,
     };
 
     final productRef = await firestore.collection('families').doc(userInfo.familyId).collection('products');
@@ -174,7 +200,7 @@ class FirestoreHelper {
     await firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).delete();
 
     // delete image
-    if (imageUrl != null) {
+    if (imageUrl != null && imageUrl.contains("firebasestorage")) {
       String filename = FirebaseStorage.instance.refFromURL(imageUrl).name;
 
       final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);

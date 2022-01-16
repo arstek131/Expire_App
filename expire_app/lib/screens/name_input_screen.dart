@@ -241,7 +241,10 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
                     },
                     child: _isLoading
                         ? const FittedBox(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator.adaptive(
+                              strokeWidth: 2,
+                              backgroundColor: styles.ghostWhite,
+                            ),
                           )
                         : const Text(
                             "NEXT",

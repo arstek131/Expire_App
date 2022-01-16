@@ -57,19 +57,6 @@ class _ProductListTileState extends State<ProductListTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      /*decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            spreadRadius: 6,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),*/
-
-      //margin: const EdgeInsets.only(bottom: 10.0),
       child: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(widget.first ? 15.0 : 0.0),
@@ -221,12 +208,16 @@ class _ProductListTileState extends State<ProductListTile> {
                             borderRadius: BorderRadius.circular(10.0),
                             child: widget.product.image != null
                                 ? widget.product.image is String
-                                    ? Image.network(
+                                    ? FadeInImage.assetNetwork(
+                                        placeholder: "assets/images/image_loading_placeholder.png", // Todo: change, sucks
+                                        image: widget.product.image!,
+                                      )
+                                    /*Image.network(
                                         widget.product.image!,
                                         fit: BoxFit.cover,
                                         color: const Color.fromRGBO(255, 255, 255, 0.85),
                                         colorBlendMode: BlendMode.modulate,
-                                      )
+                                      )*/
                                     : Image.file(
                                         widget.product.image!,
                                         fit: BoxFit.cover,

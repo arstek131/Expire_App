@@ -7,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:openfoodfacts/model/EcoscoreData.dart';
+import 'package:openfoodfacts/model/NutrientLevels.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspaths;
@@ -16,6 +18,7 @@ import 'dart:convert';
 import 'package:flutter_scandit/flutter_scandit.dart';
 import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
 /* provider */
 import 'package:provider/provider.dart';
@@ -75,6 +78,15 @@ class _AddItemModalState extends State<AddItemModal> {
   Nutriments _nutriments = new Nutriments();
   String? _ingredientsText;
   String? _nutriscore;
+  List<String>? _allergens;
+  String? _ecoscore;
+  String? _packaging;
+  Map<String, String>? _ingredientLevels;
+  String? _isPalmOilFree;
+  String? _isVegetarian;
+  String? _isVegan;
+  String? _brandName;
+  String? _quantity;
 
   @override
   initState() {
@@ -122,12 +134,22 @@ class _AddItemModalState extends State<AddItemModal> {
           id: null,
           title: _productData['title'] as String,
           expiration: _pickedDate, //_productData['expiration'] as DateTime,
+          dateAdded: DateTime.now(),
           creatorId: '',
           creatorName: '',
           image: productInsertionMethod == ProductInsertionMethod.Manually ? _pickedImage : _imageUrl,
           nutriments: _nutriments,
           ingredientsText: _ingredientsText,
           nutriscore: _nutriscore,
+          allergens: _allergens,
+          ecoscore: _ecoscore,
+          packaging: _packaging,
+          ingredientLevels: _ingredientLevels,
+          isPalmOilFree: _isPalmOilFree,
+          isVegetarian: _isVegetarian,
+          isVegan: _isVegan,
+          brandName: _brandName,
+          quantity: _quantity,
         ),
       );
     } catch (error, stacktrace) {
@@ -211,7 +233,8 @@ class _AddItemModalState extends State<AddItemModal> {
 
     String? scanResult;
 
-    //scanResult = "8013355998702"; // LEAVE FOR TESTING
+    scanResult = "8013355999662"; // LEAVE FOR TESTING
+    scanResult = "3168930010265";
 
     try {
       BarcodeResult result = await FlutterScandit(symbologies: [
@@ -249,14 +272,6 @@ class _AddItemModalState extends State<AddItemModal> {
     openfoodfacts.ProductResult result = await openfoodfacts.OpenFoodAPIClient.getProduct(configuration);
 
     if (result.status == 1) {
-      /*print(result.product?.productName); // name of product
-      print(result.product?.nutriments); // get list of nutriments, null if not there
-      print(result.product?.ingredients); // list of ingredient objects
-      print(result.product?.ingredientsTags); // list of ingredient tags
-      print(result.product?.ingredientsText); // Stringa degli ingredienti
-      print(result.product?.ingredientsAnalysisTags?.veganStatus); // check if vegan or something
-      print(result.product?.images?[2].url);*/
-
       // extracting product name
       _productNameController.text = result.product?.productName ?? '';
 
@@ -271,8 +286,35 @@ class _AddItemModalState extends State<AddItemModal> {
       _nutriments.proteins = resultNutriments?.proteins;
       _nutriments.salt = resultNutriments?.salt;
 
-      // extract ingredients
-      _ingredientsText = result.product?.ingredientsText;
+      // extracting nutriments levels
+      final _ingredientLevelsTmp = result.product?.nutrientLevels?.levels;
+
+      if (_ingredientLevelsTmp != null) {
+        for (final ingredient in _ingredientLevelsTmp.keys) {
+          _ingredientLevels?.putIfAbsent(ingredient, () => EnumToString.convertToString(_ingredientLevelsTmp[ingredient]));
+        }
+      }
+
+      // extraction of ingredients analysis (vegan, vegetaria, palm oil free...)
+      _isPalmOilFree = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.palmOilFreeStatus);
+      _isVegan = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.veganStatus);
+      _isVegetarian = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.vegetarianStatus);
+
+      // extracting ecological data
+      _ecoscore = result.product?.ecoscoreGrade;
+      _packaging = result.product?.packaging;
+
+      // extract brand name(s)
+      _brandName = result.product?.brands;
+
+      // extract quantity
+      _quantity = result.product?.quantity;
+
+      // extract ingredients (default english)
+      _ingredientsText = result.product?.ingredientsTextInLanguages?[openfoodfacts.OpenFoodFactsLanguage.ENGLISH];
+      if (_ingredientsText == null) {
+        _ingredientsText = result.product?.ingredientsText;
+      }
 
       // extract nutriscore
       _nutriscore = result.product?.nutriscore;
@@ -284,6 +326,9 @@ class _AddItemModalState extends State<AddItemModal> {
         imageUrl = images.firstWhere((element) => element.size == openfoodfacts.ImageSize.DISPLAY).url ??
             result.product?.images?.firstWhere((element) => element.size == openfoodfacts.ImageSize.SMALL).url;
       }
+
+      // extracting allergies or intolerances
+      _allergens = result.product?.allergens?.names;
 
       setState(() {
         _pickedImage = null;
@@ -543,7 +588,10 @@ class _AddItemModalState extends State<AddItemModal> {
                               }
                             },
                             child: _isLoading
-                                ? CircularProgressIndicator()
+                                ? CircularProgressIndicator.adaptive(
+                                    strokeWidth: 2,
+                                    backgroundColor: styles.ghostWhite,
+                                  )
                                 : const Text(
                                     'Submit',
                                     style: styles.subheading,
@@ -597,8 +645,9 @@ class _AddItemModalState extends State<AddItemModal> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(
-                    color: styles.ghostWhite,
+                  CircularProgressIndicator.adaptive(
+                    strokeWidth: 2,
+                    backgroundColor: styles.ghostWhite,
                   ),
                   SizedBox(
                     height: 20,

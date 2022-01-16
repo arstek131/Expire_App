@@ -79,7 +79,10 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('could not fetch data'));
               } else {
-                return CircularProgressIndicator(color: Colors.red);
+                return CircularProgressIndicator.adaptive(
+                  strokeWidth: 2,
+                  backgroundColor: Colors.white,
+                );
               }
             },
           ),

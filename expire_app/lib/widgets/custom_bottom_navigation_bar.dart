@@ -62,7 +62,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             ),
             CustomBottomNavigationBarItem(
               selected: widget.pageIndex == 1,
-              icon: const FaIcon(FontAwesomeIcons.elementor),
+              icon: const FaIcon(FontAwesomeIcons.receipt),
               selectedSize: _selectedIconSize,
               unselectedSize: _unselectedIconSize,
               onTap: () {

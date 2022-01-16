@@ -24,7 +24,7 @@ class HealthProductListTile extends StatelessWidget {
             ),
           ),
           Text(
-            '${this.quantity ?? 'N/A'} ${this.symbol}',
+            (this.quantity == null ? 'N/A' : quantity!.toStringAsFixed(2)) + ' ${this.symbol}',
             style: TextStyle(
               fontFamily: styles.currentFontFamily,
               color: styles.ghostWhite,

@@ -20,6 +20,9 @@ import 'recipe_screen.dart';
 import 'userinfo/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
+/* styles */
+import '../app_styles.dart' as styles;
+
 /* helpers */
 import '../enums/sign_in_method.dart';
 
@@ -72,7 +75,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Products",
       },
       {
-        'page':  Center(
+        'page': Center(
           child: Text(firebaseAuthHelper.displayName ?? "null"),
         ),
         'title': "Analytics",
@@ -106,7 +109,10 @@ class _ProductsScreenState extends State<MainAppScreen> {
               future: initUserInfoProvider,
               builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
                   ? const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: 2,
+                        backgroundColor: styles.ghostWhite,
+                      ),
                     )
                   : Stack(
                       children: [

@@ -45,21 +45,33 @@ class ProductsProvider extends ChangeNotifier {
           querySnapshot.docChanges.forEach((change) async {
             modifyProduct(
               Product(
-                  id: change.doc.id,
-                  title: change.doc['title'],
-                  expiration: DateTime.parse(change.doc['expiration']),
-                  creatorId: change.doc['creatorId'],
-                  image: change.doc['imageUrl'],
-                  creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
-                  nutriments: FirestoreHelper.instance.parseNutriments(
-                    change.doc['nutriments'],
-                  )),
+                id: change.doc.id,
+                title: change.doc['title'],
+                expiration: DateTime.parse(change.doc['expiration']),
+                dateAdded: DateTime.parse(change.doc['dateAdded']),
+                creatorId: change.doc['creatorId'],
+                image: change.doc['imageUrl'],
+                creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
+                nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
+                ingredientsText: change.doc['ingredientsText'],
+                nutriscore: change.doc['nutriscore'],
+                allergens: List<String>.from(change.doc['allergens']),
+                ecoscore: change.doc['ecoscore'],
+                packaging: change.doc['packaging'],
+                ingredientLevels: change.doc['ingredientLevels'],
+                isPalmOilFree: change.doc['isPalmOilFree'],
+                isVegetarian: change.doc['isVegetarian'],
+                isVegan: change.doc['isVegan'],
+                brandName: change.doc['brandName'],
+                quantity: change.doc['quantity'],
+              ),
             );
             print("Something changed for: ${change.doc.id}");
           });
         },
       );
     }
+
     await Future.delayed(Duration(milliseconds: 300));
     notifyListeners();
   }
@@ -73,10 +85,22 @@ class ProductsProvider extends ChangeNotifier {
       id: productId,
       title: product.title,
       expiration: product.expiration,
+      dateAdded: product.dateAdded,
       creatorId: userInfo.UserInfo.instance.userId!,
       creatorName: userInfo.UserInfo.instance.displayName!,
       image: product.image,
       nutriments: product.nutriments,
+      ingredientsText: product.ingredientsText,
+      nutriscore: product.nutriscore,
+      allergens: product.allergens,
+      ecoscore: product.ecoscore,
+      packaging: product.packaging,
+      ingredientLevels: product.ingredientLevels,
+      isPalmOilFree: product.isPalmOilFree,
+      isVegetarian: product.isVegetarian,
+      isVegan: product.isVegan,
+      brandName: product.brandName,
+      quantity: product.quantity,
     );
 
     _items.add(newProduct);
