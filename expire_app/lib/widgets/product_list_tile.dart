@@ -191,12 +191,12 @@ class _ProductListTileState extends State<ProductListTile> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                  padding: const EdgeInsets.only(left: 15.0, top: 15, bottom: 15),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        height: 120,
-                        width: 120,
+                        height: 130,
+                        width: 110,
                         /*decoration: const BoxDecoration(
                           border: Border(
                             right: BorderSide(width: 2.5, color: Colors.black87),
@@ -211,6 +211,7 @@ class _ProductListTileState extends State<ProductListTile> {
                                     ? FadeInImage.assetNetwork(
                                         placeholder: "assets/images/image_loading_placeholder.png", // Todo: change, sucks
                                         image: widget.product.image!,
+                                        fit: BoxFit.cover,
                                       )
                                     /*Image.network(
                                         widget.product.image!,
@@ -232,11 +233,11 @@ class _ProductListTileState extends State<ProductListTile> {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 15,
                       ),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
@@ -254,8 +255,10 @@ class _ProductListTileState extends State<ProductListTile> {
                             ),
                             Text(
                               'Expiration: ${DateFormat('dd MMMM yyyy').format(widget.product.expiration)}',
+                              maxLines: 2,
                               style: TextStyle(
                                 fontFamily: styles.currentFontFamily,
+                                overflow: TextOverflow.fade,
                                 fontSize: 14,
                                 color: widget.expireStatus == ExpireStatus.Expired
                                     ? Colors.red

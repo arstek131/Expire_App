@@ -11,6 +11,9 @@ const currentFontFamily = circular;
 const Color ghostWhite = Color(0xFFF8F8FF);
 const Color catchyBlue = Color(0xFF5353FF);
 const Color deepIndigo = Color(0xFF023e7d);
+Color deepOrange = Colors.orange.shade700;
+Color deepGreen = Colors.green.shade600;
+Color lightIndigo = secondaryColor.withOpacity(0.95);
 
 const Color primaryColor = catchyBlue;
 const Color secondaryColor = Colors.indigoAccent;

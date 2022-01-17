@@ -4,7 +4,7 @@ import '../app_styles.dart' as styles;
 import 'package:intl/intl.dart' show toBeginningOfSentenceCase;
 
 enum Type { PALM_OIL, VEGETARIAN, VEGAN }
-enum Free { FREE, MAYBE, NOT }
+enum Free { FREE, MAYBE, NOT, UNKNOWN }
 
 class IngredientAnalysisClip extends StatelessWidget {
   IngredientAnalysisClip(this.isXfree);
@@ -33,6 +33,8 @@ class IngredientAnalysisClip extends StatelessWidget {
         free = Free.NOT;
       } else if (isXfree!.contains("MAYBE")) {
         free = Free.MAYBE;
+      } else if (isXfree!.contains("UNKNOWN")) {
+        free = Free.UNKNOWN;
       } else {
         free = Free.FREE;
       }
@@ -48,7 +50,9 @@ class IngredientAnalysisClip extends StatelessWidget {
               ? Colors.green
               : free == Free.MAYBE
                   ? Colors.orange.shade400
-                  : Colors.red,
+                  : free == Free.NOT
+                      ? Colors.red
+                      : Colors.grey,
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Row(
             mainAxisSize: MainAxisSize.min,

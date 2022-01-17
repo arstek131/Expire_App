@@ -95,7 +95,7 @@ class FirestoreHelper {
           allergens: product['allergens'] == null ? null : List<String>.from(product['allergens']),
           ecoscore: product['ecoscore'],
           packaging: product['packaging'],
-          ingredientLevels: product['ingredientLevels'],
+          ingredientLevels: product['ingredientLevels'] == null ? null : Map<String, String>.from(product['ingredientLevels']),
           isPalmOilFree: product['isPalmOilFree'],
           isVegetarian: product['isVegetarian'],
           isVegan: product['isVegan'],

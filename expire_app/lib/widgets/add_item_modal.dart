@@ -57,10 +57,11 @@ class _AddItemModalState extends State<AddItemModal> {
   bool _isFetchingProduct = false;
 
   final List<Map<String, Object>> _choicesList = [
-    {"title": "MEAT", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
-    {"title": "FISH", "icon": const FaIcon(FontAwesomeIcons.fish)},
-    {"title": "VEGETARIAN", "icon": const FaIcon(FontAwesomeIcons.leaf)},
-    {"title": "FRUIT", "icon": const FaIcon(FontAwesomeIcons.appleAlt)}
+    {"title": "Meat", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
+    {"title": "Fish", "icon": const FaIcon(FontAwesomeIcons.fish)},
+    {"title": "Vegetarian", "icon": const FaIcon(FontAwesomeIcons.carrot)},
+    {"title": "Vegan", "icon": const FaIcon(FontAwesomeIcons.egg)},
+    {"title": "Palm-oil free", "icon": const FaIcon(FontAwesomeIcons.tint)}
   ];
   List<int> _chosenIndexes = [];
 
@@ -190,7 +191,7 @@ class _AddItemModalState extends State<AddItemModal> {
     print(_pickedDate.toLocal());
   }
 
-  Future<void> _takePicture() async {
+  Future<void> _takePicture(ImageSource imageSource) async {
     // todo: dropdown to choose to take picture or upload
 
     // todo bug on oneplus 6T, not working
@@ -207,7 +208,7 @@ class _AddItemModalState extends State<AddItemModal> {
 
     final picker = ImagePicker();
     final imageFile = await picker.pickImage(
-      source: ImageSource.camera,
+      source: imageSource,
       maxHeight: 480,
       maxWidth: 640,
       preferredCameraDevice: CameraDevice.front,
@@ -235,8 +236,9 @@ class _AddItemModalState extends State<AddItemModal> {
 
     scanResult = "8013355999662"; // LEAVE FOR TESTING
     scanResult = "3168930010265";
+    scanResult = "689544001737";
 
-    try {
+    /*try {
       BarcodeResult result = await FlutterScandit(symbologies: [
         Symbology.EAN13_UPCA,
         Symbology.EAN8,
@@ -257,7 +259,7 @@ class _AddItemModalState extends State<AddItemModal> {
     } on BarcodeScanException catch (error) {
       print(error);
       rethrow;
-    }
+    }*/
 
     print("fetching product...");
 
@@ -290,6 +292,7 @@ class _AddItemModalState extends State<AddItemModal> {
       final _ingredientLevelsTmp = result.product?.nutrientLevels?.levels;
 
       if (_ingredientLevelsTmp != null) {
+        _ingredientLevels = {};
         for (final ingredient in _ingredientLevelsTmp.keys) {
           _ingredientLevels?.putIfAbsent(ingredient, () => EnumToString.convertToString(_ingredientLevelsTmp[ingredient]));
         }
@@ -382,250 +385,347 @@ class _AddItemModalState extends State<AddItemModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //alignment: Alignment.bottomCenter,
       height: MediaQuery.of(context).size.height * 0.9,
       child: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 5, bottom: 10),
-                height: 5,
-                width: MediaQuery.of(widget.modalContext).size.width * 0.4,
-                decoration: const BoxDecoration(
-                  color: Colors.black45,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(3),
+          Container(
+            color: styles.secondaryColor.withOpacity(0.95),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 5, bottom: 10),
+                  height: 5,
+                  width: MediaQuery.of(widget.modalContext).size.width * 0.4,
+                  decoration: const BoxDecoration(
+                    color: Colors.black45,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(3),
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(color: Colors.black54, blurRadius: 15.0, offset: Offset(0.0, 0.75)),
+                    ],
                   ),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(color: Colors.black54, blurRadius: 15.0, offset: Offset(0.0, 0.75)),
-                  ],
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: Form(
-                    key: _formKey,
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        const Text(
-                          "Category:",
-                          style: TextStyle(
-                            fontFamily: styles.sanFrancisco,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Form(
+                      key: _formKey,
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          const SizedBox(
+                            height: 10,
                           ),
-                          textAlign: TextAlign.left,
-                        ),
-                        SizedBox(
-                          height: 80,
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _choicesList.length,
-                            itemBuilder: (context, i) => Padding(
-                              padding: const EdgeInsets.only(right: 15.0),
-                              child: ChoiceChip(
-                                elevation: 2,
-                                selectedColor: Colors.amber,
-                                backgroundColor: Colors.indigo[100],
+                          const Text(
+                            "Product informations",
+                            style: styles.heading,
+                            textAlign: TextAlign.center,
+                          ),
+                           const SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                isScrollControlled: true,
+                                enableDrag: true,
+                                context: context,
                                 shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                ),
-                                avatar: _choicesList[i]['icon'] as FaIcon,
-                                label: Text(
-                                  _choicesList[i]['title'] as String,
-                                  style: const TextStyle(
-                                    fontFamily: styles.currentFontFamily,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
                                   ),
                                 ),
-                                selected: _chosenIndexes.contains(i),
-                                onSelected: (bool selected) => _chipSelectionHandler(i, selected),
-                              ),
-                            ),
-                            scrollDirection: Axis.horizontal,
-                          ),
-                        ),
-                        const Text(
-                          "Product:",
-                          style: TextStyle(
-                            fontFamily: styles.sanFrancisco,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: _productNameController,
-                          style: const TextStyle(
-                              color: Colors.indigo, fontFamily: styles.currentFontFamily, fontWeight: FontWeight.bold),
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(15),
-                              ),
-                            ),
-                            hintText: 'Product name',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-
-                            return null;
-                          },
-                          onSaved: (value) {
-                            _productData['title'] = value!;
-                          },
-                          onFieldSubmitted: (value) {
-                            _productData['title'] = value;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: _takePicture,
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: styles.ghostWhite.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(13.0),
-                              child: Center(
-                                child: productInsertionMethod == ProductInsertionMethod.None
-                                    ? const Text(
-                                        "Click to add image",
-                                        textAlign: TextAlign.center,
-                                      )
-                                    : productInsertionMethod == ProductInsertionMethod.Scanner
-                                        ? _imageUrl == null
-                                            ? Image.asset(
-                                                "assets/images/missing_image_placeholder.png",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.network(
-                                                _imageUrl!,
-                                                fit: BoxFit.cover,
-                                              )
-                                        : _pickedImage == null
-                                            ? Image.asset(
-                                                "assets/images/missing_image_placeholder.png",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                _pickedImage!,
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                builder: (BuildContext ctx) {
+                                  return Row(
+                                    children: [
+                                      
+                                        Expanded(
+                                          child: GestureDetector(
+                                        onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+                                        child: Container(
+                                          color: Colors.blue.shade300,
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
+                                                SizedBox(height: 2),
+                                                Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ),
+                                      
+                                        Expanded(
+                                          child: GestureDetector(
+                                        onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                          child: Container(
+                                            color: Colors.pink.shade600,
+                                            child: Container(
+                                               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                  SizedBox(height: 2),
+                                                  Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                ],
                                               ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      
+                                      
+                                    ],
+                                  );
+                                },
+                              );
+                              if (imageSource == null) {
+                                return;
+                              }
+
+                              _takePicture(imageSource);
+                            },
+                            child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: styles.ghostWhite.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13.0),
+                                child: Center(
+                                  child: productInsertionMethod == ProductInsertionMethod.None
+                                      ? const Text(
+                                          "Click to add image",
+                                          textAlign: TextAlign.center,
+                                        )
+                                      : productInsertionMethod == ProductInsertionMethod.Scanner
+                                          ? _imageUrl == null
+                                              ? Image.asset(
+                                                  "assets/images/missing_image_placeholder.png",
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.network(
+                                                  _imageUrl!,
+                                                  fit: BoxFit.cover,
+                                                )
+                                          : _pickedImage == null
+                                              ? Image.asset(
+                                                  "assets/images/missing_image_placeholder.png",
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  _pickedImage!,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextButton.icon(
-                                icon: FaIcon(
-                                  FontAwesomeIcons.calendarAlt,
-                                  size: 23,
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            controller: _productNameController,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: styles.ghostWhite, 
+                                fontFamily: styles.currentFontFamily, 
+                                fontWeight: FontWeight.bold,
                                 ),
-                                label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: styles.currentFontFamily,
-                                    )),
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.symmetric(vertical: 15),
+                            decoration: InputDecoration( 
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: styles.ghostWhite,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade400,
+                                  width: 2.0,
+                                ), 
+                              ),
+                              hintText: 'Product name',
+                              hintStyle: styles.subheading
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _productData['title'] = value!;
+                            },
+                            onFieldSubmitted: (value) {
+                              _productData['title'] = value;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextButton.icon(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.calendarAlt,
+                                    size: 23,
+                                    color: styles.ghostWhite.withOpacity(0.9)
                                   ),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      side: BorderSide(color: Colors.grey),
+                                  label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
+                                      style: styles.subheading,
+                                      ),
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(
+                                      EdgeInsets.symmetric(vertical: 15),
+                                    ),
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        side: BorderSide(color: styles.ghostWhite),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                onPressed: () => _selectDate(context),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          width: double.infinity,
-                          height: 55,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14.0),
+                                  onPressed: () => _selectDate(context),
                                 ),
                               ),
-                            ),
-                            onPressed: () async {
-                              // Validate returns true if the form is valid, or false otherwise.
-                              if (_formKey.currentState!.validate()) {
-                                await _submit();
-                                Navigator.of(widget.modalContext).pop();
-                              }
-                            },
-                            child: _isLoading
-                                ? CircularProgressIndicator.adaptive(
-                                    strokeWidth: 2,
-                                    backgroundColor: styles.ghostWhite,
-                                  )
-                                : const Text(
-                                    'Submit',
-                                    style: styles.subheading,
-                                  ),
+                            ],
                           ),
-                        ),
-                      ],
+                          Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            width: double.infinity,
+                            height: 55,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(
+                                  styles.deepOrange,
+                                ),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14.0),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () async {
+                                // Validate returns true if the form is valid, or false otherwise.
+                                if (_formKey.currentState!.validate()) {
+                                  await _submit();
+                                  Navigator.of(widget.modalContext).pop();
+                                }
+                              },
+                              child: _isLoading
+                                  ? CircularProgressIndicator.adaptive(
+                                      strokeWidth: 2,
+                                      backgroundColor: styles.ghostWhite,
+                                    )
+                                  : const Text(
+                                      'Submit',
+                                      style: styles.subheading,
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                          const Text(
+                            "Category",
+                            style: styles.heading,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 80,
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: _choicesList.length,
+                              itemBuilder: (context, i) => Padding(
+                                padding: const EdgeInsets.only(right: 15.0),
+                                child: ChoiceChip(
+                                  elevation: 2,
+                                  selectedColor: styles.deepGreen,
+                                  backgroundColor: Colors.indigo[100],
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  ),
+                                  labelStyle: _chosenIndexes.contains(i) 
+                                    ? styles.subheading 
+                                    : TextStyle(fontFamily: styles.currentFontFamily, 
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                      ),
+                                  avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
+                                  label: Text(
+                                    _choicesList[i]['title'] as String,
+                                  ),
+                                  selected: _chosenIndexes.contains(i),
+                                  onSelected: (bool selected) => _chipSelectionHandler(i, selected),
+                                ),
+                              ),
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            "Additional info",
+                            style: styles.heading,
+                            textAlign: TextAlign.center,
+                          ),
+                          
+                          // dummy element for default padding, do not delete
+                          const SizedBox(
+                            height: 150,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
+          Positioned(
+            bottom: 20,
+            right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const Text(
                   "Scan barcode  ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: styles.sanFrancisco,
-                  ),
+                  style: styles.subheading,
                 ),
-                Ink(
+                Container(
+                  height: 50,
+                  width: 100,
                   decoration: ShapeDecoration(
                     color: Colors.black87,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(5.0),
                     ), //CircleBorder(),
                   ),
                   child: IconButton(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    //padding: EdgeInsets.symmetric(horizontal: 20),
                     icon: const FaIcon(
                       FontAwesomeIcons.barcode,
                       size: 27,

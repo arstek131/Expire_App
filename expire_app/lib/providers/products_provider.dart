@@ -23,6 +23,8 @@ class ProductsProvider extends ChangeNotifier {
   bool initProvider = true;
   Ordering _ordering = Ordering.ExpiringSoon;
 
+  StreamSubscription<QuerySnapshot>? streamSub;
+
   List<Product> _items = [];
 
   List<Product> get items {
@@ -34,13 +36,15 @@ class ProductsProvider extends ChangeNotifier {
     _items = await FirestoreHelper.instance.getProductsFromFamilyId(userInfo.UserInfo.instance.familyId!);
     sortProducts(_ordering);
 
+    print(initProvider);
     if (this.initProvider) {
+      print("init provider...");
       this.initProvider = false;
 
       // attach firestore listener
       CollectionReference reference =
           FirebaseFirestore.instance.collection('families').doc(userInfo.UserInfo.instance.familyId!).collection('products');
-      reference.snapshots().listen(
+      streamSub = reference.snapshots().listen(
         (querySnapshot) {
           querySnapshot.docChanges.forEach((change) async {
             modifyProduct(
@@ -55,10 +59,11 @@ class ProductsProvider extends ChangeNotifier {
                 nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
                 ingredientsText: change.doc['ingredientsText'],
                 nutriscore: change.doc['nutriscore'],
-                allergens: List<String>.from(change.doc['allergens']),
+                allergens: change.doc['allergens'] == null ? null : List<String>.from(change.doc['allergens']),
                 ecoscore: change.doc['ecoscore'],
                 packaging: change.doc['packaging'],
-                ingredientLevels: change.doc['ingredientLevels'],
+                ingredientLevels:
+                    change.doc['ingredientLevels'] == null ? null : Map<String, String>.from(change.doc['ingredientLevels']),
                 isPalmOilFree: change.doc['isPalmOilFree'],
                 isVegetarian: change.doc['isVegetarian'],
                 isVegan: change.doc['isVegan'],
@@ -102,6 +107,8 @@ class ProductsProvider extends ChangeNotifier {
       brandName: product.brandName,
       quantity: product.quantity,
     );
+
+    print(newProduct.ingredientLevels);
 
     _items.add(newProduct);
     sortProducts(_ordering);
@@ -174,5 +181,12 @@ class ProductsProvider extends ChangeNotifier {
 
   Product getItemFromId(String productId) {
     return _items.firstWhere((element) => element.id == productId);
+  }
+
+  void cleanProviderState() {
+    streamSub?.cancel();
+    initProvider = true;
+    _ordering = Ordering.ExpiringSoon;
+    _items = [];
   }
 }

@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/providers/products_provider.dart';
 import 'package:expire_app/screens/userinfo/family_info_screen.dart';
 import 'package:expire_app/widgets/family_id_choice_modal.dart';
 import 'package:expire_app/widgets/sign_up.dart';
@@ -48,10 +49,7 @@ class UserInfoScreen extends StatelessWidget {
             ],
             leading: Text(
               "Hi, Ale!",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline5?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(30),
@@ -67,9 +65,7 @@ class UserInfoScreen extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Div(
-                    text: 'Account',
-                    subtext: 'Adjust account settings to your needs'),
+                Div(text: 'Account', subtext: 'Adjust account settings to your needs'),
                 SizedBox(height: 20),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,10 +77,7 @@ class UserInfoScreen extends StatelessWidget {
                       imageWidth: 75,
                       imageHeigth: 70,
                       txtcolor: Colors.black,
-                      gradientColors: [
-                        HexColor("#7DC8E7"),
-                        HexColor("#7DC8E7")
-                      ],
+                      gradientColors: [HexColor("#7DC8E7"), HexColor("#7DC8E7")],
                       text: 'Completed',
                       imagePath: 'assets/icons/imac_icon.png',
                       alB: Alignment.centerLeft,
@@ -97,10 +90,7 @@ class UserInfoScreen extends StatelessWidget {
                       imageWidth: 28,
                       imageHeigth: 28,
                       txtcolor: Colors.white,
-                      gradientColors: [
-                        HexColor("##7D88E7"),
-                        HexColor("#7D88E7").withAlpha(74)
-                      ],
+                      gradientColors: [HexColor("##7D88E7"), HexColor("#7D88E7").withAlpha(74)],
                       text: 'Change name',
                       imagePath: 'assets/icons/time_Square.png',
                       //45 degrees gradient
@@ -113,9 +103,7 @@ class UserInfoScreen extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                Div(
-                    text: 'Family',
-                    subtext: 'Manage synchronization with family members'),
+                Div(text: 'Family', subtext: 'Manage synchronization with family members'),
                 SizedBox(height: 20),
                 //AddMemberButton(),
                 Row(
@@ -127,10 +115,7 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 75,
                       imageHeigth: 70,
-                      gradientColors: [
-                        HexColor("#6DB5CB"),
-                        HexColor("#7DC8E7")
-                      ],
+                      gradientColors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")],
                       text: 'Share family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () async {
@@ -143,15 +128,11 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 28,
                       imageHeigth: 28,
-                      gradientColors: [
-                        HexColor("#FE7235"),
-                        HexColor("#F97D47")
-                      ],
+                      gradientColors: [HexColor("#FE7235"), HexColor("#F97D47")],
                       text: 'Leave family',
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        dynamic resultant =
-                        await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
                           showErrorDialog(context, 'You don\'t belong to any family, so you can\'t leave!', 'Attention');
                         } else {
@@ -173,22 +154,16 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 28,
                       imageHeigth: 28,
-                      gradientColors: [
-                        HexColor("#5751FF"),
-                        HexColor("#5751FF")
-                      ],
+                      gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
                       text: 'Family info',
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        dynamic resultant =
-                            await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
                           showErrorDialog(context, 'You don\'t have a family!', 'Attention');
                         } else {
-                          Map<String, dynamic> res =
-                              resultant as Map<String, dynamic>;
-                          MaterialPageRoute materialPageRoute =
-                              new MaterialPageRoute(
+                          Map<String, dynamic> res = resultant as Map<String, dynamic>;
+                          MaterialPageRoute materialPageRoute = new MaterialPageRoute(
                             builder: (context) => FamilyInfoScreen(
                               famusers: res['users'],
                               familyid: res['familyid'],
@@ -204,15 +179,11 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 75,
                       imageHeigth: 70,
-                      gradientColors: [
-                        HexColor("#5751FF"),
-                        HexColor("#5751FF")
-                      ],
+                      gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
                       text: 'Join family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () async {
-                        dynamic resultant =
-                            await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
                           SignUp.showFamilyRedeemModal(
                               context,
@@ -221,8 +192,8 @@ class UserInfoScreen extends StatelessWidget {
                                 'password': '',
                                 'familyId': null,
                               },
-                                  () {},
-                                  () {});
+                              () {},
+                              () {});
                         } else {
                           showErrorDialog(context, 'You can\'t join another family!', 'Attention');
                         }
@@ -240,10 +211,8 @@ class UserInfoScreen extends StatelessWidget {
                 ),
                 LastMenu(
                   text: "Legal Notes",
-                  press: () => showAboutDialog(
-                      context: context,
-                      applicationVersion: "1.0",
-                      applicationLegalese: lorem(words: 30)),
+                  press: () =>
+                      showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
                 ),
                 LastMenu(
                   text: "Settings and Privacy",
@@ -258,6 +227,7 @@ class UserInfoScreen extends StatelessWidget {
                   onPressed: () async {
                     Navigator.of(context).pushReplacementNamed('/');
                     FirebaseAuthHelper.instance.logOut();
+                    Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
                   },
                 ),
                 SizedBox(
@@ -272,12 +242,10 @@ class UserInfoScreen extends StatelessWidget {
   }
 
   Future<void> _shareFamily(BuildContext context) async {
-    String? familyid = await FirestoreHelper.instance
-        .getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
+    String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
     //print(familyid);
     if (familyid == null) {
-      UserInfoScreen.showErrorDialog(
-          context, "Ops..........", 'Could not find your family dimmerd');
+      UserInfoScreen.showErrorDialog(context, "Ops..........", 'Could not find your family dimmerd');
     } else {
       showDialog(
         barrierColor: Colors.black.withOpacity(0.9),
@@ -290,8 +258,7 @@ class UserInfoScreen extends StatelessWidget {
     }
   }
 
-  static showErrorDialog(BuildContext context, String msg, String title,
-      {bool shouldLeave = false}) {
+  static showErrorDialog(BuildContext context, String msg, String title, {bool shouldLeave = false}) {
     Widget dismissBtn = TextButton(
         onPressed: () {
           Navigator.of(context).pop();
@@ -321,8 +288,7 @@ class ShareFamFunQR extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(25.0)),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0)),
         height: 300,
         padding: EdgeInsets.symmetric(vertical: 30.0),
         child: Column(

@@ -1,7 +1,9 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/widgets/ingredient_analysis_clip.dart';
 
 import 'package:flutter/material.dart';
+import 'package:openfoodfacts/model/NutrientLevels.dart';
 
 /* widget */
 import '../widgets/healt_product_list_tile.dart';
@@ -17,6 +19,8 @@ class HealthProductDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(product.ingredientLevels);
+
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -86,18 +90,31 @@ class HealthProductDetail extends StatelessWidget {
                     color: Colors.white12,
                     thickness: 1.5,
                   ),
-                  HealthProductListTile(name: 'Energy', quantity: product.nutriments!.energyKcal, symbol: 'kcal'),
-                  Divider(
-                    color: Colors.white12,
-                    thickness: 1.5,
+                  HealthProductListTile(
+                    name: 'Energy',
+                    quantity: product.nutriments!.energyKcal,
+                    symbol: 'kcal',
                   ),
-                  HealthProductListTile(name: 'Fat', quantity: product.nutriments!.energyKcal, symbol: 'g'),
                   Divider(
                     color: Colors.white12,
                     thickness: 1.5,
                   ),
                   HealthProductListTile(
-                      name: '   of which acid saturated fat', quantity: product.nutriments!.saturatedFat, symbol: 'g'),
+                    name: 'Fat',
+                    quantity: product.nutriments!.energyKcal,
+                    symbol: 'g',
+                    level: product.ingredientLevels?['fat'],
+                  ),
+                  Divider(
+                    color: Colors.white12,
+                    thickness: 1.5,
+                  ),
+                  HealthProductListTile(
+                    name: '   of which acid saturated fat',
+                    quantity: product.nutriments!.saturatedFat,
+                    symbol: 'g',
+                    level: product.ingredientLevels?['saturated-fat'],
+                  ),
                   Divider(
                     color: Colors.white12,
                     thickness: 1.5,
@@ -107,7 +124,12 @@ class HealthProductDetail extends StatelessWidget {
                     color: Colors.white12,
                     thickness: 1.5,
                   ),
-                  HealthProductListTile(name: '   of which sugar', quantity: product.nutriments!.sugars, symbol: 'g'),
+                  HealthProductListTile(
+                    name: '   of which sugar',
+                    quantity: product.nutriments!.sugars,
+                    symbol: 'g',
+                    level: product.ingredientLevels?['sugar'] ?? product.ingredientLevels?['sugars'],
+                  ),
                   Divider(
                     color: Colors.white12,
                     thickness: 1.5,
@@ -122,7 +144,12 @@ class HealthProductDetail extends StatelessWidget {
                     color: Colors.white12,
                     thickness: 1.5,
                   ),
-                  HealthProductListTile(name: 'Salt', quantity: product.nutriments!.salt, symbol: 'g'),
+                  HealthProductListTile(
+                    name: 'Salt',
+                    quantity: product.nutriments!.salt,
+                    symbol: 'g',
+                    level: product.ingredientLevels?['salt'],
+                  ),
                   Divider(
                     color: Colors.white12,
                     thickness: 1.5,

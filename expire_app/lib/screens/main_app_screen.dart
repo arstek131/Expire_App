@@ -13,6 +13,8 @@ import '../widgets/custom_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../helpers/user_info.dart';
+import '../providers/bottom_navigator_bar_size_provider.dart';
+import '../providers/products_provider.dart';
 
 /* Screens */
 import '../screens/products_overview_screen.dart';
@@ -114,7 +116,18 @@ class _ProductsScreenState extends State<MainAppScreen> {
                         backgroundColor: styles.ghostWhite,
                       ),
                     )
-                  : Stack(
+                  : /*MultiProvider(
+                      key: ObjectKey(UserInfo.instance.userId!),
+                      providers: [
+                        ChangeNotifierProvider(
+                          create: (_) => BottomNavigationBarSizeProvider(),
+                        ),
+                        ChangeNotifierProvider(
+                          create: (_) => ProductsProvider(),
+                        ),
+                      ],
+                      child: */
+                  Stack(
                       children: [
                         PageView(
                           //physics: BouncingScrollPhysics(),
@@ -138,6 +151,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
           ),
         ),
       ),
+      //),
     );
   }
 }

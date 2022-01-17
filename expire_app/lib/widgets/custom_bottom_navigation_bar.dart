@@ -86,6 +86,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                             ),
                           ),
                           clipBehavior: Clip.antiAliasWithSaveLayer,
+                          backgroundColor: Colors.transparent,
                           builder: (BuildContext ctx) {
                             return AddItemModal(modalContext: ctx);
                           },

@@ -67,7 +67,6 @@ class FirebaseAuthHelper {
     _signInMethod = SignInMethod.EmailAndPassword;
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      print(userCredential);
     } catch (error) {
       rethrow;
     }
@@ -149,8 +148,17 @@ class FirebaseAuthHelper {
   Future<void> logOut() async {
     await _auth.signOut();
 
-    if (signInMethod == SignInMethod.Google) {
-      await googleSignIn.disconnect();
+    switch (signInMethod) {
+      case SignInMethod.Google:
+        await googleSignIn.disconnect();
+        break;
+      case SignInMethod.Facebook:
+        await facebookAuth.logOut();
+        break;
+      default:
+        break;
     }
+
+    _signInMethod = SignInMethod.None;
   }
 }

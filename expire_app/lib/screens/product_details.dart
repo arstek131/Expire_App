@@ -105,14 +105,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     fontFamily: styles.currentFontFamily,
                                   ),
                                 ),
-                                Text(
-                                  _product.creatorName,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: styles.ghostWhite,
-                                    fontSize: 16,
-                                    fontFamily: styles.currentFontFamily,
+                                SizedBox(height: 3),
+                                SizedBox(
+                                  width: 100,
+                                  child: Text(
+                                    _product.creatorName,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      height: 1,
+                                      color: styles.ghostWhite,
+                                      fontSize: 16,
+                                      fontFamily: styles.currentFontFamily,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -351,17 +357,30 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                   elevation: 5,
                   color: styles.deepIndigo.withOpacity(0.9), //styles.secondaryColor,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Hero(
                           tag: 'produt-image${product.id}',
                           child: Container(
-                            margin: EdgeInsets.only(right: 5),
+                            margin: EdgeInsets.only(right: 10),
                             //color: Colors.red,
-                            //height: max(115 * percent, 40),
-                            width: max(110 * percent, 40),
+                            height: max(160 * percent, 40),
+                            constraints: BoxConstraints(
+                              minWidth: 0,
+                              maxWidth: 140,
+                            ),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black38,
+                                  blurRadius: 5.0,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: product.image != null
