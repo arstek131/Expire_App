@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /* providers */
 import '../providers/products_provider.dart';
 import '../providers/bottom_navigator_bar_size_provider.dart';
+import '../providers/filters_provider.dart';
 
 /* models */
 import '../models/product.dart';
@@ -138,42 +139,56 @@ class _ProductsContainerState extends State<ProductsContainer> {
                       ),
                     ),
                     if (widget._productsViewMode == ProductsViewMode.List)
-                      ListView.builder(
-                        //physics: BouncingScrollPhysics(),
-                        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                        itemCount: data.items.length + 1,
-                        itemBuilder: (ctx, i) {
-                          if (i < data.items.length) {
-                            Product product = Product(
-                              id: data.items[i].id,
-                              title: data.items[i].title,
-                              expiration: data.items[i].expiration,
-                              dateAdded: data.items[i].dateAdded,
-                              creatorId: data.items[i].creatorId,
-                              image: data.items[i].image,
-                              creatorName: data.items[i].creatorName,
-                              /*nutriments: data.items[i].nutriments,
+                      Consumer<FiltersProvider>(
+                        builder: (_, filterData, __) {
+                          final filteredProducts = data.getItems(filter: filterData.filter);
+
+                          return ListView.builder(
+                            //physics: BouncingScrollPhysics(),
+                            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                            itemCount: filteredProducts.length + 1,
+                            itemBuilder: (ctx, i) {
+                              if (!filteredProducts.isEmpty) {
+                                if (i < filteredProducts.length /*data.items.length*/) {
+                                  Product product = filteredProducts[i];
+
+                                  /*Product product = Product(
+                                id: data.items[i].id,
+                                title: data.items[i].title,
+                                expiration: data.items[i].expiration,
+                                dateAdded: data.items[i].dateAdded,
+                                creatorId: data.items[i].creatorId,
+                                image: data.items[i].image,
+                                creatorName: data.items[i].creatorName,
+                                /*nutriments: data.items[i].nutriments,
                               nutriscore: data.items[i].nutriscore,
                               ingredientsText: data.items[i].ingredientsText,
                               allergens: data.items[i].allergens,*/
-                            );
-                            bool first = (i == 0);
-                            bool last = (i == data.items.length - 1);
+                              );*/
+                                  bool first = (i == 0);
+                                  bool last = (i == data.items.length - 1);
 
-                            return GestureDetector(
-                              onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0.6, horizontal: 10),
-                                child: ProductListTile(product, first, last),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox(
-                              height: 80,
-                            );
-                          }
+                                  return GestureDetector(
+                                    onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 0.6, horizontal: 10),
+                                      child: ProductListTile(product, first, last),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox(
+                                    height: 80,
+                                  );
+                                }
+                              } else {
+                                return Container(
+                                  child: Text("No products"),
+                                );
+                              }
+                            },
+                          );
                         },
-                      ),
+                      )
                   ],
                 );
               }

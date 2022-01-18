@@ -94,7 +94,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                     child: Row(
                       children: [
                         FaIcon(
-                          FontAwesomeIcons.sort,
+                          _ordering == Ordering.ExpiringSoon ? FontAwesomeIcons.sortAmountUp : FontAwesomeIcons.sortAmountDown,
                           color: styles.ghostWhite,
                         ),
                         SizedBox(width: 10),

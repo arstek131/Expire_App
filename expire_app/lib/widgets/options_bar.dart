@@ -4,6 +4,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /* style */
 import '../app_styles.dart' as styles;
 
+/* providers */
+import '../providers/filters_provider.dart';
+import 'package:provider/provider.dart';
+
+/* models */
+import '../models/categories.dart' as categories;
+
 class OptionsBar extends StatefulWidget {
   OptionsBar();
 
@@ -12,12 +19,7 @@ class OptionsBar extends StatefulWidget {
 }
 
 class _OptionBarState extends State<OptionsBar> {
-  final List<Map<String, Object>> _choicesList = [
-    {"title": "Meat", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
-    {"title": "Fish", "icon": const FaIcon(FontAwesomeIcons.fish)},
-    {"title": "Vegetarian", "icon": const FaIcon(FontAwesomeIcons.leaf)},
-    {"title": "Fruit", "icon": const FaIcon(FontAwesomeIcons.appleAlt)}
-  ];
+  final List<Map<String, Object>> _choicesList = categories.categories;
   List<int> _chosenIndexes = [];
 
   void _chipSelectionHandler(int index, selected) {
@@ -34,6 +36,8 @@ class _OptionBarState extends State<OptionsBar> {
 
   @override
   Widget build(BuildContext context) {
+    final filtersData = Provider.of<FiltersProvider>(context, listen: false);
+
     return Column(
       children: [
         Container(
@@ -90,15 +94,15 @@ class _OptionBarState extends State<OptionsBar> {
                     itemBuilder: (context, i) => Padding(
                       padding: const EdgeInsets.only(right: 15.0),
                       child: ChoiceChip(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
                         elevation: 2,
-                        selectedColor: Colors.amber,
+                        selectedColor: styles.deepGreen.withOpacity(0.85),
                         backgroundColor: Colors.indigo,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                           side: BorderSide(color: styles.ghostWhite),
                         ),
                         avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
-                        labelPadding: EdgeInsets.symmetric(horizontal: 15),
                         label: Text(
                           _choicesList[i]['title'] as String,
                           style: const TextStyle(
@@ -109,7 +113,30 @@ class _OptionBarState extends State<OptionsBar> {
                           ),
                         ),
                         selected: _chosenIndexes.contains(i),
-                        onSelected: (bool selected) => _chipSelectionHandler(i, selected),
+                        onSelected: (bool selected) {
+                          _chipSelectionHandler(i, selected);
+
+                          switch (_choicesList[i]['title']) {
+                            case "Meat":
+                              filtersData.setSingleFilter(isMeat: selected);
+                              break;
+                            case "Fish":
+                              filtersData.setSingleFilter(isFish: selected);
+                              break;
+                            case "Vegetarian":
+                              filtersData.setSingleFilter(isVegetarian: selected);
+                              break;
+                            case "Vegan":
+                              filtersData.setSingleFilter(isVegan: selected);
+                              break;
+                            case "Palm-oil free":
+                              filtersData.setSingleFilter(isPalmOilFree: selected);
+                              break;
+                            default:
+                              print("No category found!");
+                              break;
+                          }
+                        },
                       ),
                     ),
                     scrollDirection: Axis.horizontal,

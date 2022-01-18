@@ -27,6 +27,7 @@ import '../providers/auth_provider.dart';
 
 /* models */
 import '../models/product.dart';
+import '../models/categories.dart' as categories;
 
 /* enums */
 import '../enums/product_insertion_method.dart';
@@ -56,13 +57,7 @@ class _AddItemModalState extends State<AddItemModal> {
   bool _isLoading = false;
   bool _isFetchingProduct = false;
 
-  final List<Map<String, Object>> _choicesList = [
-    {"title": "Meat", "icon": const FaIcon(FontAwesomeIcons.drumstickBite)},
-    {"title": "Fish", "icon": const FaIcon(FontAwesomeIcons.fish)},
-    {"title": "Vegetarian", "icon": const FaIcon(FontAwesomeIcons.carrot)},
-    {"title": "Vegan", "icon": const FaIcon(FontAwesomeIcons.egg)},
-    {"title": "Palm-oil free", "icon": const FaIcon(FontAwesomeIcons.tint)}
-  ];
+  final List<Map<String, Object>> _choicesList = categories.categories;
   List<int> _chosenIndexes = [];
 
   Map<String, Object?> _productData = {
@@ -238,7 +233,7 @@ class _AddItemModalState extends State<AddItemModal> {
     scanResult = "3168930010265";
     scanResult = "689544001737";
 
-    /*try {
+    try {
       BarcodeResult result = await FlutterScandit(symbologies: [
         Symbology.EAN13_UPCA,
         Symbology.EAN8,
@@ -259,7 +254,7 @@ class _AddItemModalState extends State<AddItemModal> {
     } on BarcodeScanException catch (error) {
       print(error);
       rethrow;
-    }*/
+    }
 
     print("fetching product...");
 
@@ -298,11 +293,13 @@ class _AddItemModalState extends State<AddItemModal> {
         }
       }
 
-      // extraction of ingredients analysis (vegan, vegetaria, palm oil free...)
-      _isPalmOilFree = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.palmOilFreeStatus);
-      _isVegan = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.veganStatus);
-      _isVegetarian = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.vegetarianStatus);
-
+      if(result.product?.ingredientsAnalysisTags != null)
+      {
+        // extraction of ingredients analysis (vegan, vegetaria, palm oil free...)
+        _isPalmOilFree = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.palmOilFreeStatus);
+        _isVegan = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.veganStatus);
+        _isVegetarian = EnumToString.convertToString(result.product?.ingredientsAnalysisTags?.vegetarianStatus);
+      }
       // extracting ecological data
       _ecoscore = result.product?.ecoscoreGrade;
       _packaging = result.product?.packaging;
@@ -666,6 +663,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
                                   ),
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
                                   labelStyle: _chosenIndexes.contains(i) 
                                     ? styles.subheading 
                                     : TextStyle(fontFamily: styles.currentFontFamily, 

@@ -1,5 +1,6 @@
 /* dart libraries */
 import 'dart:io';
+import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/screens/product_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (_) => ProductsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FiltersProvider(),
         ),
       ],
       child: MaterialApp(

@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /* models */
 import '../models/product.dart';
+import '../models/filter.dart';
 
 /* helpers */
 import '../helpers/user_info.dart' as userInfo;
@@ -29,6 +30,69 @@ class ProductsProvider extends ChangeNotifier {
 
   List<Product> get items {
     return [..._items];
+  }
+
+  List<Product> getItems({Filter? filter}) {
+    if (filter != null && !filter.isFilterSet()) {
+      return items;
+    }
+
+    List<Product> products = [];
+
+    if (filter!.isFish) {}
+
+    if (filter.isMeat) {}
+
+    if (filter.isPalmOilFree) {
+      List<Product> tmps = _items
+          .where(
+            (element) => element.isPalmOilFree != null
+                ? !element.isPalmOilFree!.toUpperCase().contains("NON") &&
+                    !element.isPalmOilFree!.toUpperCase().contains("UNKNOWN")
+                : false,
+          )
+          .toList();
+
+      for (final tmp in tmps) {
+        if (!products.any((item) => item.id == tmp.id)) {
+          products.add(tmp);
+        }
+      }
+    }
+
+    if (filter.isVegan) {
+      List<Product> tmps = _items
+          .where(
+            (element) => element.isVegan != null
+                ? !element.isVegan!.toUpperCase().contains("NON") && !element.isVegan!.toUpperCase().contains("UNKNOWN")
+                : false,
+          )
+          .toList();
+
+      for (final tmp in tmps) {
+        if (!products.any((item) => item.id == tmp.id)) {
+          products.add(tmp);
+        }
+      }
+    }
+
+    if (filter.isVegetarian) {
+      List<Product> tmps = _items
+          .where(
+            (element) => element.isVegetarian != null
+                ? !element.isVegetarian!.toUpperCase().contains("NON") && !element.isVegetarian!.toUpperCase().contains("UNKNOWN")
+                : false,
+          )
+          .toList();
+
+      for (final tmp in tmps) {
+        if (!products.any((item) => item.id == tmp.id)) {
+          products.add(tmp);
+        }
+      }
+    }
+
+    return products;
   }
 
   Future<void> fetchProducts() async {
