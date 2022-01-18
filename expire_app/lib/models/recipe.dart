@@ -1,117 +1,276 @@
 import 'dart:convert';
 
-List<Recipe> recipeFromJson(String str) => List<Recipe>.from(json.decode(str).map((x) => Recipe.fromJson(x)));
-
-String recipeToJson(List<Recipe> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+T? asT<T>(dynamic value) {
+  if (value is T) {
+    return value;
+  }
+  return null;
+}
 
 class Recipe {
   Recipe({
     this.id,
+    this.title,
     this.image,
     this.imageType,
-    this.likes,
+    this.usedIngredientCount,
     this.missedIngredientCount,
     this.missedIngredients,
-    this.title,
-    this.unusedIngredients,
-    this.usedIngredientCount,
     this.usedIngredients,
+    this.unusedIngredients,
+    this.likes,
   });
 
-  final int? id;
-  final String? image;
-  final String? imageType;
-  final int? likes;
-  final int? missedIngredientCount;
-  final List<SedIngredient>? missedIngredients;
-  final String? title;
-  final List<SedIngredient>? unusedIngredients;
-  final int? usedIngredientCount;
-  final List<SedIngredient>? usedIngredients;
+  factory Recipe.fromJson(Map<String, dynamic> jsonRes) {
+    final List<MissedIngredients>? missedIngredients =
+    jsonRes['missedIngredients'] is List ? <MissedIngredients>[] : null;
+    if (missedIngredients != null) {
+      for (final dynamic item in jsonRes['missedIngredients']!) {
+        if (item != null) {
+          missedIngredients.add(
+              MissedIngredients.fromJson(asT<Map<String, dynamic>>(item)!));
+        }
+      }
+    }
 
-  factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
-    id: json["id"],
-    image: json["image"],
-    imageType: json["imageType"],
-    likes: json["likes"],
-    missedIngredientCount: json["missedIngredientCount"],
-    missedIngredients: List<SedIngredient>.from(json["missedIngredients"].map((x) => SedIngredient.fromJson(x))),
-    title: json["title"],
-    unusedIngredients: List<SedIngredient>.from(json["unusedIngredients"].map((x) => SedIngredient.fromJson(x))),
-    usedIngredientCount: json["usedIngredientCount"],
-    usedIngredients: List<SedIngredient>.from(json["usedIngredients"].map((x) => SedIngredient.fromJson(x))),
-  );
+    final List<UsedIngredients>? usedIngredients =
+    jsonRes['usedIngredients'] is List ? <UsedIngredients>[] : null;
+    if (usedIngredients != null) {
+      for (final dynamic item in jsonRes['usedIngredients']!) {
+        if (item != null) {
+          usedIngredients
+              .add(UsedIngredients.fromJson(asT<Map<String, dynamic>>(item)!));
+        }
+      }
+    }
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "image": image,
-    "imageType": imageType,
-    "likes": likes,
-    "missedIngredientCount": missedIngredientCount,
-    "missedIngredients": List<dynamic>.from(missedIngredients!.map((x) => x.toJson())),
-    "title": title,
-    "unusedIngredients": List<dynamic>.from(unusedIngredients!.map((x) => x.toJson())),
-    "usedIngredientCount": usedIngredientCount,
-    "usedIngredients": List<dynamic>.from(usedIngredients!.map((x) => x.toJson())),
+    final List<Object>? unusedIngredients =
+    jsonRes['unusedIngredients'] is List ? <Object>[] : null;
+    if (unusedIngredients != null) {
+      for (final dynamic item in jsonRes['unusedIngredients']!) {
+        if (item != null) {
+          unusedIngredients.add(asT<Object>(item)!);
+        }
+      }
+    }
+    return Recipe(
+      id: asT<int?>(jsonRes['id']),
+      title: asT<String?>(jsonRes['title']),
+      image: asT<String?>(jsonRes['image']),
+      imageType: asT<String?>(jsonRes['imageType']),
+      usedIngredientCount: asT<int?>(jsonRes['usedIngredientCount']),
+      missedIngredientCount: asT<int?>(jsonRes['missedIngredientCount']),
+      missedIngredients: missedIngredients,
+      usedIngredients: usedIngredients,
+      unusedIngredients: unusedIngredients,
+      likes: asT<int?>(jsonRes['likes']),
+    );
+  }
+
+  int? id;
+  String? title;
+  String? image;
+  String? imageType;
+  int? usedIngredientCount;
+  int? missedIngredientCount;
+  List<MissedIngredients>? missedIngredients;
+  List<UsedIngredients>? usedIngredients;
+  List<Object>? unusedIngredients;
+  int? likes;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'id': id,
+    'title': title,
+    'image': image,
+    'imageType': imageType,
+    'usedIngredientCount': usedIngredientCount,
+    'missedIngredientCount': missedIngredientCount,
+    'missedIngredients': missedIngredients,
+    'usedIngredients': usedIngredients,
+    'unusedIngredients': unusedIngredients,
+    'likes': likes,
   };
 }
 
-class SedIngredient {
-  SedIngredient({
-    this.aisle,
-    this.amount,
+class MissedIngredients {
+  MissedIngredients({
     this.id,
-    this.image,
-    this.meta,
-    this.name,
-    this.original,
-    this.originalName,
+    this.amount,
     this.unit,
     this.unitLong,
     this.unitShort,
-    this.extendedName,
+    this.aisle,
+    this.name,
+    this.original,
+    this.originalString,
+    this.originalName,
+    this.metaInformation,
+    this.meta,
+    this.image,
   });
 
-  final String? aisle;
-  final double? amount;
-  final int? id;
-  final String? image;
-  final List<String>? meta;
-  final String? name;
-  final String? original;
-  final String? originalName;
-  final String? unit;
-  final String? unitLong;
-  final String? unitShort;
-  final String? extendedName;
+  factory MissedIngredients.fromJson(Map<String, dynamic> jsonRes) {
+    final List<Object>? metaInformation =
+    jsonRes['metaInformation'] is List ? <Object>[] : null;
+    if (metaInformation != null) {
+      for (final dynamic item in jsonRes['metaInformation']!) {
+        if (item != null) {
+          metaInformation.add(asT<Object>(item)!);
+        }
+      }
+    }
 
-  factory SedIngredient.fromJson(Map<String, dynamic> json) => SedIngredient(
-    aisle: json["aisle"],
-    amount: json["amount"].toDouble(),
-    id: json["id"],
-    image: json["image"],
-    meta: List<String>.from(json["meta"].map((x) => x)),
-    name: json["name"],
-    original: json["original"],
-    originalName: json["originalName"],
-    unit: json["unit"],
-    unitLong: json["unitLong"],
-    unitShort: json["unitShort"],
-    extendedName: json["extendedName"] == null ? null : json["extendedName"],
-  );
+    final List<Object>? meta = jsonRes['meta'] is List ? <Object>[] : null;
+    if (meta != null) {
+      for (final dynamic item in jsonRes['meta']!) {
+        if (item != null) {
+          meta.add(asT<Object>(item)!);
+        }
+      }
+    }
+    return MissedIngredients(
+      id: asT<int?>(jsonRes['id']),
+      amount: asT<int?>(jsonRes['amount']),
+      unit: asT<String?>(jsonRes['unit']),
+      unitLong: asT<String?>(jsonRes['unitLong']),
+      unitShort: asT<String?>(jsonRes['unitShort']),
+      aisle: asT<String?>(jsonRes['aisle']),
+      name: asT<String?>(jsonRes['name']),
+      original: asT<String?>(jsonRes['original']),
+      originalString: asT<String?>(jsonRes['originalString']),
+      originalName: asT<String?>(jsonRes['originalName']),
+      metaInformation: metaInformation,
+      meta: meta,
+      image: asT<String?>(jsonRes['image']),
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-    "aisle": aisle,
-    "amount": amount,
-    "id": id,
-    "image": image,
-    "meta": List<dynamic>.from(meta!.map((x) => x)),
-    "name": name,
-    "original": original,
-    "originalName": originalName,
-    "unit": unit,
-    "unitLong": unitLong,
-    "unitShort": unitShort,
-    "extendedName": extendedName == null ? null : extendedName,
+  int? id;
+  int? amount;
+  String? unit;
+  String? unitLong;
+  String? unitShort;
+  String? aisle;
+  String? name;
+  String? original;
+  String? originalString;
+  String? originalName;
+  List<Object>? metaInformation;
+  List<Object>? meta;
+  String? image;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'id': id,
+    'amount': amount,
+    'unit': unit,
+    'unitLong': unitLong,
+    'unitShort': unitShort,
+    'aisle': aisle,
+    'name': name,
+    'original': original,
+    'originalString': originalString,
+    'originalName': originalName,
+    'metaInformation': metaInformation,
+    'meta': meta,
+    'image': image,
+  };
+}
+
+class UsedIngredients {
+  UsedIngredients({
+    this.id,
+    this.amount,
+    this.unit,
+    this.unitLong,
+    this.unitShort,
+    this.aisle,
+    this.name,
+    this.original,
+    this.originalString,
+    this.originalName,
+    this.metaInformation,
+    this.meta,
+    this.image,
+  });
+
+  factory UsedIngredients.fromJson(Map<String, dynamic> jsonRes) {
+    final List<String>? metaInformation =
+    jsonRes['metaInformation'] is List ? <String>[] : null;
+    if (metaInformation != null) {
+      for (final dynamic item in jsonRes['metaInformation']!) {
+        if (item != null) {
+          metaInformation.add(asT<String>(item)!);
+        }
+      }
+    }
+
+    final List<String>? meta = jsonRes['meta'] is List ? <String>[] : null;
+    if (meta != null) {
+      for (final dynamic item in jsonRes['meta']!) {
+        if (item != null) {
+          meta.add(asT<String>(item)!);
+        }
+      }
+    }
+    return UsedIngredients(
+      id: asT<int?>(jsonRes['id']),
+      amount: asT<int?>(jsonRes['amount']),
+      unit: asT<String?>(jsonRes['unit']),
+      unitLong: asT<String?>(jsonRes['unitLong']),
+      unitShort: asT<String?>(jsonRes['unitShort']),
+      aisle: asT<String?>(jsonRes['aisle']),
+      name: asT<String?>(jsonRes['name']),
+      original: asT<String?>(jsonRes['original']),
+      originalString: asT<String?>(jsonRes['originalString']),
+      originalName: asT<String?>(jsonRes['originalName']),
+      metaInformation: metaInformation,
+      meta: meta,
+      image: asT<String?>(jsonRes['image']),
+    );
+  }
+
+  int? id;
+  int? amount;
+  String? unit;
+  String? unitLong;
+  String? unitShort;
+  String? aisle;
+  String? name;
+  String? original;
+  String? originalString;
+  String? originalName;
+  List<String>? metaInformation;
+  List<String>? meta;
+  String? image;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'id': id,
+    'amount': amount,
+    'unit': unit,
+    'unitLong': unitLong,
+    'unitShort': unitShort,
+    'aisle': aisle,
+    'name': name,
+    'original': original,
+    'originalString': originalString,
+    'originalName': originalName,
+    'metaInformation': metaInformation,
+    'meta': meta,
+    'image': image,
   };
 }

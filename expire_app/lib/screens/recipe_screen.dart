@@ -2,13 +2,30 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:expire_app/app_styles.dart';
+import 'package:expire_app/models/http_service.dart';
+import 'package:expire_app/models/recipe.dart';
+import 'package:expire_app/models/recipe.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:expire_app/models/mock_recipemodel.dart';
-import 'package:expire_app/models/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'MockRecipeDetails.dart';
+import 'recipe_details_screen.dart';
+
+/*
+Main screen
+  1) FROM -> /recipes/findByIngredients
+    -id (id of the recipe)
+    -title
+    -image
+    -readyInMinutes (retrieved from 2)
+
+  2) FROM -> recipes/{id}/information
+    -readyInMinutes (used also in 1)
+    -extendedIngredients (for ingredients section), list of ingredients
+    -analyzedInstructions (for preparation section)
+    -servings
+ */
 
 class RecipeScreen extends StatelessWidget {
   Future getAPIdata() async {
@@ -23,71 +40,87 @@ class RecipeScreen extends StatelessWidget {
     final response = await http.get(uri, headers: headers);
 
     var jsondata = jsonDecode(response.body);
-    final result = recipeFromJson(response.body);
+    //final result = recipeFromJson(response.body);
     print(jsondata);
-    return result;
+    //return result;
   }
 
-  /*@override
+
+
+/*
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            getAPIdata();
-          },
-          child: Text("Click me"),
-        ),
-      ],
+    return FutureBuilder(
+      future: httpService.getRecipes(),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
+        if (snapshot.hasData) {
+          List<Recipe>? recipes = snapshot.data;
+
+          return ListView(
+            children: recipes!
+                .map((Recipe recipe) => ListTile(
+                      title: Text(recipe.title!),
+                      subtitle: Text(recipe.id.toString()),
+                    ))
+                .toList(),
+          );
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
     );
-  }*/
+  }
+
+ */
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            ListView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: MockRecipeModel.demoRecipe.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 12,
+      body: FutureBuilder(
+        future: HttpService.getRecipes(),
+        builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
+          if (snapshot.hasData) {
+            List<Recipe>? recipes = snapshot.data;
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
                   ),
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MockRecipeDetails(
-                            recipeModel: MockRecipeModel.demoRecipe[index],
-                          ),
-                        )),
-                    child: RecipeCard(
-                      recipeModel: MockRecipeModel.demoRecipe[index],
-                    ),
-                  ),
-                );
-              },
-            )
-          ],
-        ),
+                  ListView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 12,
+                        ),
+                        child: RecipeCard(
+                          recipe: snapshot.data![index],
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
 }
 
 class RecipeCard extends StatefulWidget {
-  final MockRecipeModel? recipeModel;
+  //final MockRecipeModel? recipeModel;
+  final Recipe recipe;
 
-  const RecipeCard({Key? key, this.recipeModel}) : super(key: key);
+  const RecipeCard({Key? key, required this.recipe}) : super(key: key);
 
   @override
   State<RecipeCard> createState() => _RecipeCardState();
@@ -106,11 +139,20 @@ class _RecipeCardState extends State<RecipeCard> {
               alignment: Alignment.topCenter,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Image(
-                  height: 320,
-                  width: 320,
-                  fit: BoxFit.cover,
-                  image: AssetImage(widget.recipeModel!.imgPath),
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecipeDetailsScreen(
+                          idOfRecipe: widget.recipe.id.toString(),
+                        ),
+                      )),
+                  child: Image(
+                    height: 320,
+                    width: 320,
+                    fit: BoxFit.cover,
+                    image: NetworkImage(widget.recipe.image!),
+                  ),
                 ),
               ),
             ),
@@ -130,16 +172,12 @@ class _RecipeCardState extends State<RecipeCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.recipeModel!.title,
+                      widget.recipe.title!,
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     SizedBox(
                       height: 8,
                     ),
-                    Text(
-                      widget.recipeModel!.writer,
-                      style: Theme.of(context).textTheme.caption,
-                    )
                   ],
                 ),
               ),
@@ -154,7 +192,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     SizedBox(
                       width: 4,
                     ),
-                    Text(widget.recipeModel!.cookingTime.toString() + '\''),
+                    Text('2'),
                     Spacer(),
                     InkWell(
                       onTap: () {
