@@ -9,7 +9,7 @@ class HttpService{
 
   static Map<String, String> queryParameters = {
     'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
-    'ingredients': 'fish',//atm hardcoded, will be dynamically replaced
+    'ingredients': 'beef', 'yogurt'//atm hardcoded, will be dynamically replaced
     'number': '5',
   };
 

@@ -28,7 +28,7 @@ Main screen
  */
 
 class RecipeScreen extends StatelessWidget {
-  Future getAPIdata() async {
+  /*Future getAPIdata() async {
     final queryParameters = {
       'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
       'ingredients': 'tomato',
@@ -44,6 +44,8 @@ class RecipeScreen extends StatelessWidget {
     print(jsondata);
     //return result;
   }
+
+   */
 
 
 
