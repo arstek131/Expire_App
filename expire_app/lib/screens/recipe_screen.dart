@@ -5,10 +5,12 @@ import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/models/http_service.dart';
 import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/models/recipe.dart';
+import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:expire_app/models/mock_recipemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import 'recipe_details_screen.dart';
 
@@ -78,13 +80,13 @@ class RecipeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recipeData = Provider.of<RecipeProvider>(context).printProduct();
     return Scaffold(
       body: FutureBuilder(
         future: HttpService.getRecipes(),
         builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
           if (snapshot.hasData) {
             List<Recipe>? recipes = snapshot.data;
-
             return SingleChildScrollView(
               child: Column(
                 children: [

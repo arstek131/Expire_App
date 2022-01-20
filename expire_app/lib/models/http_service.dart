@@ -9,7 +9,7 @@ class HttpService{
 
   static Map<String, String> queryParameters = {
     'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
-    'ingredients': 'beef', 'yogurt'//atm hardcoded, will be dynamically replaced
+    'ingredients': 'Vegetarian',//atm hardcoded, will be dynamically replaced
     'number': '5',
   };
 
@@ -25,10 +25,14 @@ class HttpService{
         'api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
+    print(uri.toString());
 
     if(res.statusCode == 200){
       List<dynamic> body = jsonDecode(res.body);
+
       List<Recipe> recipes = body.map((dynamic item) => Recipe.fromJson(item)).toList();
+
+
       return recipes;
     }else{
       throw 'can\'t get recipes';
@@ -43,15 +47,15 @@ class HttpService{
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
 
-    var jsondata = jsonDecode(res.body);
-    //final result = recipeFromJson(response.body);
-    //print(jsondata);
 
     if(res.statusCode == 200){
-      List <dynamic> body = jsonDecode(res.body);
+      final body = jsonDecode(res.body);
 
-      List<RecipeDetails> recipes = body.map((dynamic item) => RecipeDetails.fromJson(item)).toList();
-      return recipes;
+      RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
+      //body.map((dynamic item) => print(item));
+      print(recipesDetails.title);
+
+      return [];
     }else{
       throw 'can\'t get infos';
     }

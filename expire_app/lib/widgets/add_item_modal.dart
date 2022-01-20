@@ -232,8 +232,9 @@ class _AddItemModalState extends State<AddItemModal> {
     scanResult = "8013355999662"; // LEAVE FOR TESTING
     scanResult = "3168930010265";
     scanResult = "689544001737";
+    scanResult = "8000090003297";
 
-    try {
+    /*try {
       BarcodeResult result = await FlutterScandit(symbologies: [
         Symbology.EAN13_UPCA,
         Symbology.EAN8,
@@ -255,6 +256,8 @@ class _AddItemModalState extends State<AddItemModal> {
       print(error);
       rethrow;
     }
+
+     */
 
     print("fetching product...");
 
