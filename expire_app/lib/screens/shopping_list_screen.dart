@@ -41,7 +41,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
             Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 30),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).orientation == Orientation.portrait ? 30.0 : 10.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -65,7 +65,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
                     ],
                   ),
                   child: Padding(
-                    padding: EdgeInsets.only(top: 56, left: 20, right: 40, bottom: 30),
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).orientation == Orientation.portrait ? 56 : 0,
+                      left: 20,
+                      right: 30,
+                      bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 30 : 10,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -133,15 +138,29 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
                             elevation: 10,
                             color: styles.ghostWhite,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-                                child: FaIcon(
-                                  FontAwesomeIcons.plus,
-                                  color: styles.primaryColor,
-                                  size: 26,
-                                )),
+                              padding: EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Add list",
+                                    style: TextStyle(
+                                      fontFamily: styles.currentFontFamily,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 2),
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.black87,
+                                    size: 26,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],

@@ -41,7 +41,8 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: MediaQuery.of(context).size.height * 0.09,
+        toolbarHeight:
+            MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.portrait ? 0.09 : 0.15),
         backgroundColor: Colors.indigoAccent,
         leading: IconButton(
           icon: Icon(
@@ -330,7 +331,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                         height: 30,
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
-                          width: 150,
+                          width: MediaQuery.of(context).orientation == Orientation.portrait ? 150 : 300,
                           child: Text(
                             product.title,
                             style: styles.heading,

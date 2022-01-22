@@ -52,7 +52,7 @@ class _OptionBarState extends State<OptionsBar> {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 30),
+          margin: EdgeInsets.only(top: MediaQuery.of(context).orientation == Orientation.portrait ? 30 : 0),
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -78,7 +78,8 @@ class _OptionBarState extends State<OptionsBar> {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 40, bottom: 0),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).orientation == Orientation.portrait ? 20 : 10, left: 20, right: 40, bottom: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -157,7 +158,7 @@ class _OptionBarState extends State<OptionsBar> {
                           ),
                           onPressed: () {
                             setState(() {
-                              inputWidth = 250;
+                              inputWidth = (MediaQuery.of(context).orientation == Orientation.portrait ? 250 : 600);
                               FocusScope.of(context).requestFocus(_focusNode);
                             });
                             print(inputWidth);
@@ -165,7 +166,7 @@ class _OptionBarState extends State<OptionsBar> {
                   ],
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: MediaQuery.of(context).orientation == Orientation.portrait ? 10 : 0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: SizedBox(

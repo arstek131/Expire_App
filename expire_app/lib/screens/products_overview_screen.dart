@@ -108,7 +108,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
             OptionsBar(),
             Container(
               margin: const EdgeInsets.only(bottom: 0),
-              padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
+              padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).orientation == Orientation.portrait ? 20 : 5, left: 20, right: 20, bottom: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

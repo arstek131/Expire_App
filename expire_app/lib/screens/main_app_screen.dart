@@ -100,6 +100,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Scaffold(
       backgroundColor: primaryColor,
       body: SizedBox(
@@ -129,7 +131,13 @@ class _ProductsScreenState extends State<MainAppScreen> {
                         ),
                         SafeArea(
                           child: Align(
-                            child: CustomBottomNavigationBar(setIndex: _bottomNavigationBarHandler, pageIndex: _pageIndex),
+                            child: Visibility(
+                              visible: !isKeyboardOpen,
+                              child: CustomBottomNavigationBar(
+                                setIndex: _bottomNavigationBarHandler,
+                                pageIndex: _pageIndex,
+                              ),
+                            ),
                             alignment: Alignment.bottomCenter,
                           ),
                         ),
