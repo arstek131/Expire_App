@@ -181,9 +181,9 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
                                 controller: _controller,
                                 autofocus: true,
                                 decoration: InputDecoration(
-                                  suffixIcon: (!_isLoading && _firstCheck)
+                                  suffixIcon: !_isLoading
                                       ? Container(
-                                          margin: EdgeInsets.only(right: 4),
+                                          margin: EdgeInsets.only(right: _firstCheck ? 4 : 40),
                                           child: IconButton(
                                             icon: Icon(
                                               Icons.qr_code_scanner,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:expire_app/enums/expire_status.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/providers/products_provider.dart';
@@ -11,6 +13,8 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:openfoodfacts/openfoodfacts.dart' as opf;
+import 'package:openfoodfacts/utils/TagType.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -228,11 +232,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ),
                     ),
                     SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      height: 1000,
-                      color: Colors.green,
+                      height: 20,
                     ),
                   ],
                 ),

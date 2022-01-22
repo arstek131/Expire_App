@@ -144,27 +144,15 @@ class _ProductsContainerState extends State<ProductsContainer> {
                           final filteredProducts = data.getItems(filter: filterData.filter);
 
                           return ListView.builder(
+                            controller: ScrollController(initialScrollOffset: 0),
                             //physics: BouncingScrollPhysics(),
                             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                             itemCount: filteredProducts.length + 1,
                             itemBuilder: (ctx, i) {
                               if (!filteredProducts.isEmpty) {
-                                if (i < filteredProducts.length /*data.items.length*/) {
+                                if (i < filteredProducts.length) {
                                   Product product = filteredProducts[i];
 
-                                  /*Product product = Product(
-                                id: data.items[i].id,
-                                title: data.items[i].title,
-                                expiration: data.items[i].expiration,
-                                dateAdded: data.items[i].dateAdded,
-                                creatorId: data.items[i].creatorId,
-                                image: data.items[i].image,
-                                creatorName: data.items[i].creatorName,
-                                /*nutriments: data.items[i].nutriments,
-                              nutriscore: data.items[i].nutriscore,
-                              ingredientsText: data.items[i].ingredientsText,
-                              allergens: data.items[i].allergens,*/
-                              );*/
                                   bool first = (i == 0);
                                   bool last = (i == data.items.length - 1);
 
@@ -182,7 +170,12 @@ class _ProductsContainerState extends State<ProductsContainer> {
                                 }
                               } else {
                                 return Container(
-                                  child: Text("No products"),
+                                  margin: EdgeInsets.only(top: 100),
+                                  child: Text(
+                                    "No products found.",
+                                    style: styles.subheading,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 );
                               }
                             },

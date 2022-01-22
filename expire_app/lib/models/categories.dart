@@ -7,8 +7,8 @@ const categories = [
   {"title": "Vegetarian", "icon": const FaIcon(FontAwesomeIcons.carrot, color: styles.ghostWhite)},
   {"title": "Vegan", "icon": const FaIcon(FontAwesomeIcons.egg, color: styles.ghostWhite)},
   {"title": "Palm-oil free", "icon": const FaIcon(FontAwesomeIcons.tint, color: styles.ghostWhite)},
-  {"title": "Fruit", "icon": const FaIcon(FontAwesomeIcons.tint, color: styles.ghostWhite)},
-  {"title": "Cheese", "icon": const FaIcon(FontAwesomeIcons.tint, color: styles.ghostWhite)},
-  {"title": "Milk", "icon": const FaIcon(FontAwesomeIcons.tint, color: styles.ghostWhite)},
-  {"title": "Yogurt", "icon": const FaIcon(FontAwesomeIcons.tint, color: styles.ghostWhite)},
+  {"title": "Fruit", "icon": const FaIcon(FontAwesomeIcons.appleAlt, color: styles.ghostWhite)},
+  {"title": "Cheese", "icon": const FaIcon(FontAwesomeIcons.cheese, color: styles.ghostWhite)},
+  {"title": "Milk", "icon": const FaIcon(FontAwesomeIcons.glassWhiskey, color: styles.ghostWhite)},
+  {"title": "Yogurt", "icon": const FaIcon(FontAwesomeIcons.iceCream, color: styles.ghostWhite)},
 ];

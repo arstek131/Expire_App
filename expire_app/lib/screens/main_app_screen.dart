@@ -1,6 +1,7 @@
 /* Dart */
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/screens/shopping_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path/path.dart';
@@ -67,9 +68,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Recipes",
       },
       {
-        'page': const Center(
-          child: Text("test1"),
-        ),
+        'page': ShoppingListScreen(),
         'title': "Shopping list",
       },
       {
@@ -116,18 +115,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
                         backgroundColor: styles.ghostWhite,
                       ),
                     )
-                  : /*MultiProvider(
-                      key: ObjectKey(UserInfo.instance.userId!),
-                      providers: [
-                        ChangeNotifierProvider(
-                          create: (_) => BottomNavigationBarSizeProvider(),
-                        ),
-                        ChangeNotifierProvider(
-                          create: (_) => ProductsProvider(),
-                        ),
-                      ],
-                      child: */
-                  Stack(
+                  : Stack(
                       children: [
                         PageView(
                           //physics: BouncingScrollPhysics(),

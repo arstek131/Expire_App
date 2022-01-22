@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /* providers */
 import 'package:provider/provider.dart';
 import '../providers/products_provider.dart';
+import '../providers/filters_provider.dart';
 
 /* widgets */
 import '../widgets/options_bar.dart';
@@ -21,6 +22,11 @@ import '../helpers/user_info.dart' as userinfo;
 /* styles */
 import '../app_styles.dart' as styles;
 
+enum ViewMode {
+  HideExpired,
+  ShowExpired,
+}
+
 class ProductsOverviewScreen extends StatefulWidget {
   @override
   _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
@@ -36,6 +42,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
   bool get wantKeepAlive => true;
 
   Ordering _ordering = Ordering.ExpiringSoon;
+  ViewMode _viewMode = ViewMode.ShowExpired;
 
   void _toggleProductsViewMode() {
     setState(() {
@@ -66,8 +73,27 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     }
   }
 
+  void _toggleViewMode() {
+    switch (_viewMode) {
+      case ViewMode.HideExpired:
+        setState(() {
+          _viewMode = ViewMode.ShowExpired;
+        });
+        break;
+      case ViewMode.ShowExpired:
+        setState(() {
+          _viewMode = ViewMode.HideExpired;
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final filtersData = Provider.of<FiltersProvider>(context, listen: false);
+
     super.build(context);
 
     return Container(
@@ -101,7 +127,27 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                         Text(
                           _ordering == Ordering.ExpiringSoon ? "Expiring soon" : "Expiring last",
                           style: styles.subheading,
-                        )
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _toggleViewMode();
+                      filtersData.setSingleFilter(hideExpired: !filtersData.filter.hideExpired);
+                    },
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          _viewMode == ViewMode.HideExpired ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.solidEye,
+                          color: styles.ghostWhite,
+                          size: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          _viewMode == ViewMode.HideExpired ? "Hide expired" : "Show expired",
+                          style: styles.subheading,
+                        ),
                       ],
                     ),
                   ),

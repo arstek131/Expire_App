@@ -11,12 +11,7 @@ class RecipeDetailsScreen extends StatelessWidget {
   final MockRecipeModel? recipeModel;
   final RecipeDetails? recipeDetails;
 
-  const RecipeDetailsScreen(
-      {Key? key,
-      this.recipeModel,
-      this.recipeDetails,
-      required this.idOfRecipe})
-      : super(key: key);
+  const RecipeDetailsScreen({Key? key, this.recipeModel, this.recipeDetails, required this.idOfRecipe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +54,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                       height: 30,
                     ),
                     Text(
-                      recipesDetails![0].title!,
+                      recipesDetails![0].title,
                       style: _textTheme.headline6,
                     ),
                     SizedBox(
@@ -142,8 +137,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                                 radius: 3,
                                 paintingStyle: PaintingStyle.fill,
                               ),
-                              unselectedLabelColor:
-                                  Colors.black.withOpacity(0.3),
+                              unselectedLabelColor: Colors.black.withOpacity(0.3),
                               labelStyle: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -182,13 +176,13 @@ class RecipeDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Hero(
-                          tag: recipesDetails[0].image!,
+                          tag: recipesDetails[0].image,
                           child: ClipRRect(
                             child: Image(
                               width: double.infinity,
                               height: (size.height / 2) + 50,
                               fit: BoxFit.cover,
-                              image: NetworkImage(recipesDetails[0].image!),
+                              image: NetworkImage(recipesDetails[0].image),
                             ),
                           ),
                         ),
@@ -233,13 +227,13 @@ class Ingredients extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: recipeModel.extendedIngredients!.length,
+              itemCount: recipeModel.extendedIngredients.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 2.0,
                   ),
-                  child: Text('⚫️ ' + recipeModel.extendedIngredients![index].nameClean.toString()),
+                  child: Text('⚫️ ' + recipeModel.extendedIngredients[index].nameClean.toString()),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

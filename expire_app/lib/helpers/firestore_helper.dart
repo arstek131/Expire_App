@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
+import 'package:expire_app/models/shopping_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
@@ -107,6 +108,24 @@ class FirestoreHelper {
     return products;
   }
 
+  Future<List<ShoppingList>> getShoppingListsFromFamilyId(String familyId) async {
+    List<ShoppingList> lists = [];
+
+    final listsRef = await firestore.collection('families').doc(familyId).collection('shopping_lists').get();
+
+    for (var list in listsRef.docs) {
+      lists.add(
+        ShoppingList(
+          id: list.id,
+          title: list['title'],
+          products: [],
+        ),
+      );
+      print(list.data());
+    }
+    return lists;
+  }
+
   Stream<QuerySnapshot> getFamilyProductsStream({required String familyId}) {
     return firestore.collection('families').doc(familyId).collection('products').snapshots();
   }
@@ -191,6 +210,19 @@ class FirestoreHelper {
     }
   }
 
+  Future<void> addShoppingList({required ShoppingList list}) async {
+    final userInfo = userinfo.UserInfo.instance;
+
+    // storing shopping list on shoppingLists collection
+    final listsRef = await firestore.collection('families').doc(userInfo.familyId).collection('shopping_lists');
+
+    final data = {
+      'title': list.title,
+    };
+
+    listsRef.doc(list.id).set(data);
+  }
+
   Future<void> deleteProduct(String productId) async {
     final userInfo = userinfo.UserInfo.instance;
 
@@ -206,6 +238,13 @@ class FirestoreHelper {
       final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);
       await ref.delete();
     }
+  }
+
+  Future<void> deleteShoppingList(String id) async {
+    final userInfo = userinfo.UserInfo.instance;
+
+    // delte shopping list record
+    await firestore.collection("families").doc(userInfo.familyId).collection('shopping_lists').doc(id).delete();
   }
 
   Nutriments? parseNutriments(Map<String, dynamic> JSONnutriments) {

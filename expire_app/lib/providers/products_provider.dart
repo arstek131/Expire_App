@@ -1,4 +1,5 @@
 /* dart */
+import 'package:expire_app/providers/filters_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
@@ -33,13 +34,13 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   List<Product> getItems({Filter? filter}) {
-    if (filter != null && !filter.isFilterSet()) {
+    if (filter == null || !filter.isFilterSet()) {
       return items;
     }
 
     List<Product> products = [];
 
-    if (filter!.isFish) {}
+    if (filter.isFish) {}
 
     if (filter.isMeat) {}
 
@@ -90,6 +91,54 @@ class ProductsProvider extends ChangeNotifier {
           products.add(tmp);
         }
       }
+    }
+
+    // todo: implement search that updates every keystroke
+    if (filter.searchKeywords.isNotEmpty) {
+      List<Product> referenceList;
+
+      if (!filter.areCategoriesSet()) {
+        referenceList = _items;
+      } else {
+        referenceList = products;
+      }
+
+      for (final searchKeyword in filter.searchKeywords) {
+        products = referenceList.where((product) {
+          if (product.title.toLowerCase().contains(searchKeyword.toLowerCase())) {
+            return true;
+          }
+          return false;
+        }).toList();
+
+        referenceList = products;
+      }
+    }
+
+    if (filter.hideExpired) {
+      List<Product> referenceList;
+
+      if (products.isEmpty) {
+        referenceList = _items;
+      } else {
+        referenceList = products;
+      }
+
+      products = referenceList.where((element) {
+        DateTime today = DateTime.now();
+
+        int dateDifferenceInDays = DateTime(element.expiration.year, element.expiration.month, element.expiration.day)
+            .difference(
+              DateTime(today.year, today.month, today.day),
+            )
+            .inDays;
+
+        if (dateDifferenceInDays < 0) {
+          return false;
+        } else {
+          return true;
+        }
+      }).toList();
     }
 
     return products;

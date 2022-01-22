@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:math';
 
 /* style */
 import '../app_styles.dart' as styles;
@@ -32,6 +33,16 @@ class _OptionBarState extends State<OptionsBar> {
         _chosenIndexes.add(index);
       });
     }
+  }
+
+  double inputWidth = 0.0;
+  final searchController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,15 +82,86 @@ class _OptionBarState extends State<OptionsBar> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Your Products",
-                      style: styles.title,
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 150),
+                      curve: Curves.easeInOut,
+                      width: max(200 - inputWidth, 0),
+                      child: AnimatedOpacity(
+                        opacity: inputWidth > 0 ? 0 : 1,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 150),
+                        child: FittedBox(
+                          child: Text(
+                            "Your Products",
+                            style: styles.title,
+                          ),
+                        ),
+                      ),
                     ),
-                    FaIcon(
-                      FontAwesomeIcons.search,
-                      color: styles.ghostWhite,
-                      size: 23,
-                    )
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 150),
+                      curve: Curves.easeInOut,
+                      width: inputWidth,
+                      height: 40,
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: _focusNode,
+                        onChanged: (value) {
+                          filtersData.setSingleFilter(searchKeyword: value.split(" ").where((element) => element != "").toList());
+                        },
+                        textAlign: TextAlign.left,
+                        cursorColor: styles.ghostWhite,
+                        style: const TextStyle(
+                          color: styles.ghostWhite,
+                          fontFamily: styles.currentFontFamily,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: InputDecoration(
+                            isDense: true,
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: styles.ghostWhite,
+                              ),
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: styles.ghostWhite,
+                              ),
+                            ),
+                            hintText: 'Search product',
+                            hintStyle: styles.subheading),
+                      ),
+                    ),
+                    if (inputWidth > 0)
+                      IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.timesCircle,
+                            color: styles.ghostWhite,
+                            size: 23,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              inputWidth = 0;
+                              searchController.clear();
+                              filtersData.clearFilter();
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            });
+                            print(inputWidth);
+                          })
+                    else
+                      IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.sistrix,
+                            color: styles.ghostWhite,
+                            size: 27,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              inputWidth = 250;
+                              FocusScope.of(context).requestFocus(_focusNode);
+                            });
+                            print(inputWidth);
+                          })
                   ],
                 ),
               ),
