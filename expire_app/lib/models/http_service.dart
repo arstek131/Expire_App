@@ -47,15 +47,13 @@ class HttpService{
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
 
-
     if(res.statusCode == 200){
       final body = jsonDecode(res.body);
 
-      RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
-      //body.map((dynamic item) => print(item));
-      print(recipesDetails.title);
+      List<RecipeDetails> recipesDetails = body.map((dynamic item) => Recipe.fromJson(item)).toList();
+      //Se stampo qualcosa qui, tipo anche "print("ciaooo")" non va, si inceppa nel mapping
 
-      return [];
+      return recipesDetails;
     }else{
       throw 'can\'t get infos';
     }
