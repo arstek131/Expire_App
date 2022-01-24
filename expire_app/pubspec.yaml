@@ -66,6 +66,7 @@ dependencies:
   # facebook sign in
   flutter_facebook_auth: ^3.5.7  
 
+
   # openfoodfacts
   openfoodfacts: ^1.10.0
 

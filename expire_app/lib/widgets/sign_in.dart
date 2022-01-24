@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -265,40 +267,60 @@ class _SignInState extends State<SignIn> {
                               "Or sign in with:",
                               style: TextStyle(fontFamily: styles.currentFontFamily),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 10),
-                              width: double.infinity,
-                              height: 55,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF161618)),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14.0),
+                            if (Platform.isIOS)
+                              Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                width: double.infinity,
+                                height: 55,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF161618)),
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14.0),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                onPressed: () {
-                                  print("Login with facebook");
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    FaIcon(
-                                      FontAwesomeIcons.apple,
-                                      size: 32,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'Sign-in using Apple',
-                                      style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
-                                    ),
-                                  ],
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible: false, // user must tap button!
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Not implemented!', textAlign: TextAlign.center),
+                                          content: Text(
+                                              'Apple login was not implemented because it required expensive apple developer account.',
+                                              textAlign: TextAlign.center),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('I understand'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      FaIcon(
+                                        FontAwesomeIcons.apple,
+                                        size: 32,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Sign-in using Apple',
+                                        style: TextStyle(fontSize: 16, fontFamily: styles.currentFontFamily),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
                             Container(
                               margin: const EdgeInsets.only(top: 10),
                               width: double.infinity,

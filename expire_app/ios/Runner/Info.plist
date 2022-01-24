@@ -50,6 +50,12 @@
 		<key>CFBundleURLTypes</key>
 		<array>
 				<dict>
+					<key>CFBundleURLSchemes</key>
+					<array>
+						<string>fb270149645099851</string>
+					</array>
+				</dict>
+				<dict>
 						<key>CFBundleTypeRole</key>
 						<string>Editor</string>
 						<key>CFBundleURLSchemes</key>
@@ -70,25 +76,15 @@
 						<string>Editor</string>
 						<key>CFBundleURLSchemes</key>
 						<array>
-								<string>TEST?</string>
+								<string>com.googleusercontent.apps.160174632437-alqh3ousd201h14rbsh3o92mdf8rfhhv</string>
 						</array>
 				</dict>
-		</array>
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb270149645099851</string>
-			</array>
-			</dict>
 		</array>
 		<key>FacebookAppID</key>
 		<string>270149645099851</string>
 		<key>FacebookClientToken</key>
 		<string>4880fec42271b93f2b4717c67b48117e</string>
 		<key>FacebookDisplayName</key>
-		<string>Expiry App</string>
-		
+		<string>Expiry App</string>				
 	</dict>
 </plist>
