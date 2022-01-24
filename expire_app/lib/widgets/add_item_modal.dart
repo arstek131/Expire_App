@@ -617,1001 +617,1004 @@ class _AddItemModalState extends State<AddItemModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Stack(
-        children: [
-          Container(
-            color: styles.secondaryColor.withOpacity(0.95),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 5, bottom: 10),
-                  height: 5,
-                  width: MediaQuery.of(widget.modalContext).size.width * 0.4,
-                  decoration: const BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(3),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Stack(
+          children: [
+            Container(
+              color: styles.secondaryColor.withOpacity(0.95),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 5, bottom: 10),
+                    height: 5,
+                    width: MediaQuery.of(widget.modalContext).size.width * 0.4,
+                    decoration: const BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(3),
+                      ),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(color: Colors.black54, blurRadius: 15.0, offset: Offset(0.0, 0.75)),
+                      ],
                     ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(color: Colors.black54, blurRadius: 15.0, offset: Offset(0.0, 0.75)),
-                    ],
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: Form(
-                      key: _formKey,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          const Text(
-                            "Scan barcode",
-                            style: styles.heading,
-                            textAlign: TextAlign.center,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                              height: 65,
-                              width: 300,
-                              child: Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  decoration: ShapeDecoration(
-                                    color: Colors.black87,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ), //CircleBorder(),
-                                  ),
-                                  child: IconButton(
-                                    //padding: EdgeInsets.symmetric(horizontal: 20),
-                                    icon: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const FaIcon(
-                                          FontAwesomeIcons.barcode,
-                                          size: 35,
-                                        ),
-                                        const FaIcon(
-                                          FontAwesomeIcons.barcode,
-                                          size: 35,
-                                        ),
-                                        const FaIcon(
-                                          FontAwesomeIcons.barcode,
-                                          size: 35,
-                                        ),
-                                        const FaIcon(
-                                          FontAwesomeIcons.barcode,
-                                          size: 35,
-                                        ),
-                                      ],
-                                    ),
-                                    color: Colors.white,
-                                    onPressed: _scanBarcode,
-                                  ),
-                                ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            const Text(
+                              "Scan barcode",
+                              style: styles.heading,
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            "Product informations",
-                            style: styles.heading,
-                            textAlign: TextAlign.center,
-                          ),
-                           const SizedBox(
-                            height: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                isScrollControlled: true,
-                                enableDrag: true,
-                                context: context,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                builder: (BuildContext ctx) {
-                                  return Row(
-                                    children: [
-                                      
-                                        Expanded(
-                                          child: GestureDetector(
-                                        onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                        child: Container(
-                                          color: Colors.blue.shade300,
-                                          child: Container(
-                                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                SizedBox(height: 2),
-                                                Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                              ],
-                                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: 65,
+                                width: 300,
+                                child: Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    decoration: ShapeDecoration(
+                                      color: Colors.black87,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ), //CircleBorder(),
+                                    ),
+                                    child: IconButton(
+                                      //padding: EdgeInsets.symmetric(horizontal: 20),
+                                      icon: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const FaIcon(
+                                            FontAwesomeIcons.barcode,
+                                            size: 35,
                                           ),
-                                        ),
+                                          const FaIcon(
+                                            FontAwesomeIcons.barcode,
+                                            size: 35,
+                                          ),
+                                          const FaIcon(
+                                            FontAwesomeIcons.barcode,
+                                            size: 35,
+                                          ),
+                                          const FaIcon(
+                                            FontAwesomeIcons.barcode,
+                                            size: 35,
+                                          ),
+                                        ],
                                       ),
+                                      color: Colors.white,
+                                      onPressed: _scanBarcode,
+                                    ),
                                   ),
-                                      
-                                        Expanded(
-                                          child: GestureDetector(
-                                        onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Product informations",
+                              style: styles.heading,
+                              textAlign: TextAlign.center,
+                            ),
+                             const SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                  isScrollControlled: true,
+                                  enableDrag: true,
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20),
+                                    ),
+                                  ),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  builder: (BuildContext ctx) {
+                                    return Row(
+                                      children: [
+                                        
+                                          Expanded(
+                                            child: GestureDetector(
+                                          onTap: () => Navigator.of(context).pop(ImageSource.gallery),
                                           child: Container(
-                                            color: Colors.pink.shade600,
+                                            color: Colors.blue.shade300,
                                             child: Container(
-                                               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                  FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
                                                   SizedBox(height: 2),
-                                                  Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                  Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
                                                 ],
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                              if (imageSource == null) {
-                                return;
-                              }
-
-                              _takePicture(imageSource);
-                            },
-                            child: Container(
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: styles.ghostWhite.withOpacity(0.9),
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                  width: 1.5,
-                                  color: styles.ghostWhite,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(13.0),
-                                child: Center(
-                                  child: productInsertionMethod == ProductInsertionMethod.None
-                                      ? const Text(
-                                          "Click to add image",
-                                          textAlign: TextAlign.center,
-                                        )
-                                      : productInsertionMethod == ProductInsertionMethod.Scanner
-                                          ? _imageUrl == null
-                                              ? Image.asset(
-                                                  "assets/images/missing_image_placeholder.png",
-                                                  fit: BoxFit.contain,
-                                                )
-                                              : Stack(
-                                                fit: StackFit.expand,
-                                                children: [
-                                                  Container(
-                                                    child: Image.network(
-                                                        _imageUrl!,
-                                                        fit: BoxFit.cover,
-                                                        color: Colors.black.withOpacity(0.4),
-                                                        colorBlendMode: BlendMode.colorBurn,
-                                                      ),
-                                                  ),
-                                                  Positioned.fill(
-                                                    child: BackdropFilter(
-                                                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                                      child: Container(color: Colors.black.withOpacity(0.0),),
-                                                    )
-                                                  ),
-                                                  Image.network(
-                                                      _imageUrl!,
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                ],
-                                              )
-                                          : _pickedImage == null
-                                              ? Image.asset(
-                                                  "assets/images/missing_image_placeholder.png",
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Stack(
-                                                fit: StackFit.expand,
-                                                children: [
-                                                  Container(
-                                                    child: Image.file(
-                                                        _pickedImage!,
-                                                        fit: BoxFit.cover,
-                                                        color: Colors.black.withOpacity(0.4),
-                                                        colorBlendMode: BlendMode.colorBurn,
-                                                      ),
-                                                  ),
-                                                  Positioned.fill(
-                                                    child: BackdropFilter(
-                                                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                                      child: Container(color: Colors.black.withOpacity(0.0),),
-                                                    )
-                                                  ),
-                                                  Image.file(
-                                                    _pickedImage!,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                ],
-                                              )
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _productNameController,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: styles.ghostWhite, 
-                                fontFamily: styles.currentFontFamily, 
-                                fontWeight: FontWeight.bold,
-                                ),
-                            decoration: InputDecoration( 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: styles.ghostWhite,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade400,
-                                  width: 2.0,
-                                ), 
-                              ),
-                              hintText: 'Product name',
-                              hintStyle: styles.subheading
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _productData['title'] = value!;
-                            },
-                            onFieldSubmitted: (value) {
-                              _productData['title'] = value;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextButton.icon(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.calendarAlt,
-                                    size: 23,
-                                    color: styles.ghostWhite.withOpacity(0.9)
-                                  ),
-                                  label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
-                                      style: styles.subheading,
-                                      ),
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all<EdgeInsets>(
-                                      EdgeInsets.symmetric(vertical: 15),
                                     ),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        side: BorderSide(color: styles.ghostWhite),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: () => _selectDate(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 20),
-                            width: double.infinity,
-                            height: 55,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                  styles.deepOrange,
-                                ),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () async {
-                                // Validate returns true if the form is valid, or false otherwise.
-                                if (_formKey.currentState!.validate()) {
-                                  await _submit();
-                                  Navigator.of(widget.modalContext).pop();
-                                }
-                              },
-                              child: _isLoading
-                                  ? CircularProgressIndicator.adaptive(
-                                      strokeWidth: 2,
-                                      backgroundColor: styles.ghostWhite,
-                                    )
-                                  : const Text(
-                                      'Submit',
-                                      style: styles.subheading,
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          const Text(
-                            "Category",
-                            style: styles.heading,
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 80,
-                            child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: _choicesList.length,
-                              itemBuilder: (context, i) => Padding(
-                                padding: const EdgeInsets.only(right: 15.0),
-                                child: ChoiceChip(
-                                  elevation: 2,
-                                  selectedColor: styles.deepGreen,
-                                  backgroundColor: Colors.indigo[100],
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  labelStyle: _chosenIndexes.contains(i) 
-                                    ? styles.subheading 
-                                    : TextStyle(fontFamily: styles.currentFontFamily, 
-                                                color: Colors.black,
-                                                fontSize: 15,
-                                      ),
-                                  avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
-                                  label: Text(
-                                    _choicesList[i]['title'] as String,
-                                  ),
-                                  selected: _chosenIndexes.contains(i),
-                                  onSelected: (bool selected) => _chipSelectionHandler(i, selected),
-                                ),
-                              ),
-                              scrollDirection: Axis.horizontal,
-                            ),
-                          ),
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            "Nutriments",
-                            style: styles.heading,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          HealthInfoInput(
-                            title: 'Energy', 
-                            symbol: 'kcal', 
-                            controller: _kcalsController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.energyKcal = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.energyKcal = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: 'Fat', 
-                            symbol: 'g', 
-                            controller: _fatController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.fat = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.fat = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: '   of which acid saturated fat', 
-                            symbol: 'g', 
-                            controller: _saturatedFatController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.saturatedFat = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.saturatedFat = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: 'Carbohydrates', 
-                            symbol: 'g', 
-                            controller: _carboController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.carbohydrates = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.carbohydrates = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: '   of which sugar', 
-                            symbol: 'g', 
-                            controller: _sugarController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.sugars = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.sugars = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: 'Fibers', 
-                            symbol: 'g', 
-                            controller: _fibersController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.fiber = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.fiber = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: 'Proteins', 
-                            symbol: 'g', 
-                            controller: _proteinsController, 
-                            divider: true, 
-                            onSaved: (value) => _nutriments.proteins = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.proteins = double.tryParse(value),
-                          ),
-                          HealthInfoInput(
-                            title: 'Salt', 
-                            symbol: 'g', 
-                            controller: _saltController, 
-                            divider: false, 
-                            onSaved: (value) => _nutriments.salt = (value == null ? null : double.tryParse(value)), 
-                            onFieldSubmitted: (value) => _nutriments.salt = double.tryParse(value),
-                          ),    
-                          SizedBox(height: 20), 
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          SizedBox(height: 20), 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Ingredients",
-                                style: styles.heading,
-                                textAlign: TextAlign.center,
-                              ),
-                              IconButton(
-                                icon: FaIcon(
-                                  FontAwesomeIcons.camera, 
-                                  size: 16, 
-                                  color: styles.ghostWhite,
-                                ),
-                                onPressed: () async {
-                                  ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                    isScrollControlled: true,
-                                    enableDrag: true,
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20),
-                                      ),
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    builder: (BuildContext ctx) {
-                                      return Row(
-                                        children: [
-                                          
-                                            Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+                                        
+                                          Expanded(
+                                            child: GestureDetector(
+                                          onTap: () => Navigator.of(context).pop(ImageSource.camera),
                                             child: Container(
-                                              color: Colors.blue.shade300,
+                                              color: Colors.pink.shade600,
                                               child: Container(
-                                                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                 margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
+                                                    Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
                                                     SizedBox(height: 2),
-                                                    Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                    Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
                                                   ],
                                                 ),
                                               ),
                                             ),
                                           ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (imageSource == null) {
+                                  return;
+                                }
+
+                                _takePicture(imageSource);
+                              },
+                              child: Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: styles.ghostWhite.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  border: Border.all(
+                                    width: 1.5,
+                                    color: styles.ghostWhite,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(13.0),
+                                  child: Center(
+                                    child: productInsertionMethod == ProductInsertionMethod.None
+                                        ? const Text(
+                                            "Click to add image",
+                                            textAlign: TextAlign.center,
+                                          )
+                                        : productInsertionMethod == ProductInsertionMethod.Scanner
+                                            ? _imageUrl == null
+                                                ? Image.asset(
+                                                    "assets/images/missing_image_placeholder.png",
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : Stack(
+                                                  fit: StackFit.expand,
+                                                  children: [
+                                                    Container(
+                                                      child: Image.network(
+                                                          _imageUrl!,
+                                                          fit: BoxFit.cover,
+                                                          color: Colors.black.withOpacity(0.4),
+                                                          colorBlendMode: BlendMode.colorBurn,
+                                                        ),
+                                                    ),
+                                                    Positioned.fill(
+                                                      child: BackdropFilter(
+                                                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                        child: Container(color: Colors.black.withOpacity(0.0),),
+                                                      )
+                                                    ),
+                                                    Image.network(
+                                                        _imageUrl!,
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                  ],
+                                                )
+                                            : _pickedImage == null
+                                                ? Image.asset(
+                                                    "assets/images/missing_image_placeholder.png",
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Stack(
+                                                  fit: StackFit.expand,
+                                                  children: [
+                                                    Container(
+                                                      child: Image.file(
+                                                          _pickedImage!,
+                                                          fit: BoxFit.cover,
+                                                          color: Colors.black.withOpacity(0.4),
+                                                          colorBlendMode: BlendMode.colorBurn,
+                                                        ),
+                                                    ),
+                                                    Positioned.fill(
+                                                      child: BackdropFilter(
+                                                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                        child: Container(color: Colors.black.withOpacity(0.0),),
+                                                      )
+                                                    ),
+                                                    Image.file(
+                                                      _pickedImage!,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ],
+                                                )
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _productNameController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: styles.ghostWhite, 
+                                  fontFamily: styles.currentFontFamily, 
+                                  fontWeight: FontWeight.bold,
+                                  ),
+                              decoration: InputDecoration( 
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: styles.ghostWhite,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade400,
+                                    width: 2.0,
+                                  ), 
+                                ),
+                                hintText: 'Product name',
+                                hintStyle: styles.subheading
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _productData['title'] = value!;
+                              },
+                              onFieldSubmitted: (value) {
+                                _productData['title'] = value;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextButton.icon(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.calendarAlt,
+                                      size: 23,
+                                      color: styles.ghostWhite.withOpacity(0.9)
+                                    ),
+                                    label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
+                                        style: styles.subheading,
+                                        ),
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all<EdgeInsets>(
+                                        EdgeInsets.symmetric(vertical: 15),
                                       ),
-                                          
-                                            Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          side: BorderSide(color: styles.ghostWhite),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () => _selectDate(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              width: double.infinity,
+                              height: 55,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(
+                                    styles.deepOrange,
+                                  ),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14.0),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  // Validate returns true if the form is valid, or false otherwise.
+                                  if (_formKey.currentState!.validate()) {
+                                    await _submit();
+                                    Navigator.of(widget.modalContext).pop();
+                                  }
+                                },
+                                child: _isLoading
+                                    ? CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        backgroundColor: styles.ghostWhite,
+                                      )
+                                    : const Text(
+                                        'Submit',
+                                        style: styles.subheading,
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            const Text(
+                              "Category",
+                              style: styles.heading,
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 80,
+                              child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: _choicesList.length,
+                                itemBuilder: (context, i) => Padding(
+                                  padding: const EdgeInsets.only(right: 15.0),
+                                  child: ChoiceChip(
+                                    elevation: 2,
+                                    selectedColor: styles.deepGreen,
+                                    backgroundColor: Colors.indigo[100],
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
+                                    labelStyle: _chosenIndexes.contains(i) 
+                                      ? styles.subheading 
+                                      : TextStyle(fontFamily: styles.currentFontFamily, 
+                                                  color: Colors.black,
+                                                  fontSize: 15,
+                                        ),
+                                    avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
+                                    label: Text(
+                                      _choicesList[i]['title'] as String,
+                                    ),
+                                    selected: _chosenIndexes.contains(i),
+                                    onSelected: (bool selected) => _chipSelectionHandler(i, selected),
+                                  ),
+                                ),
+                                scrollDirection: Axis.horizontal,
+                              ),
+                            ),
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              "Nutriments",
+                              style: styles.heading,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            HealthInfoInput(
+                              title: 'Energy', 
+                              symbol: 'kcal', 
+                              controller: _kcalsController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.energyKcal = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.energyKcal = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: 'Fat', 
+                              symbol: 'g', 
+                              controller: _fatController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.fat = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.fat = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: '   of which acid saturated fat', 
+                              symbol: 'g', 
+                              controller: _saturatedFatController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.saturatedFat = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.saturatedFat = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: 'Carbohydrates', 
+                              symbol: 'g', 
+                              controller: _carboController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.carbohydrates = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.carbohydrates = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: '   of which sugar', 
+                              symbol: 'g', 
+                              controller: _sugarController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.sugars = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.sugars = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: 'Fibers', 
+                              symbol: 'g', 
+                              controller: _fibersController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.fiber = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.fiber = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: 'Proteins', 
+                              symbol: 'g', 
+                              controller: _proteinsController, 
+                              divider: true, 
+                              onSaved: (value) => _nutriments.proteins = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.proteins = double.tryParse(value),
+                            ),
+                            HealthInfoInput(
+                              title: 'Salt', 
+                              symbol: 'g', 
+                              controller: _saltController, 
+                              divider: false, 
+                              onSaved: (value) => _nutriments.salt = (value == null ? null : double.tryParse(value)), 
+                              onFieldSubmitted: (value) => _nutriments.salt = double.tryParse(value),
+                            ),    
+                            SizedBox(height: 20), 
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            SizedBox(height: 20), 
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Ingredients",
+                                  style: styles.heading,
+                                  textAlign: TextAlign.center,
+                                ),
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.camera, 
+                                    size: 16, 
+                                    color: styles.ghostWhite,
+                                  ),
+                                  onPressed: () async {
+                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                      isScrollControlled: true,
+                                      enableDrag: true,
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
+                                      ),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      builder: (BuildContext ctx) {
+                                        return Row(
+                                          children: [
+                                            
+                                              Expanded(
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
                                               child: Container(
-                                                color: Colors.pink.shade600,
+                                                color: Colors.blue.shade300,
                                                 child: Container(
                                                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                                                   child: Column(
                                                     mainAxisSize: MainAxisSize.min,
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
                                                       SizedBox(height: 2),
-                                                      Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  if (imageSource == null) {
-                                    return;
-                                  }
-                                  _extractTextFromImage(imageSource, _ingredientsTextController);
-                                }
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _ingredientsTextController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 10,
-                            style: styles.subheading,
-                            decoration: InputDecoration( 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: styles.ghostWhite,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade400,
-                                  width: 2.0,
-                                ), 
-                              ),
-                              hintText: 'e.g. 200g oil, milk, ...',
-                              hintStyle: styles.subheading
-                            ),
-                            validator: (value) {
-                              /*if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }*/
-
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _ingredientsText = value;
-                            },
-                            onFieldSubmitted: (value) {
-                              _ingredientsText = value;
-                            },
-                          ),
-                          SizedBox(height: 20), 
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Text("Nutri-score", style: styles.subtitle, textAlign: TextAlign.center,),
-                                  SizedBox(
-                                    height: 70, // card height
-                                    width: 120,
-                                    child: PageView.builder(
-                                    itemCount: 5,
-                                    pageSnapping: true,
-                                    controller: _nutriscorePageViewController,
-                                    onPageChanged: (int index) {
-                                      setState(() => _nutriScoreIndex = index);
-                                      _nutriscore = (index == 0 ? null : nutriscoreValues[index]);
-                                    },
-                                    itemBuilder: (_, i) {
-                                      final List<Color> colors = [Colors.grey, Colors.green.shade900, Colors.green.shade300, Colors.yellow.shade600, Colors.orange.shade600, Colors.red.shade700];
-                                      return Transform.scale(
-                                        scale: i == _nutriScoreIndex ? 1 : 0.9,
-                                        child: Card(
-                                          color: colors[i],
-                                          elevation: 6,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                          child: Center(
-                                            child: FittedBox(
-                                              child: Text(
-                                                nutriscoreValues[i],
-                                                style: styles.subtitle,
+                                        ),
+                                            
+                                              Expanded(
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                                child: Container(
+                                                  color: Colors.pink.shade600,
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                        SizedBox(height: 2),
+                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    if (imageSource == null) {
+                                      return;
+                                    }
+                                    _extractTextFromImage(imageSource, _ingredientsTextController);
+                                  }
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _ingredientsTextController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 10,
+                              style: styles.subheading,
+                              decoration: InputDecoration( 
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: styles.ghostWhite,
                                   ),
-                                ],
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade400,
+                                    width: 2.0,
+                                  ), 
+                                ),
+                                hintText: 'e.g. 200g oil, milk, ...',
+                                hintStyle: styles.subheading
                               ),
-                              Column(
-                                children: [
-                                  Text("Eco-score", style: styles.subtitle, textAlign: TextAlign.center,),
-                                  SizedBox(
-                                    height: 70, // card height
-                                    width: 120,
-                                    child: PageView.builder(
+                              validator: (value) {
+                                /*if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }*/
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _ingredientsText = value;
+                              },
+                              onFieldSubmitted: (value) {
+                                _ingredientsText = value;
+                              },
+                            ),
+                            SizedBox(height: 20), 
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text("Nutri-score", style: styles.subtitle, textAlign: TextAlign.center,),
+                                    SizedBox(
+                                      height: 70, // card height
+                                      width: 120,
+                                      child: PageView.builder(
                                       itemCount: 5,
-                                      controller: _ecoscorePageViewController,
+                                      pageSnapping: true,
+                                      controller: _nutriscorePageViewController,
                                       onPageChanged: (int index) {
-                                      setState(() => _ecoScoreIndex = index);
-                                        _ecoscore = (index == 0 ? null : nutriscoreValues[index]);
+                                        setState(() => _nutriScoreIndex = index);
+                                        _nutriscore = (index == 0 ? null : nutriscoreValues[index]);
                                       },
                                       itemBuilder: (_, i) {
                                         final List<Color> colors = [Colors.grey, Colors.green.shade900, Colors.green.shade300, Colors.yellow.shade600, Colors.orange.shade600, Colors.red.shade700];
                                         return Transform.scale(
-                                          scale: i == _ecoScoreIndex ? 1 : 0.9,
+                                          scale: i == _nutriScoreIndex ? 1 : 0.9,
                                           child: Card(
-                                          color: colors[i],
-                                          elevation: 6,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                          child: Center(
-                                            child: FittedBox(
-                                              child: Text(
-                                                ecoscoreValues[i],
-                                                style: styles.subtitle,
+                                            color: colors[i],
+                                            elevation: 6,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                            child: Center(
+                                              child: FittedBox(
+                                                child: Text(
+                                                  nutriscoreValues[i],
+                                                  style: styles.subtitle,
+                                                ),
                                               ),
                                             ),
-                                          ),
                                           ),
                                         );
                                       },
+                                      ),
                                     ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Text("Eco-score", style: styles.subtitle, textAlign: TextAlign.center,),
+                                    SizedBox(
+                                      height: 70, // card height
+                                      width: 120,
+                                      child: PageView.builder(
+                                        itemCount: 5,
+                                        controller: _ecoscorePageViewController,
+                                        onPageChanged: (int index) {
+                                        setState(() => _ecoScoreIndex = index);
+                                          _ecoscore = (index == 0 ? null : nutriscoreValues[index]);
+                                        },
+                                        itemBuilder: (_, i) {
+                                          final List<Color> colors = [Colors.grey, Colors.green.shade900, Colors.green.shade300, Colors.yellow.shade600, Colors.orange.shade600, Colors.red.shade700];
+                                          return Transform.scale(
+                                            scale: i == _ecoScoreIndex ? 1 : 0.9,
+                                            child: Card(
+                                            color: colors[i],
+                                            elevation: 6,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                            child: Center(
+                                              child: FittedBox(
+                                                child: Text(
+                                                  ecoscoreValues[i],
+                                                  style: styles.subtitle,
+                                                ),
+                                              ),
+                                            ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),          
+                            SizedBox(height: 20), 
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            SizedBox(height: 10), 
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Alergies or intolerances",
+                                  style: styles.heading,
+                                  textAlign: TextAlign.center,
+                                ),
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.camera, 
+                                    size: 16, 
+                                    color: styles.ghostWhite,
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),          
-                          SizedBox(height: 20), 
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          SizedBox(height: 10), 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Alergies or intolerances",
-                                style: styles.heading,
-                                textAlign: TextAlign.center,
-                              ),
-                              IconButton(
-                                icon: FaIcon(
-                                  FontAwesomeIcons.camera, 
-                                  size: 16, 
-                                  color: styles.ghostWhite,
-                                ),
-                                onPressed: () async {
-                                  ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                    isScrollControlled: true,
-                                    enableDrag: true,
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20),
+                                  onPressed: () async {
+                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                      isScrollControlled: true,
+                                      enableDrag: true,
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
                                       ),
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    builder: (BuildContext ctx) {
-                                      return Row(
-                                        children: [
-                                            Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                            child: Container(
-                                              color: Colors.blue.shade300,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      builder: (BuildContext ctx) {
+                                        return Row(
+                                          children: [
+                                              Expanded(
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
                                               child: Container(
-                                                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                    SizedBox(height: 2),
-                                                    Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                      ),
-                                          Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.camera),
-                                              child: Container(
-                                                color: Colors.pink.shade600,
+                                                color: Colors.blue.shade300,
                                                 child: Container(
                                                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                                                   child: Column(
                                                     mainAxisSize: MainAxisSize.min,
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
                                                       SizedBox(height: 2),
-                                                      Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  if (imageSource == null) {
-                                    return;
-                                  }
-                                  _extractTextFromImage(imageSource, _alergiesTextController);
-                                }
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _alergiesTextController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 3,
-                            style: styles.subheading,
-                            decoration: InputDecoration( 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: styles.ghostWhite,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade400,
-                                  width: 2.0,
-                                ), 
-                              ),
-                              hintText: 'e.g. eggs, milk, shrimps...',
-                              hintStyle: styles.subheading
-                            ),
-                            validator: (value) {
-                              /*if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }*/
-
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _allergens = value == null ? null : value.split(",");
-                            },
-                            onFieldSubmitted: (value) {
-                              _allergens = value.split(",");
-                            },
-                          ),
-                          SizedBox(height: 20), 
-                          Divider(color: styles.ghostWhite.withOpacity(0.8)),
-                          SizedBox(height: 10),  
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Packaging",
-                                style: styles.heading,
-                                textAlign: TextAlign.center,
-                              ),
-                              IconButton(
-                                icon: FaIcon(
-                                  FontAwesomeIcons.camera, 
-                                  size: 16, 
-                                  color: styles.ghostWhite,
-                                ),
-                                onPressed: () async {
-                                  ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                    isScrollControlled: true,
-                                    enableDrag: true,
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20),
-                                      ),
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    builder: (BuildContext ctx) {
-                                      return Row(
-                                        children: [
+                                        ),
                                             Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                            child: Container(
-                                              color: Colors.blue.shade300,
-                                              child: Container(
-                                                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                    SizedBox(height: 2),
-                                                    Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                  ],
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                                child: Container(
+                                                  color: Colors.pink.shade600,
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                        SizedBox(height: 2),
+                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    if (imageSource == null) {
+                                      return;
+                                    }
+                                    _extractTextFromImage(imageSource, _alergiesTextController);
+                                  }
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _alergiesTextController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 3,
+                              style: styles.subheading,
+                              decoration: InputDecoration( 
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: styles.ghostWhite,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade400,
+                                    width: 2.0,
+                                  ), 
+                                ),
+                                hintText: 'e.g. eggs, milk, shrimps...',
+                                hintStyle: styles.subheading
+                              ),
+                              validator: (value) {
+                                /*if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }*/
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _allergens = value == null ? null : value.split(",");
+                              },
+                              onFieldSubmitted: (value) {
+                                _allergens = value.split(",");
+                              },
+                            ),
+                            SizedBox(height: 20), 
+                            Divider(color: styles.ghostWhite.withOpacity(0.8)),
+                            SizedBox(height: 10),  
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Packaging",
+                                  style: styles.heading,
+                                  textAlign: TextAlign.center,
+                                ),
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.camera, 
+                                    size: 16, 
+                                    color: styles.ghostWhite,
+                                  ),
+                                  onPressed: () async {
+                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                      isScrollControlled: true,
+                                      enableDrag: true,
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
                                       ),
-                                          Expanded(
-                                              child: GestureDetector(
-                                            onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      builder: (BuildContext ctx) {
+                                        return Row(
+                                          children: [
+                                              Expanded(
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
                                               child: Container(
-                                                color: Colors.pink.shade600,
+                                                color: Colors.blue.shade300,
                                                 child: Container(
                                                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                                                   child: Column(
                                                     mainAxisSize: MainAxisSize.min,
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
                                                       SizedBox(height: 2),
-                                                      Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  if (imageSource == null) {
-                                    return;
+                                        ),
+                                            Expanded(
+                                                child: GestureDetector(
+                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                                child: Container(
+                                                  color: Colors.pink.shade600,
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                        SizedBox(height: 2),
+                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    if (imageSource == null) {
+                                      return;
+                                    }
+                                    _extractTextFromImage(imageSource, _packagingTextController);
                                   }
-                                  _extractTextFromImage(imageSource, _packagingTextController);
-                                }
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _packagingTextController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 2,
-                            style: styles.subheading,
-                            decoration: InputDecoration( 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: styles.ghostWhite,
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade400,
-                                  width: 2.0,
-                                ), 
-                              ),
-                              hintText: 'e.g. glass, cardboard...',
-                              hintStyle: styles.subheading
+                              ],
                             ),
-                            validator: (value) {
-                              /*if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }*/
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _packagingTextController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 2,
+                              style: styles.subheading,
+                              decoration: InputDecoration( 
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: styles.ghostWhite,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade400,
+                                    width: 2.0,
+                                  ), 
+                                ),
+                                hintText: 'e.g. glass, cardboard...',
+                                hintStyle: styles.subheading
+                              ),
+                              validator: (value) {
+                                /*if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }*/
 
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _packaging = value ?? null;
-                            },
-                            onFieldSubmitted: (value) {
-                              _packaging = value;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                        ],
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _packaging = value ?? null;
+                              },
+                              onFieldSubmitted: (value) {
+                                _packaging = value;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          /*Positioned(
-            top: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Text(
-                  "Scan barcode  ",
-                  style: styles.subheading,
-                ),
-                Container(
-                  height: 50,
-                  width: 100,
-                  decoration: ShapeDecoration(
-                    color: Colors.black87,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ), //CircleBorder(),
+            /*Positioned(
+              top: 20,
+              right: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    "Scan barcode  ",
+                    style: styles.subheading,
                   ),
-                  child: IconButton(
-                    //padding: EdgeInsets.symmetric(horizontal: 20),
-                    icon: const FaIcon(
-                      FontAwesomeIcons.barcode,
-                      size: 27,
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: ShapeDecoration(
+                      color: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ), //CircleBorder(),
                     ),
-                    color: Colors.white,
-                    onPressed: _scanBarcode,
+                    child: IconButton(
+                      //padding: EdgeInsets.symmetric(horizontal: 20),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.barcode,
+                        size: 27,
+                      ),
+                      color: Colors.white,
+                      onPressed: _scanBarcode,
+                    ),
                   ),
+                ],
+              ),
+            ),*/
+            if (_isFetchingProduct)
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                color: Colors.black45,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      backgroundColor: styles.ghostWhite,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Fetching product...",
+                      style: styles.subtitle,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),*/
-          if (_isFetchingProduct)
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Colors.black45,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator.adaptive(
-                    strokeWidth: 2,
-                    backgroundColor: styles.ghostWhite,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Fetching product...",
-                    style: styles.subtitle,
-                  ),
-                ],
               ),
-            ),
-          if (_isExtractingText)
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Colors.black45,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator.adaptive(
-                    strokeWidth: 2,
-                    backgroundColor: styles.ghostWhite,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Extracting ingredients text...",
-                    style: styles.subtitle,
-                  ),
-                ],
-              ),
-            )
-        ],
+            if (_isExtractingText)
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                color: Colors.black45,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      backgroundColor: styles.ghostWhite,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Extracting ingredients text...",
+                      style: styles.subtitle,
+                    ),
+                  ],
+                ),
+              )
+          ],
+        ),
       ),
     );
   }
@@ -1664,7 +1667,7 @@ class HealthInfoInput extends StatelessWidget {
                       controller: controller,
                       style: styles.subheading,
                       textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(0),
                         isDense: true,

@@ -112,7 +112,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
               future: initUserInfoProvider,
               builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
                   ? const Center(
-                      child: CircularProgressIndicator.adaptive(
+                      child: CircularProgressIndicator(
                         strokeWidth: 2,
                         backgroundColor: styles.ghostWhite,
                       ),

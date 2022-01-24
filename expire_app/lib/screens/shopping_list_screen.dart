@@ -1,5 +1,6 @@
 /* flutter  */
 import 'package:expire_app/models/shopping_list.dart';
+import 'package:expire_app/widgets/shopping_list_title_placeholder.dart';
 import 'package:expire_app/widgets/shopping_lists_container.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -194,9 +195,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
                     return Expanded(
                       child: ListView(
                         children: [
-                          ProductListTilePlaceholder(first: true),
-                          ProductListTilePlaceholder(),
-                          ProductListTilePlaceholder(last: true),
+                          ShoppingListTilePlaceholder(first: true),
+                          ShoppingListTilePlaceholder(),
+                          ShoppingListTilePlaceholder(last: true),
                         ],
                       ),
                     );

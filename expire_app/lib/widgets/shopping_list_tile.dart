@@ -11,10 +11,16 @@ import 'package:provider/provider.dart';
 import '../app_styles.dart' as styles;
 
 class ShoppingListTile extends StatefulWidget {
-  ShoppingListTile({required this.shoppingList}) : numberOfElements = shoppingList.products.length;
+  ShoppingListTile({
+    required this.shoppingList,
+    this.first = false,
+    this.last = false,
+  }) : numberOfElements = shoppingList.products.length;
 
   ShoppingList shoppingList;
   final int numberOfElements;
+  bool first;
+  bool last;
 
   @override
   _ShoppingListTileState createState() => _ShoppingListTileState();
@@ -24,8 +30,15 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0.7),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(widget.first ? 15.0 : 0.0),
+          topRight: Radius.circular(widget.first ? 15.0 : 0.0),
+          bottomLeft: Radius.circular(widget.last ? 15.0 : 0.0),
+          bottomRight: Radius.circular(widget.last ? 15.0 : 0.0),
+        ), /*BorderRadius.circular(10.0)*/
+      ),
       elevation: 10,
       color: widget.shoppingList.completed ? Colors.grey.shade500 : styles.ghostWhite,
       child: Dismissible(
@@ -152,6 +165,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
           }
         },
         child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
           leading: Container(
             height: double.infinity,
             child: Icon(

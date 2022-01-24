@@ -39,7 +39,7 @@ class _ShoppingListDetailState extends State<ShoppingListSection> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator.adaptive(
+                CircularProgressIndicator(
                   strokeWidth: 2,
                   backgroundColor: styles.ghostWhite,
                 ),
@@ -90,7 +90,7 @@ class _ShoppingListDetailState extends State<ShoppingListSection> {
                           ),
                         ),
                         trailing: _isInserting
-                            ? CircularProgressIndicator.adaptive()
+                            ? CircularProgressIndicator()
                             : Icon(
                                 Icons.add_circle,
                                 color: styles.deepGreen,

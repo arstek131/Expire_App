@@ -60,6 +60,7 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: PageView(
               controller: pageController,
               children: [

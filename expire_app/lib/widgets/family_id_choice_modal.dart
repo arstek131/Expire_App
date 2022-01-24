@@ -277,7 +277,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
                                           height: 20,
                                           width: 20,
                                           child: Center(
-                                            child: CircularProgressIndicator.adaptive(
+                                            child: CircularProgressIndicator(
                                               strokeWidth: 2,
                                               backgroundColor: styles.ghostWhite,
                                             ),

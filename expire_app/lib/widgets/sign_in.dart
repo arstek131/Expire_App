@@ -236,7 +236,7 @@ class _SignInState extends State<SignIn> {
                               }
                             },
                             child: _isLoading
-                                ? const CircularProgressIndicator.adaptive(
+                                ? const CircularProgressIndicator(
                                     strokeWidth: 2,
                                     backgroundColor: styles.ghostWhite,
                                   )
@@ -370,7 +370,7 @@ class _SignInState extends State<SignIn> {
                           ],
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         RichText(
                           textAlign: TextAlign.center,
@@ -389,6 +389,9 @@ class _SignInState extends State<SignIn> {
                               ),
                             ],
                           ),
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                       ],
                     ),

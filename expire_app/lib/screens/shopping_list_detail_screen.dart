@@ -39,6 +39,10 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          Provider.of<ShoppingListProvider>(context).shoppingLists.firstWhere((element) => element.id == listId).title,
+          textAlign: TextAlign.center,
+        ),
         toolbarHeight:
             MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.portrait ? 0.09 : 0.15),
         backgroundColor: Colors.indigoAccent,
