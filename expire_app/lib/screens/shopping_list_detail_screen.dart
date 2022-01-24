@@ -53,49 +53,51 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
         actions: [],
       ),
       backgroundColor: styles.primaryColor,
-      body: products.isEmpty
-          ? Center(
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Click the  ",
-                      style: styles.subheading,
-                    ),
-                    WidgetSpan(
-                      style: TextStyle(height: 1.6),
-                      child: Icon(
-                        Icons.menu,
-                        size: 20,
-                        color: Colors.white,
+      body: SafeArea(
+        child: products.isEmpty
+            ? Center(
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Click the  ",
+                        style: styles.subheading,
                       ),
-                    ),
-                    TextSpan(
-                      text: "  button to add your first product!",
-                      style: styles.subheading,
-                    ),
-                  ],
+                      WidgetSpan(
+                        style: TextStyle(height: 1.6),
+                        child: Icon(
+                          Icons.menu,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "  button to add your first product!",
+                        style: styles.subheading,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Container(
+                margin: EdgeInsets.only(top: 10),
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemCount: products.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index < products.length) {
+                      return ChangeNotifierProvider(
+                        create: (_) => TilePointerProvider(),
+                        child: ShoppingListElementTile(listId, products[index]),
+                      );
+                    } else {
+                      return SizedBox(height: 120);
+                    }
+                  },
                 ),
               ),
-            )
-          : Container(
-              margin: EdgeInsets.only(top: 10),
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemCount: products.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < products.length) {
-                    return ChangeNotifierProvider(
-                      create: (_) => TilePointerProvider(),
-                      child: ShoppingListElementTile(listId, products[index]),
-                    );
-                  } else {
-                    return SizedBox(height: 120);
-                  }
-                },
-              ),
-            ),
+      ),
       floatingActionButton: CircularMenu(
         key: menuKey,
         alignment: Alignment.bottomRight,

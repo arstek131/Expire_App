@@ -23,6 +23,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'dart:convert';
 import 'package:image_cropper/image_cropper.dart';
+import 'dart:io' as pltf show Platform;
 
 // google apis
 import 'package:googleapis/vision/v1.dart' as vision;
@@ -448,7 +449,7 @@ class _AddItemModalState extends State<AddItemModal> {
         Symbology.QR,
         Symbology.UPCE,
         Symbology.UPCE,
-      ], licenseKey: SCANDIT_API_KEY)
+      ], licenseKey: pltf.Platform.isAndroid ? SCANDIT_API_KEY_ANDROID : SCANDIT_API_KEY_IOS)
           .scanBarcode();
 
       if (result.data == null) {

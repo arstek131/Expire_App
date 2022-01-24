@@ -30,12 +30,13 @@ import 'helpers/custom_route.dart';
 import './helpers/firebase_auth_helper.dart';
 
 void main() async {
+  /*if (Platform.isIOS) {
+    print("Facebook login still not implemented for iOS");
+    return;
+  }*/
+
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isIOS) {
-    print("initializeApp still not implemented for iOS");
-    return;
-  }
   await Firebase.initializeApp(); // todo: set for ios
 
   print("Todo: click on plus, animation: from products or add new");

@@ -309,8 +309,8 @@ class ProductsProvider extends ChangeNotifier {
     return _items.firstWhere((element) => element.id == productId);
   }
 
-  void cleanProviderState() {
-    streamSub?.cancel();
+  Future<void> cleanProviderState() async {
+    await streamSub?.cancel();
     initProvider = true;
     _ordering = Ordering.ExpiringSoon;
     _items = [];

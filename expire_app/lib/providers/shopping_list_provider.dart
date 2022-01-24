@@ -217,8 +217,8 @@ class ShoppingListProvider extends ChangeNotifier {
     return _shoppingLists.where((element) => element.title.contains("Shopping list")).length;
   }
 
-  void cleanProviderState() {
-    streamSub?.cancel();
+  Future<void> cleanProviderState() async {
+    await streamSub?.cancel();
     initProvider = true;
     _shoppingLists = [];
   }

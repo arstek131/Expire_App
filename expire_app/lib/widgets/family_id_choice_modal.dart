@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 //import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_scandit/flutter_scandit.dart';
+import 'package:googleapis/versionhistory/v1.dart';
+import 'dart:io' as pltf show Platform;
 
 /* helpers */
 import '../helpers/firestore_helper.dart';
@@ -84,7 +86,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
         Symbology.QR,
         Symbology.UPCE,
         Symbology.UPCE,
-      ], licenseKey: SCANDIT_API_KEY)
+      ], licenseKey: pltf.Platform.isAndroid ? SCANDIT_API_KEY_ANDROID : SCANDIT_API_KEY_IOS)
           .scanBarcode();
 
       scanResult = result.data;

@@ -5,6 +5,7 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/providers/products_provider.dart';
+import 'package:expire_app/providers/shopping_list_provider.dart';
 import 'package:expire_app/screens/userinfo/family_info_screen.dart';
 import 'package:expire_app/widgets/family_id_choice_modal.dart';
 import 'package:expire_app/widgets/sign_up.dart';
@@ -226,8 +227,9 @@ class UserInfoScreen extends StatelessWidget {
                   child: Text("LOGOUT"),
                   onPressed: () async {
                     Navigator.of(context).pushReplacementNamed('/');
+                    await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
+                    await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
                     FirebaseAuthHelper.instance.logOut();
-                    Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
                   },
                 ),
                 SizedBox(
