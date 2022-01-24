@@ -6,7 +6,7 @@ import 'package:expire_app/providers/products_provider.dart';
 import 'package:expire_app/widgets/eco_product_detail.dart';
 import 'package:expire_app/widgets/expire_clip.dart';
 import 'package:expire_app/widgets/health_product_detail.dart';
-import 'package:expire_app/widgets/shopping_list_detail.dart';
+import 'package:expire_app/widgets/shopping_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:math';
@@ -222,7 +222,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                             ),
                           if (_page == Pages.ShoppingList)
                             // add to some shopping list
-                            ShoppingListDetail(),
+                            ShoppingListSection(title: _product.title),
                           if (_page == Pages.Score)
                             // add to some shopping list
                             Container(

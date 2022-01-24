@@ -1,4 +1,7 @@
+import 'package:expire_app/helpers/firestore_helper.dart';
+import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
+import 'package:expire_app/screens/shopping_list_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,11 +11,10 @@ import 'package:provider/provider.dart';
 import '../app_styles.dart' as styles;
 
 class ShoppingListTile extends StatefulWidget {
-  ShoppingListTile({required this.id, required this.title, this.numberOfElements = 0});
+  ShoppingListTile({required this.shoppingList}) : numberOfElements = shoppingList.products.length;
 
-  String id;
-  String title;
-  int numberOfElements;
+  ShoppingList shoppingList;
+  final int numberOfElements;
 
   @override
   _ShoppingListTileState createState() => _ShoppingListTileState();
@@ -25,16 +27,15 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 10,
-      color: styles.ghostWhite,
+      color: widget.shoppingList.completed ? Colors.grey.shade500 : styles.ghostWhite,
       child: Dismissible(
         key: UniqueKey(),
-        direction: DismissDirection.endToStart,
         onDismissed: (direction) {
           if (direction == DismissDirection.endToStart) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  "List '${widget.title}' deleted",
+                  "List '${widget.shoppingList.title}' deleted",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -45,7 +46,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
         dismissThresholds: const {
           DismissDirection.endToStart: 0.4,
         },
-        background: Container(
+        secondaryBackground: Container(
           color: Colors.red,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           alignment: AlignmentDirectional.centerEnd,
@@ -54,6 +55,22 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
             color: Colors.white,
             size: 30,
           ),
+        ),
+        background: Container(
+          color: widget.shoppingList.completed ? Colors.blue.shade600 : Colors.green,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          alignment: AlignmentDirectional.centerStart,
+          child: widget.shoppingList.completed
+              ? const FaIcon(
+                  FontAwesomeIcons.redo,
+                  color: Colors.white,
+                  size: 22,
+                )
+              : const Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                  size: 30,
+                ),
         ),
         confirmDismiss: (DismissDirection direction) async {
           Vibrate.feedback(FeedbackType.selection);
@@ -91,7 +108,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
                         color: Colors.redAccent,
                       ),
                       onPressed: () {
-                        Provider.of<ShoppingListProvider>(context, listen: false).deleteShoppingList(widget.id);
+                        Provider.of<ShoppingListProvider>(context, listen: false).deleteShoppingList(widget.shoppingList.id);
                         Navigator.of(ctx).pop(true);
                       },
                       label: Text(
@@ -121,7 +138,17 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
               },
             );
           } else {
-            return false;
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            if (widget.shoppingList.completed) {
+              Provider.of<ShoppingListProvider>(context, listen: false)
+                  .updateCompletedShoppingList(widget.shoppingList.id, false);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("Shopping list restored", textAlign: TextAlign.center)));
+            } else {
+              Provider.of<ShoppingListProvider>(context, listen: false).updateCompletedShoppingList(widget.shoppingList.id, true);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("Shopping list completed", textAlign: TextAlign.center)));
+            }
           }
         },
         child: ListTile(
@@ -133,14 +160,22 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
             ),
           ),
           title: Text(
-            widget.title,
-            style: TextStyle(fontFamily: styles.currentFontFamily, fontWeight: FontWeight.normal),
+            widget.shoppingList.title,
+            style: TextStyle(
+              fontFamily: styles.currentFontFamily,
+              fontWeight: FontWeight.normal,
+              decoration: (widget.shoppingList.completed ? TextDecoration.lineThrough : null),
+            ),
           ),
           subtitle: Text(
             "List with ${widget.numberOfElements} products",
-            style: TextStyle(fontFamily: styles.currentFontFamily),
+            style: TextStyle(
+              fontFamily: styles.currentFontFamily,
+              decoration: (widget.shoppingList.completed ? TextDecoration.lineThrough : null),
+            ),
           ),
           trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () => Navigator.of(context).pushNamed(ShoppingListDetailScreen.routeName, arguments: widget.shoppingList.id),
         ),
       ),
     );

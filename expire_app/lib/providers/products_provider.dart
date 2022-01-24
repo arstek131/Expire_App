@@ -149,9 +149,7 @@ class ProductsProvider extends ChangeNotifier {
     _items = await FirestoreHelper.instance.getProductsFromFamilyId(userInfo.UserInfo.instance.familyId!);
     sortProducts(_ordering);
 
-    print(initProvider);
     if (this.initProvider) {
-      print("init provider...");
       this.initProvider = false;
 
       // attach firestore listener
@@ -160,30 +158,46 @@ class ProductsProvider extends ChangeNotifier {
       streamSub = reference.snapshots().listen(
         (querySnapshot) {
           querySnapshot.docChanges.forEach((change) async {
-            modifyProduct(
-              Product(
-                id: change.doc.id,
-                title: change.doc['title'],
-                expiration: DateTime.parse(change.doc['expiration']),
-                dateAdded: DateTime.parse(change.doc['dateAdded']),
-                creatorId: change.doc['creatorId'],
-                image: change.doc['imageUrl'],
-                creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
-                nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
-                ingredientsText: change.doc['ingredientsText'],
-                nutriscore: change.doc['nutriscore'],
-                allergens: change.doc['allergens'] == null ? null : List<String>.from(change.doc['allergens']),
-                ecoscore: change.doc['ecoscore'],
-                packaging: change.doc['packaging'],
-                ingredientLevels:
-                    change.doc['ingredientLevels'] == null ? null : Map<String, String>.from(change.doc['ingredientLevels']),
-                isPalmOilFree: change.doc['isPalmOilFree'],
-                isVegetarian: change.doc['isVegetarian'],
-                isVegan: change.doc['isVegan'],
-                brandName: change.doc['brandName'],
-                quantity: change.doc['quantity'],
-              ),
+            Product updatedProduct = Product(
+              id: change.doc.id,
+              title: change.doc['title'],
+              expiration: DateTime.parse(change.doc['expiration']),
+              dateAdded: DateTime.parse(change.doc['dateAdded']),
+              creatorId: change.doc['creatorId'],
+              image: change.doc['imageUrl'],
+              creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
+              nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
+              ingredientsText: change.doc['ingredientsText'],
+              nutriscore: change.doc['nutriscore'],
+              allergens: change.doc['allergens'] == null ? null : List<String>.from(change.doc['allergens']),
+              ecoscore: change.doc['ecoscore'],
+              packaging: change.doc['packaging'],
+              ingredientLevels:
+                  change.doc['ingredientLevels'] == null ? null : Map<String, String>.from(change.doc['ingredientLevels']),
+              isPalmOilFree: change.doc['isPalmOilFree'],
+              isVegetarian: change.doc['isVegetarian'],
+              isVegan: change.doc['isVegan'],
+              brandName: change.doc['brandName'],
+              quantity: change.doc['quantity'],
             );
+            if (change.type == DocumentChangeType.modified) {
+              modifyProduct(updatedProduct);
+              print("Something changed for product: ${change.doc.id}");
+            } else if (change.type == DocumentChangeType.removed) {
+              _items.removeWhere((element) => element.id == updatedProduct.id);
+              notifyListeners();
+              print("Product deleted: ${change.doc.id}");
+            } else if (change.type == DocumentChangeType.added) {
+              if (!_items.any((element) => element.id == updatedProduct.id)) {
+                _items.add(updatedProduct);
+              }
+              notifyListeners();
+              print("New product added: ${change.doc.id}");
+            } else {
+              print("UNSUPPORTED OPERATION FROM SERVER");
+              throw Exception();
+            }
+
             print("Something changed for: ${change.doc.id}");
           });
         },
@@ -257,9 +271,8 @@ class ProductsProvider extends ChangeNotifier {
     /* if exists, update */
     if (_items.any((element) => element.id == product.id)) {
       _items[_items.indexWhere((element) => element.id == product.id)] = product;
-
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void deleteProduct(String productId) {

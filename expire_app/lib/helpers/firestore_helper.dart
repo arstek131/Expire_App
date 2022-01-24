@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/models/shopping_list.dart';
+import 'package:expire_app/models/shopping_list_element.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
@@ -23,6 +24,7 @@ class FirestoreHelper {
 
   /* varialbes */
   final firestore = FirebaseFirestore.instance;
+  final userInfo = userinfo.UserInfo.instance;
 
   /* getters */
   Future<bool> familyExists({required String familyId}) async {
@@ -63,7 +65,6 @@ class FirestoreHelper {
   }
 
   Future<String?> getImageUrlFromProductId({required String productId}) async {
-    final userInfo = userinfo.UserInfo.instance;
     final productRef = await firestore.collection("families").doc(userInfo.familyId).collection('products').doc(productId).get();
 
     if (productRef.data()!.containsKey("imageUrl")) {
@@ -112,16 +113,21 @@ class FirestoreHelper {
     List<ShoppingList> lists = [];
 
     final listsRef = await firestore.collection('families').doc(familyId).collection('shopping_lists').get();
-
     for (var list in listsRef.docs) {
+      List<ShoppingListElement> products = [];
+
+      for (final productJSON in list['products']) {
+        products.add(ShoppingListElement.fromJSON(productJSON));
+      }
+
       lists.add(
         ShoppingList(
           id: list.id,
           title: list['title'],
-          products: [],
+          products: products,
+          completed: list['completed'],
         ),
       );
-      print(list.data());
     }
     return lists;
   }
@@ -166,7 +172,6 @@ class FirestoreHelper {
   }
 
   Future<String?> addProduct({required Product product, dynamic image}) async {
-    final userInfo = userinfo.UserInfo.instance;
     String? imageUrl;
     var uuid = const Uuid();
 
@@ -211,21 +216,19 @@ class FirestoreHelper {
   }
 
   Future<void> addShoppingList({required ShoppingList list}) async {
-    final userInfo = userinfo.UserInfo.instance;
-
     // storing shopping list on shoppingLists collection
     final listsRef = await firestore.collection('families').doc(userInfo.familyId).collection('shopping_lists');
 
     final data = {
       'title': list.title,
+      'products': list.products,
+      'completed': list.completed,
     };
 
     listsRef.doc(list.id).set(data);
   }
 
   Future<void> deleteProduct(String productId) async {
-    final userInfo = userinfo.UserInfo.instance;
-
     String? imageUrl = await getImageUrlFromProductId(productId: productId);
 
     // delte product record
@@ -241,10 +244,65 @@ class FirestoreHelper {
   }
 
   Future<void> deleteShoppingList(String id) async {
-    final userInfo = userinfo.UserInfo.instance;
-
     // delte shopping list record
     await firestore.collection("families").doc(userInfo.familyId).collection('shopping_lists').doc(id).delete();
+  }
+
+  Future<void> deleteShoppingListElement(String shoppingListid, String elementId) async {
+    final ref =
+        await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(shoppingListid).get();
+    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    jsonProducts.removeWhere((element) => element['id'] == elementId);
+
+    firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(shoppingListid).update(
+      {'products': jsonProducts},
+    );
+  }
+
+  Future<void> updateCompleted({required String listId, required bool completed}) async {
+    firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).update({
+      "completed": completed,
+    });
+  }
+
+  Future<void> updateQuantity({required String listId, required String elementId, required int quantity}) async {
+    final ref = await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).get();
+    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    jsonProducts[jsonProducts.indexWhere((element) => element['id'] == elementId)]['quantity'] = quantity;
+
+    firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).update(
+      {'products': jsonProducts},
+    );
+  }
+
+  Future<void> updateChecked({required String listId, required String elementId, required bool checked}) async {
+    final ref = await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).get();
+    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    jsonProducts[jsonProducts.indexWhere((element) => element['id'] == elementId)]['checked'] = checked;
+
+    firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).update(
+      {'products': jsonProducts},
+    );
+  }
+
+  Future<void> addElementToShoppingList({required String listId, required ShoppingListElement shoppingListElement}) async {
+    final ref = await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).get();
+    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    if (jsonProducts.any((element) => element['title'] == shoppingListElement.title || element['id'] == shoppingListElement.id)) {
+      jsonProducts[jsonProducts
+              .indexWhere((element) => element['id'] == shoppingListElement.id || element['title'] == shoppingListElement.title)]
+          ['quantity'] += shoppingListElement.quantity;
+    } else {
+      jsonProducts.add(shoppingListElement.toJSON());
+    }
+
+    firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).update({
+      "products": jsonProducts, //FieldValue.arrayUnion([shoppingListElement.toJSON()]),
+    });
   }
 
   Nutriments? parseNutriments(Map<String, dynamic> JSONnutriments) {

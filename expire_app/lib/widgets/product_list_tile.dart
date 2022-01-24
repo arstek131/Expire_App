@@ -1,13 +1,8 @@
 /* dart */
-import 'package:expire_app/helpers/db_helper.dart';
-import 'package:expire_app/helpers/firestore_helper.dart';
-import 'package:expire_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
-import 'dart:math' as math;
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 /* models */

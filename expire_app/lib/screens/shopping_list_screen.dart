@@ -88,50 +88,67 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
                               backgroundColor: styles.primaryColor,
                               context: context,
                               builder: (context) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 40, right: 40, top: 20, bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "List name:",
-                                        textAlign: TextAlign.start,
-                                        style: styles.heading,
+                                return Stack(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 25, right: 25, top: 20, bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            "List name:",
+                                            textAlign: TextAlign.start,
+                                            style: styles.heading,
+                                          ),
+                                          TextField(
+                                            style: styles.subheading,
+                                            cursorColor: styles.ghostWhite,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              enabledBorder: UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: styles.ghostWhite,
+                                                ),
+                                              ),
+                                              focusedBorder: UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: styles.ghostWhite,
+                                                ),
+                                              ),
+                                            ),
+                                            autofocus: true,
+                                            onSubmitted: (newValue) {
+                                              Navigator.of(context).pop(newValue);
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                      TextField(
-                                        style: styles.subheading,
-                                        cursorColor: styles.ghostWhite,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: styles.ghostWhite,
-                                            ),
-                                          ),
-                                          focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: styles.ghostWhite,
-                                            ),
-                                          ),
+                                    ),
+                                    Positioned(
+                                      top: 2,
+                                      right: 4,
+                                      child: IconButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.timesCircle,
+                                          color: styles.ghostWhite,
+                                          size: 22,
                                         ),
-                                        autofocus: true,
-                                        onSubmitted: (newValue) {
-                                          Navigator.of(context).pop(newValue);
-                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 );
                               },
                             );
-
-                            if (title == "") {
+                            if (title == null) {
+                              return;
+                            } else if (title == "") {
                               Provider.of<ShoppingListProvider>(context, listen: false)
-                                  .addShoppingList(title: "Shopping list (${uniqueId})");
+                                  .addNewShoppingList(title: "Shopping list (${uniqueId})");
                             } else {
-                              Provider.of<ShoppingListProvider>(context, listen: false).addShoppingList(title: title!);
+                              Provider.of<ShoppingListProvider>(context, listen: false).addNewShoppingList(title: title);
                             }
                           },
                           child: Card(

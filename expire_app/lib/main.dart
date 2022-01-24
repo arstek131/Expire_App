@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
+import 'package:expire_app/providers/tile_pointer_provider.dart';
 import 'package:expire_app/screens/product_details.dart';
+import 'package:expire_app/screens/shopping_list_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,6 +38,7 @@ void main() async {
   }
   await Firebase.initializeApp(); // todo: set for ios
 
+  print("Todo: click on plus, animation: from products or add new");
   runApp(const MyApp());
 }
 
@@ -66,8 +69,9 @@ class _MyAppState extends State<MyApp> {
           create: (_) => FiltersProvider(),
         ),
         ChangeNotifierProxyProvider<ProductsProvider, RecipeProvider>(
-            create: (BuildContext context) => RecipeProvider(null, null),
-            update: (context, products, previousRecipes) => RecipeProvider(products, previousRecipes!.rec))
+          create: (BuildContext context) => RecipeProvider(null, null),
+          update: (context, products, previousRecipes) => RecipeProvider(products, previousRecipes!.rec),
+        ),
       ],
       child: MaterialApp(
         title: 'Expire app',
@@ -95,6 +99,7 @@ class _MyAppState extends State<MyApp> {
           NameInputScreen.routeName: (ctx) => NameInputScreen(),
           MainAppScreen.routeName: (ctx) => MainAppScreen(),
           ProductDetails.routeName: (ctx) => ProductDetails(),
+          ShoppingListDetailScreen.routeName: (ctx) => ShoppingListDetailScreen(),
         },
       ),
     );

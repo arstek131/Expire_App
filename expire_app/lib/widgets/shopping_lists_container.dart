@@ -65,11 +65,7 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
                 physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 itemCount: data.shoppingLists.length + 1,
                 itemBuilder: (context, index) => index < data.shoppingLists.length
-                    ? ShoppingListTile(
-                        title: data.shoppingLists[index].title,
-                        id: data.shoppingLists[index].id,
-                        numberOfElements: data.shoppingLists[index].products.length,
-                      )
+                    ? ShoppingListTile(shoppingList: data.shoppingLists[index])
                     : SizedBox(
                         height: 120,
                       ),
