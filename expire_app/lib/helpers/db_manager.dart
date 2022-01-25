@@ -2,6 +2,8 @@
 import 'dart:io';
 
 import 'package:expire_app/models/product.dart';
+import 'package:expire_app/models/shopping_list.dart';
+import 'package:expire_app/models/shopping_list_element.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
@@ -83,9 +85,25 @@ class DBManager {
           "FOREIGN KEY(INGREDIENTSLEVEL_REF) REFERENCES INGREDIENTSLEVEL(ID)"
           ")",
         );
+        /* shopping list table */
+        await db.execute(
+          "CREATE TABLE SHOPPINGLIST ("
+          "ID TEXT PRIMARY KEY,"
+          "TITLE TEXT NOT NULL,"
+          "COMPLETED INTEGER DEFAULT 0 NOT NULL"
+          ")",
+        );
 
-        /*await db
-          .execute('CREATE TABLE user_products(id TEXT PRIMARY KEY, title TEXT, expiration TEXT, creatorId TEXT, image TEXT)');*/
+        /* shopping list element */
+        await db.execute(
+          "CREATE TABLE SHOPPINGLISTELEMENT ("
+          "ID TEXT PRIMARY KEY,"
+          "SHOPPING_LIST_ID TEXT NOT NULL,"
+          "TITLE TEXT NOT NULL,"
+          "QUANTITY INTEGER NOT NULL,"
+          "CHECKED INTEGER NOT NULL DEFAULT 0"
+          ")",
+        );
       },
       version: 1,
     );
@@ -225,6 +243,72 @@ class DBManager {
     this.checkInit();
 
     _db.rawDelete('DELETE FROM PRODUCT WHERE ID = ?', [productId]);
+  }
+
+  Future<List<ShoppingList>> getShoppingLists() async {
+    List<ShoppingList> lists = [];
+
+    // get lists
+    final queryRes = await _db.rawQuery('SELECT * FROM SHOPPINGLIST');
+    for (final listJSON in queryRes) {
+      ShoppingList list = new ShoppingList(
+        id: listJSON['ID'] as String,
+        title: listJSON['TITLE'] as String,
+        products: [],
+        completed: listJSON['COMPLETED'] == 0 ? false : true,
+      );
+
+      // get associated products to list
+      final queryRes2 = await _db.rawQuery('SELECT * FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ?', [listJSON['ID']]);
+      for (final shoppingListElement in queryRes2) {
+        list.products.add(
+          ShoppingListElement(
+            id: shoppingListElement['ID'] as String,
+            title: shoppingListElement['TITLE'] as String,
+            checked: shoppingListElement['CHECKED'] == 0 ? false : true,
+            quantity: int.parse(shoppingListElement['QUANTITY'] as String),
+          ),
+        );
+      }
+
+      lists.add(list);
+    }
+
+    return lists;
+  }
+
+  Future<void> addShoppingList({required ShoppingList list}) async {
+    /* shopping list*/
+    _db.rawInsert(
+      'INSERT INTO SHOPPINGLIST(ID, TITLE, COMPLETED) VALUES(?, ?, ?)',
+      [
+        list.id, // ID
+        list.title, // TITLE
+        list.completed, // COMPLETED
+      ],
+    );
+    /* shopping list products */
+    for (final product in list.products) {
+      _db.rawInsert(
+        'INSERT INTO SHOPPINGLISTELEMENT(ID, SHOPPING_LIST_ID, TITLE, QUANTITY, CHECKED) VALUES(?, ?, ?, ?, ?)',
+        [
+          product.id, // ID
+          list.id, // SHOPPING LIST ID
+          product.title, // TITLE
+          product.quantity, // QUANTITY
+          product.checked, // CHECKED
+        ],
+      );
+    }
+  }
+
+  Future<void> deleteShoppingList(String id) async {
+    _db.rawDelete('DELETE FROM SHOPPINGLIST WHERE ID = ?', [id]);
+    _db.rawDelete('DELETE FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ?', [id]);
+  }
+
+  Future<void> updateCompletedShoppingList({required String listId, required bool completed}) async {
+    _db.rawUpdate('UPDATE SHOPPINGLIST SET COMPLETED = ? WHERE ID = ?', [completed ? 1 : 0, listId]);
   }
 
   Nutriments? _parseNutriments(Map<String, dynamic> JSONnutriments) {

@@ -177,6 +177,19 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                   child: Consumer<ProductsProvider>(
                                     builder: (_, data, __) {
                                       List<Product> products = data.items;
+                                      if (data.items.isEmpty) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(30.0),
+                                            child: Text(
+                                              "No products. Add a new one from the main screen!",
+                                              style: styles.subheading,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      }
+
                                       return ListView.builder(
                                         physics: BouncingScrollPhysics(),
                                         itemCount: products.length,

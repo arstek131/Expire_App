@@ -10,6 +10,8 @@ import '../models/shopping_list_element.dart';
 /* helpers */
 import '../helpers/user_info.dart' as userInfo;
 import '../helpers/firestore_helper.dart';
+import '../helpers/firebase_auth_helper.dart';
+import '../helpers/db_manager.dart';
 
 /* Firebse */
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,60 +24,67 @@ class ShoppingListProvider extends ChangeNotifier {
   bool initProvider = true;
   StreamSubscription<QuerySnapshot>? streamSub;
 
+  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  DBManager _db = DBManager.instance;
+
   List<ShoppingList> get shoppingLists {
     return [..._shoppingLists];
   }
 
   Future<void> fetchShoppingLists() async {
-    // todo: take images from url and save them locally!
-    _shoppingLists = await FirestoreHelper.instance.getShoppingListsFromFamilyId(userInfo.UserInfo.instance.familyId!);
+    if (_auth.isAuth) {
+      // todo: take images from url and save them locally!
+      _shoppingLists = await FirestoreHelper.instance.getShoppingListsFromFamilyId(userInfo.UserInfo.instance.familyId!);
 
-    print(initProvider);
-    if (this.initProvider) {
-      print("init provider...");
-      this.initProvider = false;
+      print(initProvider);
+      if (this.initProvider) {
+        print("init provider...");
+        this.initProvider = false;
 
-      // attach firestore listener
-      CollectionReference reference = FirebaseFirestore.instance
-          .collection('families')
-          .doc(userInfo.UserInfo.instance.familyId!)
-          .collection('shopping_lists');
-      streamSub = reference.snapshots().listen(
-        (querySnapshot) {
-          querySnapshot.docChanges.forEach((change) async {
-            print(change.type);
-            List<ShoppingListElement> products = [];
-            for (final productJSON in change.doc['products']) {
-              products.add(ShoppingListElement.fromJSON(productJSON));
-            }
-
-            ShoppingList updatedShoppingList = ShoppingList(
-              id: change.doc.id,
-              title: change.doc['title'],
-              products: products,
-              completed: change.doc['completed'],
-            );
-
-            if (change.type == DocumentChangeType.modified) {
-              modifyShoppingList(updatedShoppingList);
-              print("Something changed for: ${change.doc.id}");
-            } else if (change.type == DocumentChangeType.removed) {
-              _shoppingLists.removeWhere((element) => element.id == updatedShoppingList.id);
-              notifyListeners();
-              print("List deleted: ${change.doc.id}");
-            } else if (change.type == DocumentChangeType.added) {
-              if (!_shoppingLists.any((element) => element.id == updatedShoppingList.id)) {
-                _shoppingLists.add(updatedShoppingList);
+        // attach firestore listener
+        CollectionReference reference = FirebaseFirestore.instance
+            .collection('families')
+            .doc(userInfo.UserInfo.instance.familyId!)
+            .collection('shopping_lists');
+        streamSub = reference.snapshots().listen(
+          (querySnapshot) {
+            querySnapshot.docChanges.forEach((change) async {
+              print(change.type);
+              List<ShoppingListElement> products = [];
+              for (final productJSON in change.doc['products']) {
+                products.add(ShoppingListElement.fromJSON(productJSON));
               }
-              notifyListeners();
-              print("New list added: ${change.doc.id}");
-            } else {
-              print("UNSUPPORTED OPERATION FROM SERVER");
-              throw Exception();
-            }
-          });
-        },
-      );
+
+              ShoppingList updatedShoppingList = ShoppingList(
+                id: change.doc.id,
+                title: change.doc['title'],
+                products: products,
+                completed: change.doc['completed'],
+              );
+
+              if (change.type == DocumentChangeType.modified) {
+                modifyShoppingList(updatedShoppingList);
+                print("Something changed for: ${change.doc.id}");
+              } else if (change.type == DocumentChangeType.removed) {
+                _shoppingLists.removeWhere((element) => element.id == updatedShoppingList.id);
+                notifyListeners();
+                print("List deleted: ${change.doc.id}");
+              } else if (change.type == DocumentChangeType.added) {
+                if (!_shoppingLists.any((element) => element.id == updatedShoppingList.id)) {
+                  _shoppingLists.add(updatedShoppingList);
+                }
+                notifyListeners();
+                print("New list added: ${change.doc.id}");
+              } else {
+                print("UNSUPPORTED OPERATION FROM SERVER");
+                throw Exception();
+              }
+            });
+          },
+        );
+      }
+    } else {
+      _shoppingLists = await _db.getShoppingLists();
     }
 
     await Future.delayed(Duration(milliseconds: 300));
@@ -95,9 +104,13 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
 
     /* remote insertion */
-    await FirestoreHelper.instance.addShoppingList(
-      list: shoppingList,
-    );
+    if (_auth.isAuth) {
+      FirestoreHelper.instance.addShoppingList(
+        list: shoppingList,
+      );
+    } else {
+      _db.addShoppingList(list: shoppingList);
+    }
   }
 
   void modifyShoppingList(ShoppingList shoppingList) {
@@ -114,10 +127,14 @@ class ShoppingListProvider extends ChangeNotifier {
 
     notifyListeners();
 
+    if (_auth.isAuth) {
+      /* remote delete */
+      FirestoreHelper.instance.deleteShoppingList(id);
+    }
     /* local DB deletion */
-
-    /* remote delete */
-    FirestoreHelper.instance.deleteShoppingList(id);
+    else {
+      _db.deleteShoppingList(id);
+    }
   }
 
   List<ShoppingListElement> getProductsFromListId({required String listId}) {
@@ -156,8 +173,12 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
 
     /* remote insertion */
-    await FirestoreHelper.instance
-        .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
+    if (_auth.isAuth) {
+      await FirestoreHelper.instance
+          .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
+    }
+    /* local insertion in DB */
+    else {}
   }
 
   Future<void> incrementProductQuantity({required String listId, required String productId}) async {
@@ -189,8 +210,12 @@ class ShoppingListProvider extends ChangeNotifier {
     _shoppingLists[_shoppingLists.indexWhere((element) => element.id == shoppingListid)].completed = completed;
     notifyListeners();
 
-    /* remote update */
-    FirestoreHelper.instance.updateCompleted(listId: shoppingListid, completed: completed);
+    if (_auth.isAuth) {
+      /* remote update */
+      FirestoreHelper.instance.updateCompleted(listId: shoppingListid, completed: completed);
+    } else {
+      _db.updateCompletedShoppingList(listId: shoppingListid, completed: completed);
+    }
   }
 
   Future<void> updateShoppingListElementChecked(String shoppingListid, String elementId, bool checked) async {
