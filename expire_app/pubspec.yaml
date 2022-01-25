@@ -124,12 +124,9 @@ flutter:
     - assets/images/name_input_image.png
     - assets/images/name_input_animated.gif
     - assets/images/empty_list_products.png
-    - assets/images/mock_img1.png
-    - assets/images/mock_img2.png
-    - assets/images/mock_img3.png
-    - assets/images/mock_img4.png
-    - assets/images/mock_img5.png
+    - assets/images/missing_image_placeholder.png
     - assets/auth/credentials.json
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
