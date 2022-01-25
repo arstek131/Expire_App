@@ -20,9 +20,9 @@ class RecipeDetailsScreen extends StatelessWidget {
     return Scaffold(
       body: FutureBuilder(
         future: HttpService.getInfoRecipes(idOfRecipe),
-        builder: (BuildContext context, AsyncSnapshot<List<RecipeDetails>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<RecipeDetails> snapshot) {
           if (snapshot.hasData) {
-            List<RecipeDetails>? recipesDetails = snapshot.data;
+            RecipeDetails? recipesDetails = snapshot.data;
 
             return SlidingUpPanel(
               parallaxEnabled: true,
@@ -53,9 +53,11 @@ class RecipeDetailsScreen extends StatelessWidget {
                     SizedBox(
                       height: 30,
                     ),
-                    Text(
-                      "ciao", //recipesDetails![0].title!,
-                      style: _textTheme.headline6,
+                    Center(
+                      child: Text(
+                        recipesDetails!.title, //recipesDetails![0].title!,
+                        style: _textTheme.headline6,
+                      ),
                     ),
                     SizedBox(
                       height: 10,
@@ -65,17 +67,6 @@ class RecipeDetailsScreen extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Icon(
-                          FlutterIcons.heart_circle_mco,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "198",
-                          // style: _textTheme.caption,
-                        ),
                         SizedBox(
                           width: 10,
                         ),
@@ -86,7 +77,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                           width: 4,
                         ),
                         Text(
-                          "ciao", //recipesDetails[0].readyInMinutes.toString(),
+                          recipesDetails.readyInMinutes.toString(), //recipesDetails[0].readyInMinutes.toString(),
                         ),
                         SizedBox(
                           width: 20,
@@ -100,7 +91,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          "ciao", //recipesDetails[0].readyInMinutes.toString() + ' Servings',
+                          recipesDetails.servings.toString() + ' Servings', //recipesDetails[0].readyInMinutes.toString() + ' Servings',
                         ),
                       ],
                     ),
@@ -112,7 +103,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: DefaultTabController(
-                        length: 3,
+                        length: 2,
                         initialIndex: 0,
                         child: Column(
                           children: [
@@ -125,9 +116,6 @@ class RecipeDetailsScreen extends StatelessWidget {
                                 ),
                                 Tab(
                                   text: "Preparation".toUpperCase(),
-                                ),
-                                Tab(
-                                  text: "Reviews".toUpperCase(),
                                 ),
                               ],
                               labelColor: Colors.black,
@@ -152,12 +140,9 @@ class RecipeDetailsScreen extends StatelessWidget {
                             Expanded(
                               child: TabBarView(
                                 children: [
-                                  Ingredients(recipeModel: this.recipeDetails!), //recipesDetails[0]),
+                                  Ingredients(recipeModel: snapshot.data!), //recipesDetails[0]),
                                   Container(
-                                    child: Text("Preparation Tab"),
-                                  ),
-                                  Container(
-                                    child: Text("Reviews Tab"),
+                                    child: Preparation(recipeModel: snapshot.data!),
                                   ),
                                 ],
                               ),
@@ -176,13 +161,13 @@ class RecipeDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Hero(
-                          tag: "ciao", //recipesDetails[0].image!,
+                          tag: recipesDetails.image, //recipesDetails[0].image!,
                           child: ClipRRect(
                             child: Image(
                               width: double.infinity,
                               height: (size.height / 2) + 50,
                               fit: BoxFit.cover,
-                              image: AssetImage("assets/images/auth_login_img.png"), //NetworkImage(recipesDetails[0].image!),
+                              image: NetworkImage(recipesDetails.image), //NetworkImage(recipesDetails[0].image!),
                             ),
                           ),
                         ),
@@ -212,6 +197,42 @@ class RecipeDetailsScreen extends StatelessWidget {
   }
 }
 
+class Preparation extends StatelessWidget {
+  const Preparation({Key? key, required this.recipeModel}) : super(key: key);
+
+  final RecipeDetails recipeModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12.0),
+        child: Column(
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemCount: recipeModel.analyzedInstructions[0].steps.length, //recipeModel.extendedIngredients!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2.0,
+                  ),
+                  child: Text(recipeModel.analyzedInstructions[0].steps[index].number.toString() + ' ' + recipeModel.analyzedInstructions[0].steps[index].step.toString()), //recipeModel.extendedIngredients![index].nameClean.toString()),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(color: Colors.black.withOpacity(0.3));
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class Ingredients extends StatelessWidget {
   const Ingredients({Key? key, required this.recipeModel}) : super(key: key);
 
@@ -227,13 +248,13 @@ class Ingredients extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: 3, //recipeModel.extendedIngredients!.length,
+              itemCount: recipeModel.extendedIngredients.length, //recipeModel.extendedIngredients!.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 2.0,
                   ),
-                  child: Text('⚫️ ' + "ciao"), //recipeModel.extendedIngredients![index].nameClean.toString()),
+                  child: Text('⚫️ ' + recipeModel.extendedIngredients[index].nameClean.toString()), //recipeModel.extendedIngredients![index].nameClean.toString()),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

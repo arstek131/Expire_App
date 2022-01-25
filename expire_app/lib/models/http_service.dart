@@ -9,7 +9,7 @@ class HttpService{
 
   static Map<String, String> queryParameters = {
     'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
-    'ingredients': 'Vegetarian',//atm hardcoded, will be dynamically replaced
+    'ingredients': 'egg',//atm hardcoded, will be dynamically replaced
     'number': '5',
   };
 
@@ -25,7 +25,6 @@ class HttpService{
         'api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
-    print(uri.toString());
 
     if(res.statusCode == 200){
       List<dynamic> body = jsonDecode(res.body);
@@ -40,7 +39,7 @@ class HttpService{
 
   }
 
-   static Future<List<RecipeDetails>> getInfoRecipes(String id) async{
+   static Future <RecipeDetails> getInfoRecipes(String id) async{
 
     final uri = Uri.https(
         'api.spoonacular.com', '/recipes/$id/information', queryParameters2);
@@ -48,10 +47,14 @@ class HttpService{
     Response res = await get(uri, headers: headers);
 
     if(res.statusCode == 200){
-      final body = jsonDecode(res.body);
+      Map<String, dynamic> body = jsonDecode(res.body);
+      print(uri.toString());
 
-      List<RecipeDetails> recipesDetails = body.map((dynamic item) => Recipe.fromJson(item)).toList();
+
+      RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
       //Se stampo qualcosa qui, tipo anche "print("ciaooo")" non va, si inceppa nel mapping
+      print(recipesDetails.title);
+      print(recipesDetails.analyzedInstructions[0].steps.length);
 
       return recipesDetails;
     }else{
