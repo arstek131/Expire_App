@@ -130,6 +130,7 @@ flutter:
     - assets/images/mock_img4.png
     - assets/images/mock_img5.png
     - assets/auth/credentials.json
+    - assets/images/missing_image_placeholder.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

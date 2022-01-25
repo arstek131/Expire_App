@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:expire_app/screens/main_app_screen.dart';
+import 'package:expire_app/screens/name_input_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/http_exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /* firebase */
 import '../helpers/firebase_auth_helper.dart';
@@ -251,10 +254,23 @@ class _SignInState extends State<SignIn> {
                         const SizedBox(
                           height: 20,
                         ),
-                        const Text(
-                          'CONTINUE WITHOUT REGISTRATION',
-                          style: TextStyle(
-                            fontFamily: styles.currentFontFamily,
+                        GestureDetector(
+                          onTap: () async {
+                            // check on shared preferences if name is set
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            String? displayName = prefs.getString('localDisplayName');
+
+                            String targetRoute = (displayName == null) ? NameInputScreen.routeName : MainAppScreen.routeName;
+                            Navigator.of(context).pushReplacementNamed(targetRoute);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30.0),
+                            child: const Text(
+                              'CONTINUE WITHOUT REGISTRATION',
+                              style: TextStyle(
+                                fontFamily: styles.currentFontFamily,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(

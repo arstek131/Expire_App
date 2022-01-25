@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /* providers */
 import 'package:provider/provider.dart';
@@ -91,13 +92,18 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
     });
     final String displayName = _userData['name']! + " " + _userData['surname']!;
 
-    await firebaseAuthHelper.setDisplayName(displayName);
+    if (firebaseAuthHelper.isAuth) {
+      await firebaseAuthHelper.setDisplayName(displayName);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('localDisplayName', displayName);
+    }
 
     setState(() {
       _isLoading = false;
     });
 
-    Navigator.of(context).pushNamed(MainAppScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(MainAppScreen.routeName);
   }
 
   @override

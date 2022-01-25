@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/main_app_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/name_input_screen.dart';
-
 import 'screens/onboarding_page.dart';
 
 /* Providers */
@@ -25,6 +24,8 @@ import './providers/bottom_navigator_bar_size_provider.dart';
 
 /* helpers */
 import 'helpers/custom_route.dart';
+import './helpers/db_manager.dart';
+import './constants.dart' as constants;
 
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
@@ -34,7 +35,18 @@ void main() async {
 
   await Firebase.initializeApp(); // todo: set for ios
 
-  print("Todo: click on plus, animation: from products or add new");
+  /* setting local user data for unregistered usage */
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getString("localUserId") == null) {
+    await prefs.setString("localUserId", constants.localUserId);
+  }
+  if (prefs.getString("localFamilyId") == null) {
+    await prefs.setString("localFamilyId", constants.localFamilyId);
+  }
+
+  /* DB init */
+  await DBManager.instance.init();
+
   runApp(const MyApp());
 }
 

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/providers/products_provider.dart';
+import 'package:expire_app/widgets/image_dispatcher.dart';
 import 'package:expire_app/widgets/shopping_list_element_tile.dart';
 import 'package:expire_app/widgets/shopping_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -192,30 +193,7 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                                 width: 50,
                                                 child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                  child: products[i].image != null
-                                                      ? products[i].image is String
-                                                          ? FadeInImage.assetNetwork(
-                                                              placeholder:
-                                                                  "assets/images/image_loading_placeholder.png", // Todo: change, sucks
-                                                              image: products[i].image!,
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          /*Image.network(
-                                                          products[i].image!,
-                                                          fit: BoxFit.cover,
-                                                          color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                                          colorBlendMode: BlendMode.modulate,
-                                                        )*/
-                                                          : Image.file(
-                                                              products[i].image!,
-                                                              fit: BoxFit.cover,
-                                                              color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                                              colorBlendMode: BlendMode.modulate,
-                                                            )
-                                                      : Image.asset(
-                                                          "assets/images/missing_image_placeholder.png",
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                  child: ImageDispatcher(products[i].image),
                                                 ),
                                               ),
                                               subtitle: Row(

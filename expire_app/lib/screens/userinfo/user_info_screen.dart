@@ -229,7 +229,9 @@ class UserInfoScreen extends StatelessWidget {
                     Navigator.of(context).pushReplacementNamed('/');
                     await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
                     await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
-                    FirebaseAuthHelper.instance.logOut();
+                    if (FirebaseAuthHelper.instance.isAuth) {
+                      FirebaseAuthHelper.instance.logOut();
+                    }
                   },
                 ),
                 SizedBox(
