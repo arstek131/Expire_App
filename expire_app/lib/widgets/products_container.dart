@@ -14,6 +14,9 @@ import '../providers/filters_provider.dart';
 /* models */
 import '../models/product.dart';
 
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+
 /* widgets */
 import '../widgets/product_list_tile.dart';
 
@@ -39,6 +42,7 @@ class ProductsContainer extends StatefulWidget {
 
 class _ProductsContainerState extends State<ProductsContainer> {
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -142,111 +146,131 @@ class _ProductsContainerState extends State<ProductsContainer> {
                         ),
                       ),
                     ),
-                    Consumer<FiltersProvider>(
-                      builder: (_, filterData, __) {
-                        final filteredProducts = data.getItems(filter: filterData.filter);
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: _deviceInfo.isTablet ? 4 : 1,
+                          child: Consumer<FiltersProvider>(
+                            builder: (_, filterData, __) {
+                              final filteredProducts = data.getItems(filter: filterData.filter);
 
-                        if (widget._productsViewMode == ProductsViewMode.List) {
-                          return ListView.builder(
-                            controller: ScrollController(initialScrollOffset: 0),
-                            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                            itemCount: filteredProducts.length + 1,
-                            itemBuilder: (ctx, i) {
-                              if (!filteredProducts.isEmpty) {
-                                if (i < filteredProducts.length) {
-                                  Product product = filteredProducts[i];
+                              if (widget._productsViewMode == ProductsViewMode.List) {
+                                return ListView.builder(
+                                  controller: ScrollController(initialScrollOffset: 0),
+                                  physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                                  itemCount: filteredProducts.length + 1,
+                                  itemBuilder: (ctx, i) {
+                                    if (!filteredProducts.isEmpty) {
+                                      if (i < filteredProducts.length) {
+                                        Product product = filteredProducts[i];
 
-                                  bool first = (i == 0);
-                                  bool last = (i == data.items.length - 1);
+                                        bool first = (i == 0);
+                                        bool last = (i == data.items.length - 1);
 
-                                  return GestureDetector(
-                                    onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 0.6, horizontal: 10),
-                                      child: ProductListTile(product, first, last),
-                                    ),
-                                  );
-                                } else {
-                                  return const SizedBox(
-                                    height: 80,
-                                  );
-                                }
+                                        return GestureDetector(
+                                          onTap: () =>
+                                              Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 0.6, horizontal: 10),
+                                            child: ProductListTile(product, first, last),
+                                          ),
+                                        );
+                                      } else {
+                                        return const SizedBox(
+                                          height: 80,
+                                        );
+                                      }
+                                    } else {
+                                      return Container(
+                                        margin: EdgeInsets.only(top: 100),
+                                        child: Text(
+                                          "No products found.",
+                                          style: styles.subheading,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
                               } else {
                                 return Container(
-                                  margin: EdgeInsets.only(top: 100),
-                                  child: Text(
-                                    "No products found.",
-                                    style: styles.subheading,
-                                    textAlign: TextAlign.center,
+                                  padding: EdgeInsets.only(bottom: 70),
+                                  child: GridView.builder(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                    controller: ScrollController(initialScrollOffset: 0),
+                                    physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: _deviceInfo.isPhonePotrait(context)
+                                          ? 2
+                                          : _deviceInfo.isPhoneLandscape(context)
+                                              ? 4
+                                              : _deviceInfo.isTabletPotrait(context)
+                                                  ? 2
+                                                  : 3,
+                                      childAspectRatio: 1,
+                                      crossAxisSpacing: 5,
+                                      mainAxisSpacing: 5,
+                                    ),
+                                    itemCount: filteredProducts.length,
+                                    itemBuilder: (ctx, i) {
+                                      if (!filteredProducts.isEmpty) {
+                                        Product product = filteredProducts[i];
+
+                                        bool first = (i == 0);
+                                        bool second = (i == 1);
+                                        bool second_last = (i == data.items.length - 2);
+                                        bool last = (i == data.items.length - 1);
+
+                                        return GestureDetector(
+                                          onTap: () =>
+                                              Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
+                                          child: Container(
+                                            padding: EdgeInsets.all(5.0),
+                                            decoration: BoxDecoration(
+                                              color: styles.ghostWhite,
+                                              //borderRadius: BorderRadius.all(Radius.circular(15)
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(first ? 15.0 : 0.0),
+                                                topRight: Radius.circular(second ? 15.0 : 0.0),
+                                                bottomRight: Radius.circular(
+                                                  last && filteredProducts.length.isEven ? 15.0 : 0.0,
+                                                ),
+                                                bottomLeft: Radius.circular(
+                                                  second_last && filteredProducts.length.isEven
+                                                      ? 15.0
+                                                      : last && filteredProducts.length.isOdd
+                                                          ? 15.0
+                                                          : 0.0,
+                                                ),
+                                              ),
+                                            ),
+                                            child: ProductGridTile(
+                                                product, first, second, second_last, last, filteredProducts.length.isEven),
+                                          ),
+                                        );
+                                      } else {
+                                        return Container(
+                                          margin: EdgeInsets.only(top: 100),
+                                          child: Text(
+                                            "No products found.",
+                                            style: styles.subheading,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      }
+                                    },
                                   ),
                                 );
                               }
                             },
-                          );
-                        } else {
-                          return Container(
-                            padding: EdgeInsets.only(bottom: 70),
-                            child: GridView.builder(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              controller: ScrollController(initialScrollOffset: 0),
-                              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
-                              ),
-                              itemCount: filteredProducts.length,
-                              itemBuilder: (ctx, i) {
-                                if (!filteredProducts.isEmpty) {
-                                  Product product = filteredProducts[i];
-
-                                  bool first = (i == 0);
-                                  bool second = (i == 1);
-                                  bool second_last = (i == data.items.length - 2);
-                                  bool last = (i == data.items.length - 1);
-
-                                  return GestureDetector(
-                                    onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
-                                    child: Container(
-                                      padding: EdgeInsets.all(5.0),
-                                      decoration: BoxDecoration(
-                                        color: styles.ghostWhite,
-                                        //borderRadius: BorderRadius.all(Radius.circular(15)
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(first ? 15.0 : 0.0),
-                                          topRight: Radius.circular(second ? 15.0 : 0.0),
-                                          bottomRight: Radius.circular(
-                                            last && filteredProducts.length.isEven ? 15.0 : 0.0,
-                                          ),
-                                          bottomLeft: Radius.circular(
-                                            second_last && filteredProducts.length.isEven
-                                                ? 15.0
-                                                : last && filteredProducts.length.isOdd
-                                                    ? 15.0
-                                                    : 0.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: ProductGridTile(
-                                          product, first, second, second_last, last, filteredProducts.length.isEven),
-                                    ),
-                                  );
-                                } else {
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 100),
-                                    child: Text(
-                                      "No products found.",
-                                      style: styles.subheading,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          );
-                        }
-                      },
+                          ),
+                        ),
+                        if (_deviceInfo.isTablet)
+                          Flexible(
+                            child: Container(color: Colors.red),
+                            flex: 7,
+                          ) // todo: idea: remove spacing on the right, make like spark, shadow dropping and neat cut
+                      ],
                     )
                   ],
                 );

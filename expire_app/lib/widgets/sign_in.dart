@@ -10,6 +10,9 @@ import '../providers/auth_provider.dart';
 import '../models/http_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+
 /* firebase */
 import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +43,8 @@ class _SignInState extends State<SignIn> {
     'email': '',
     'password': '',
   };
+
+  deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -147,7 +152,20 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0, bottom: 20.0),
+                  padding: EdgeInsets.only(
+                    left: _deviceInfo.isPhone
+                        ? 20.0
+                        : _deviceInfo.isLandscape(context)
+                            ? 220
+                            : 130,
+                    right: _deviceInfo.isPhone
+                        ? 20.0
+                        : _deviceInfo.isLandscape(context)
+                            ? 220
+                            : 130,
+                    top: 0.0,
+                    bottom: 20.0,
+                  ),
                   child: Form(
                     key: widget._formKey,
                     child: Column(

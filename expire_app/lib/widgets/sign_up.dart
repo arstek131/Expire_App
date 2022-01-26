@@ -20,6 +20,9 @@ import 'family_id_choice_modal.dart';
 import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+
 /* styles */
 import '../app_styles.dart' as styles;
 
@@ -78,6 +81,8 @@ class _SignUpState extends State<SignUp> {
     'password': '',
     'familyId': null,
   };
+
+  deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -179,20 +184,41 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  /*padding: EdgeInsets.all(10),
-                  height: 280,
-                  width: 423,*/
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Image.asset(
-                      "./assets/images/auth_signup_img.png",
-                      fit: BoxFit.contain,
+                if (_deviceInfo.isTablet && _deviceInfo.isPotrait(context))
+                  SizedBox(
+                    height: 100,
+                  ),
+                Flexible(
+                  child: Container(
+                    constraints: BoxConstraints(maxHeight: 600, minWidth: double.infinity),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Image.asset(
+                        "./assets/images/auth_signup_img.png",
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
+                if (_deviceInfo.isTablet && _deviceInfo.isPotrait(context))
+                  SizedBox(
+                    height: 200,
+                  ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                  padding: EdgeInsets.only(
+                    left: _deviceInfo.isPhone
+                        ? 20.0
+                        : _deviceInfo.isLandscape(context)
+                            ? 200
+                            : 130,
+                    right: _deviceInfo.isPhone
+                        ? 20.0
+                        : _deviceInfo.isLandscape(context)
+                            ? 200
+                            : 130,
+                    top: 0.0,
+                    bottom: 20.0,
+                  ),
                   child: Form(
                     key: widget._formKey,
                     child: Column(

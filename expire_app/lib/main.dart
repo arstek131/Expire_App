@@ -1,5 +1,6 @@
 /* dart libraries */
 import 'dart:io';
+import 'package:expire_app/helpers/device_info.dart';
 import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
@@ -46,6 +47,9 @@ void main() async {
 
   /* DB init */
   await DBManager.instance.init();
+
+  /* init device info such as device type, screen size etc...*/
+  DeviceInfo.instance;
 
   runApp(const MyApp());
 }

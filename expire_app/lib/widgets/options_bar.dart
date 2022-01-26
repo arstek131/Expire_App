@@ -9,6 +9,9 @@ import '../app_styles.dart' as styles;
 import '../providers/filters_provider.dart';
 import 'package:provider/provider.dart';
 
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+
 /* models */
 import '../models/categories.dart' as categories;
 
@@ -22,6 +25,8 @@ class OptionsBar extends StatefulWidget {
 class _OptionBarState extends State<OptionsBar> {
   final List<Map<String, Object>> _choicesList = categories.categories;
   List<int> _chosenIndexes = [];
+
+  deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   void _chipSelectionHandler(int index, selected) {
     if (!selected) {
@@ -52,7 +57,7 @@ class _OptionBarState extends State<OptionsBar> {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.only(top: MediaQuery.of(context).orientation == Orientation.portrait ? 30 : 0),
+          margin: EdgeInsets.only(top: !(_deviceInfo.isPhone && _deviceInfo.isLandscape(context)) ? 30 : 0),
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -79,7 +84,7 @@ class _OptionBarState extends State<OptionsBar> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).orientation == Orientation.portrait ? 20 : 10, left: 20, right: 40, bottom: 0),
+                    top: !(_deviceInfo.isPhone && _deviceInfo.isLandscape(context)) ? 20 : 10, left: 20, right: 40, bottom: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -87,6 +92,7 @@ class _OptionBarState extends State<OptionsBar> {
                       duration: Duration(milliseconds: 150),
                       curve: Curves.easeInOut,
                       width: max(200 - inputWidth, 0),
+                      height: !(_deviceInfo.isPhone && _deviceInfo.isLandscape(context)) ? null : 30,
                       child: AnimatedOpacity(
                         opacity: inputWidth > 0 ? 0 : 1,
                         curve: Curves.easeInOut,
@@ -158,7 +164,7 @@ class _OptionBarState extends State<OptionsBar> {
                           ),
                           onPressed: () {
                             setState(() {
-                              inputWidth = (MediaQuery.of(context).orientation == Orientation.portrait ? 250 : 600);
+                              inputWidth = (_deviceInfo.isPotrait(context) && !_deviceInfo.isTablet ? 250 : 600);
                               FocusScope.of(context).requestFocus(_focusNode);
                             });
                             print(inputWidth);
@@ -166,66 +172,71 @@ class _OptionBarState extends State<OptionsBar> {
                   ],
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).orientation == Orientation.portrait ? 10 : 0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: SizedBox(
-                  height: 50,
-                  child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                    itemCount: _choicesList.length,
-                    itemBuilder: (context, i) => Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: ChoiceChip(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        elevation: 2,
-                        selectedColor: styles.deepGreen.withOpacity(0.85),
-                        backgroundColor: Colors.indigo,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          side: BorderSide(color: styles.ghostWhite),
-                        ),
-                        avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
-                        label: Text(
-                          _choicesList[i]['title'] as String,
-                          style: const TextStyle(
-                            fontFamily: styles.currentFontFamily,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
-                            color: styles.ghostWhite,
+              SizedBox(height: 10),
+              if (!(_deviceInfo.isPhone && _deviceInfo.isLandscape(context)))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: SizedBox(
+                    height: 50,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                        itemCount: _choicesList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) => Padding(
+                          padding: const EdgeInsets.only(right: 15.0),
+                          child: ChoiceChip(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            elevation: 2,
+                            selectedColor: styles.deepGreen.withOpacity(0.85),
+                            backgroundColor: Colors.indigo,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              side: BorderSide(color: styles.ghostWhite),
+                            ),
+                            avatar: _chosenIndexes.contains(i) ? _choicesList[i]['icon'] as FaIcon : null,
+                            label: Text(
+                              _choicesList[i]['title'] as String,
+                              style: const TextStyle(
+                                fontFamily: styles.currentFontFamily,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal,
+                                color: styles.ghostWhite,
+                              ),
+                            ),
+                            selected: _chosenIndexes.contains(i),
+                            onSelected: (bool selected) {
+                              _chipSelectionHandler(i, selected);
+
+                              switch (_choicesList[i]['title']) {
+                                case "Meat":
+                                  filtersData.setSingleFilter(isMeat: selected);
+                                  break;
+                                case "Fish":
+                                  filtersData.setSingleFilter(isFish: selected);
+                                  break;
+                                case "Vegetarian":
+                                  filtersData.setSingleFilter(isVegetarian: selected);
+                                  break;
+                                case "Vegan":
+                                  filtersData.setSingleFilter(isVegan: selected);
+                                  break;
+                                case "Palm-oil free":
+                                  filtersData.setSingleFilter(isPalmOilFree: selected);
+                                  break;
+                                default:
+                                  print("No category found!");
+                                  break;
+                              }
+                            },
                           ),
                         ),
-                        selected: _chosenIndexes.contains(i),
-                        onSelected: (bool selected) {
-                          _chipSelectionHandler(i, selected);
-
-                          switch (_choicesList[i]['title']) {
-                            case "Meat":
-                              filtersData.setSingleFilter(isMeat: selected);
-                              break;
-                            case "Fish":
-                              filtersData.setSingleFilter(isFish: selected);
-                              break;
-                            case "Vegetarian":
-                              filtersData.setSingleFilter(isVegetarian: selected);
-                              break;
-                            case "Vegan":
-                              filtersData.setSingleFilter(isVegan: selected);
-                              break;
-                            case "Palm-oil free":
-                              filtersData.setSingleFilter(isPalmOilFree: selected);
-                              break;
-                            default:
-                              print("No category found!");
-                              break;
-                          }
-                        },
+                        scrollDirection: Axis.horizontal,
                       ),
                     ),
-                    scrollDirection: Axis.horizontal,
                   ),
                 ),
-              ),
             ],
           ),
         ),

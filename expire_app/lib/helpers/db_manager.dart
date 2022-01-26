@@ -248,6 +248,8 @@ class DBManager {
 
   /***  shopping list ***/
   Future<List<ShoppingList>> getShoppingLists() async {
+    this.checkInit();
+
     List<ShoppingList> lists = [];
 
     // get lists
@@ -278,6 +280,8 @@ class DBManager {
   }
 
   Future<void> addShoppingList({required ShoppingList list}) async {
+    this.checkInit();
+
     /* shopping list*/
     _db.rawInsert(
       'INSERT INTO SHOPPINGLIST(ID, TITLE, COMPLETED) VALUES(?, ?, ?)',
@@ -303,16 +307,22 @@ class DBManager {
   }
 
   Future<void> deleteShoppingList(String id) async {
+    this.checkInit();
+
     _db.rawDelete('DELETE FROM SHOPPINGLIST WHERE ID = ?', [id]);
     _db.rawDelete('DELETE FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ?', [id]);
   }
 
   Future<void> updateCompletedShoppingList({required String listId, required bool completed}) async {
+    this.checkInit();
+
     _db.rawUpdate('UPDATE SHOPPINGLIST SET COMPLETED = ? WHERE ID = ?', [completed ? 1 : 0, listId]);
   }
 
   /***  shopping list element ***/
   Future<void> addElementToShoppingList({required String listId, required ShoppingListElement shoppingListElement}) async {
+    this.checkInit();
+
     final queryRes = await _db.rawQuery('SELECT * FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ? and (ID = ? OR TITLE = ?)',
         [listId, shoppingListElement.id, shoppingListElement.title]);
 
@@ -337,14 +347,20 @@ class DBManager {
   }
 
   Future<void> updateCheckedElementList({required String elementId, required bool checked}) async {
+    this.checkInit();
+
     _db.rawUpdate('UPDATE SHOPPINGLISTELEMENT SET CHECKED = ? WHERE ID = ?', [checked ? 1 : 0, elementId]);
   }
 
   Future<void> updateQuantity({required String elementId, required int quantity}) async {
+    this.checkInit();
+
     _db.rawUpdate('UPDATE SHOPPINGLISTELEMENT SET QUANTITY = ? WHERE ID = ?', [quantity, elementId]);
   }
 
   Future<void> deleteShoppingListElement(String elementId) async {
+    this.checkInit();
+
     _db.rawDelete('DELETE FROM SHOPPINGLISTELEMENT WHERE ID = ?', [elementId]);
   }
 
