@@ -1,4 +1,7 @@
 /* dart */
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,7 @@ import '../models/product.dart';
 
 /* widgets */
 import '../widgets/expire_clip.dart';
+import '../widgets/image_dispatcher.dart';
 
 /* provider */
 import '../providers/products_provider.dart';
@@ -201,29 +205,7 @@ class _ProductListTileState extends State<ProductListTile> {
                           tag: 'produt-image${widget.product.id}',
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
-                            child: widget.product.image != null
-                                ? widget.product.image is String
-                                    ? FadeInImage.assetNetwork(
-                                        placeholder: "assets/images/image_loading_placeholder.png", // Todo: change, sucks
-                                        image: widget.product.image!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    /*Image.network(
-                                        widget.product.image!,
-                                        fit: BoxFit.cover,
-                                        color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                        colorBlendMode: BlendMode.modulate,
-                                      )*/
-                                    : Image.file(
-                                        widget.product.image!,
-                                        fit: BoxFit.cover,
-                                        color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                        colorBlendMode: BlendMode.modulate,
-                                      )
-                                : Image.asset(
-                                    "assets/images/missing_image_placeholder.png",
-                                    fit: BoxFit.cover,
-                                  ),
+                            child: ImageDispatcher(widget.product.image),
                           ),
                         ),
                       ),

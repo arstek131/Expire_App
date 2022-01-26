@@ -23,6 +23,9 @@ import 'recipe_screen.dart';
 import 'userinfo/user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
+/* helpers */
+import '../helpers/user_info.dart' as userInfo;
+
 /* styles */
 import '../app_styles.dart' as styles;
 
@@ -77,7 +80,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
       },
       {
         'page': Center(
-          child: Text(firebaseAuthHelper.displayName ?? "null"),
+          child: Text(firebaseAuthHelper.displayName ?? userInfo.UserInfo.instance.displayName.toString()),
         ),
         'title': "Analytics",
       },

@@ -1,7 +1,9 @@
 /* dart */
 import 'dart:ui';
 
+import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/main.dart';
+import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +40,7 @@ import '../providers/auth_provider.dart';
 /* models */
 import '../models/product.dart';
 import '../models/categories.dart' as categories;
+import '../models/openfoodfacts_exceptions.dart' show ProductNotFoundException;
 
 /* enums */
 import '../enums/product_insertion_method.dart';
@@ -120,7 +123,7 @@ class _AddItemModalState extends State<AddItemModal> {
 
   bool _isLoading = false;
   bool _isFetchingProduct = false;
-    bool _isExtractingText = false;
+  bool _isExtractingText = false;
 
   final List<Map<String, Object>> _choicesList = categories.categories;
   List<int> _chosenIndexes = [];
@@ -231,6 +234,23 @@ class _AddItemModalState extends State<AddItemModal> {
           brandName: _brandName,
           quantity: _quantity,
         ),
+      );
+    } on SocketException catch (error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(ctx).pop(true);
+          });
+          return CustomDialog(
+            title: Text("No internet", 
+              textAlign: TextAlign.center
+            ), 
+            body: Text("You don't seem to be connected to the internet", 
+              textAlign: TextAlign.center,
+            ),
+          );
+        },
       );
     } catch (error, stacktrace) {
       const errorMessage = 'Chould not upload product. Please try again later';
@@ -344,8 +364,94 @@ class _AddItemModalState extends State<AddItemModal> {
     });
   }
 
-  Future<void> _extractTextFromImage(ImageSource imageSource, TextEditingController controller) async
+  Future<void> _extractTextFromImage(TextEditingController controller) async
   {
+    if(!FirebaseAuthHelper.instance.isAuth)
+    {
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(ctx).pop(true);
+          });
+          return CustomDialog(
+            title: Text("Premium feature", 
+              textAlign: TextAlign.center
+            ), 
+            body: Text(
+              "This is a premium feature! Please register to fully unlock the functionalities of the app", 
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: Align(alignment: Alignment.bottomCenter, child: Text("Okay", style: styles.heading,))),
+            ]
+          );
+        },
+      );
+      return;
+    }
+
+    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+      isScrollControlled: true,
+      enableDrag: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      builder: (BuildContext ctx) {
+        return Row(
+          children: [
+              Expanded(
+                child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+                child: Container(
+                  color: Colors.blue.shade300,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
+                        SizedBox(height: 2),
+                        Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                      ],
+                    ),
+                  ),
+                ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                  child: Container(
+                    color: Colors.pink.shade600,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                          SizedBox(height: 2),
+                          Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+    if (imageSource == null) {
+      return;
+    }
+
     final picker = ImagePicker();
     final imageFile = await picker.pickImage(
       source: imageSource,
@@ -410,6 +516,23 @@ class _AddItemModalState extends State<AddItemModal> {
 
     try {
         extractedText = await rekognizeProvider.extractTextAnnotation(base64Image);
+    } on SocketException catch (error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(ctx).pop(true);
+          });
+          return CustomDialog(
+            title: Text("No internet", 
+              textAlign: TextAlign.center
+            ), 
+            body: Text("You don't seem to be connected to the internet", 
+              textAlign: TextAlign.center,
+            ),
+          );
+        },
+      );
     } catch(error)
     {
       print(error);
@@ -426,9 +549,6 @@ class _AddItemModalState extends State<AddItemModal> {
     controller.text = extractedText ?? "";
   }
 
-  
-  //TODO: push and get nutritionscore and ingredientText to server + use consumer on health
-
   Future<void> _scanBarcode() async {
     _formKey.currentState?.reset();
     // todo: set meat, fish, vegetarian etc... automatically
@@ -440,9 +560,9 @@ class _AddItemModalState extends State<AddItemModal> {
     scanResult = "689544001737";
     scanResult = "8000090003297";
     scanResult = "8000090003297";
-    scanResult = "5053990160075";
+    //scanResult = "5053990160075";
 
-    try {
+    /*try {
       BarcodeResult result = await FlutterScandit(symbologies: [
         Symbology.EAN13_UPCA,
         Symbology.EAN8,
@@ -463,7 +583,7 @@ class _AddItemModalState extends State<AddItemModal> {
     } on BarcodeScanException catch (error) {
       print(error);
       rethrow;
-    }
+    }*/
 
     print("fetching product...");
 
@@ -474,10 +594,16 @@ class _AddItemModalState extends State<AddItemModal> {
     await Future.delayed(Duration(seconds: 1)); // faking user interaction
 
     openfoodfacts.ProductQueryConfiguration configuration = openfoodfacts.ProductQueryConfiguration(scanResult,
-        /*language: openfoodfacts.OpenFoodFactsLanguage.GERMAN,*/ fields: [openfoodfacts.ProductField.ALL]);
-    openfoodfacts.ProductResult result = await openfoodfacts.OpenFoodAPIClient.getProduct(configuration);
+        language: openfoodfacts.OpenFoodFactsLanguage.ENGLISH, fields: [openfoodfacts.ProductField.ALL]);
+    
+    
+    try{
+      openfoodfacts.ProductResult result = await openfoodfacts.OpenFoodAPIClient.getProduct(configuration);
 
-    if (result.status == 1) {
+      if (result.status != 1) {
+        throw ProductNotFoundException("Scanned product could not be found on DB");
+      }
+
       // extracting product name
       _productNameController.text = result.product?.productName ?? '';
 
@@ -571,7 +697,8 @@ class _AddItemModalState extends State<AddItemModal> {
         _imageUrl = imageUrl;
         productInsertionMethod = ProductInsertionMethod.Scanner;
       });
-    } else {
+
+    } on ProductNotFoundException catch (error) {
       Vibrate.feedback(FeedbackType.error);
 
       showDialog(
@@ -580,35 +707,34 @@ class _AddItemModalState extends State<AddItemModal> {
           Future.delayed(Duration(seconds: 5), () {
             Navigator.of(ctx).pop(true);
           });
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.0),
-              ),
-            ),
-            alignment: Alignment.center,
-            title: const Text(
-              "Not found",
+          return CustomDialog(
+            title: Text("Not found", 
+              textAlign: TextAlign.center
+            ), 
+            body: Text("No product was found with scanned barcode. Try to scan it again or insert it manually.", 
               textAlign: TextAlign.center,
             ),
-            content: const Text(
-              "No product was found with scanned barcode. Try to scan it again or insert it manually.",
-              textAlign: TextAlign.center,
-            ),
-            titleTextStyle: TextStyle(
-              fontFamily: styles.currentFontFamily,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
-            contentTextStyle: TextStyle(
-              fontFamily: styles.currentFontFamily,
-              fontSize: 16,
-            ),
-            backgroundColor: styles.primaryColor,
           );
         },
       );
-    }
+    } on SocketException catch (error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(ctx).pop(true);
+          });
+          return CustomDialog(
+            title: Text("No internet", 
+              textAlign: TextAlign.center
+            ), 
+            body: Text("You don't seem to be connected to the internet", 
+              textAlign: TextAlign.center,
+            ),
+          );
+        },
+      );
+    } 
 
     setState(() {
       _isFetchingProduct = false;
@@ -1096,69 +1222,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                     color: styles.ghostWhite,
                                   ),
                                   onPressed: () async {
-                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                      isScrollControlled: true,
-                                      enableDrag: true,
-                                      context: context,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20),
-                                        ),
-                                      ),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      builder: (BuildContext ctx) {
-                                        return Row(
-                                          children: [
-                                            
-                                              Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                              child: Container(
-                                                color: Colors.blue.shade300,
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                  child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                      SizedBox(height: 2),
-                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                        ),
-                                            
-                                              Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
-                                                child: Container(
-                                                  color: Colors.pink.shade600,
-                                                  child: Container(
-                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
-                                                        SizedBox(height: 2),
-                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (imageSource == null) {
-                                      return;
-                                    }
-                                    _extractTextFromImage(imageSource, _ingredientsTextController);
+                                    _extractTextFromImage(_ingredientsTextController);
                                   }
                                 ),
                               ],
@@ -1360,7 +1424,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                     if (imageSource == null) {
                                       return;
                                     }
-                                    _extractTextFromImage(imageSource, _alergiesTextController);
+                                    _extractTextFromImage(_alergiesTextController);
                                   }
                                 ),
                               ],
@@ -1482,7 +1546,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                     if (imageSource == null) {
                                       return;
                                     }
-                                    _extractTextFromImage(imageSource, _packagingTextController);
+                                    _extractTextFromImage(_packagingTextController);
                                   }
                                 ),
                               ],

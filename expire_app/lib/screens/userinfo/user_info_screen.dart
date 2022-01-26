@@ -299,6 +299,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                             listen: false)
                         .cleanProviderState();
                     FirebaseAuthHelper.instance.logOut();
+                    await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
+                    await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
+                    if (FirebaseAuthHelper.instance.isAuth) {
+                      FirebaseAuthHelper.instance.logOut();
+                    }
                   },
                 ),
                 SizedBox(

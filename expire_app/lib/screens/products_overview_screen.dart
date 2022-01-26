@@ -177,22 +177,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
               ),
             ),
             FutureBuilder(
-                future: Provider.of<ProductsProvider>(context, listen: false).fetchProducts(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Expanded(
-                      child: ListView(
-                        children: [
-                          ProductListTilePlaceholder(first: true),
-                          ProductListTilePlaceholder(),
-                          ProductListTilePlaceholder(last: true),
-                        ],
-                      ),
-                    );
-                  } else {
-                    return ProductsContainer(_productsViewMode);
-                  }
-                }),
+              future: Provider.of<ProductsProvider>(context, listen: false).fetchProducts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Expanded(
+                    child: ListView(
+                      children: [
+                        ProductListTilePlaceholder(first: true),
+                        ProductListTilePlaceholder(),
+                        ProductListTilePlaceholder(last: true),
+                      ],
+                    ),
+                  );
+                } else {
+                  return ProductsContainer(_productsViewMode);
+                }
+              },
+            ),
           ],
         ),
       ),

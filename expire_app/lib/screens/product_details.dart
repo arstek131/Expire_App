@@ -6,6 +6,7 @@ import 'package:expire_app/providers/products_provider.dart';
 import 'package:expire_app/widgets/eco_product_detail.dart';
 import 'package:expire_app/widgets/expire_clip.dart';
 import 'package:expire_app/widgets/health_product_detail.dart';
+import 'package:expire_app/widgets/image_dispatcher.dart';
 import 'package:expire_app/widgets/shopping_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -303,24 +304,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                         width: 45,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: product.image != null
-                              ? product.image is String
-                                  ? Image.network(
-                                      product.image!,
-                                      fit: BoxFit.cover,
-                                      color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                      colorBlendMode: BlendMode.modulate,
-                                    )
-                                  : Image.file(
-                                      product.image!,
-                                      fit: BoxFit.cover,
-                                      color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                      colorBlendMode: BlendMode.modulate,
-                                    )
-                              : Image.asset(
-                                  "assets/images/missing_image_placeholder.png",
-                                  fit: BoxFit.cover,
-                                ),
+                          child: ImageDispatcher(product.image),
                         ),
                       ),
                     ),
@@ -384,24 +368,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: product.image != null
-                                  ? product.image is String
-                                      ? Image.network(
-                                          product.image!,
-                                          fit: BoxFit.contain,
-                                          color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                          colorBlendMode: BlendMode.modulate,
-                                        )
-                                      : Image.file(
-                                          product.image!,
-                                          fit: BoxFit.fill,
-                                          color: const Color.fromRGBO(255, 255, 255, 0.85),
-                                          colorBlendMode: BlendMode.modulate,
-                                        )
-                                  : Image.asset(
-                                      "assets/images/missing_image_placeholder.png",
-                                      fit: BoxFit.cover,
-                                    ),
+                              child: ImageDispatcher(product.image),
                             ),
                           ),
                         ),
