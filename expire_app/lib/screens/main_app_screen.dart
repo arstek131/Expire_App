@@ -2,6 +2,7 @@
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/screens/shopping_list_screen.dart';
+import 'package:expire_app/screens/statistics_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path/path.dart';
@@ -79,9 +80,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
         'title': "Products",
       },
       {
-        'page': Center(
-          child: Text(firebaseAuthHelper.displayName ?? userInfo.UserInfo.instance.displayName.toString()),
-        ),
+        'page': StatisticsScreen(),
         'title': "Analytics",
       },
       {

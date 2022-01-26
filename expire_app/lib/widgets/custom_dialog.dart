@@ -27,7 +27,7 @@ class CustomDialog extends StatelessWidget {
         fontFamily: styles.currentFontFamily,
         fontSize: 16,
       ),
-      backgroundColor: styles.primaryColor,
+      backgroundColor: styles.deepAmber, //styles.primaryColor,
       actions: actions,
     );
   }

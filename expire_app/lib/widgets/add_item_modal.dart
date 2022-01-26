@@ -179,7 +179,6 @@ class _AddItemModalState extends State<AddItemModal> {
 
     _nutriscorePageViewController.dispose();
     _ecoscorePageViewController.dispose();
-    //_cameraController!.dispose();
   }
 
   void _chipSelectionHandler(int index, selected) {

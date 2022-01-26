@@ -42,7 +42,10 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
             Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: MediaQuery.of(context).orientation == Orientation.portrait ? 30.0 : 10.0),
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).orientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.height * 0.04
+                          : 10.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(

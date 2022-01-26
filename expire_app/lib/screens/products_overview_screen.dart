@@ -109,7 +109,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
             Container(
               margin: const EdgeInsets.only(bottom: 0),
               padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).orientation == Orientation.portrait ? 20 : 5, left: 20, right: 20, bottom: 0),
+                  top:
+                      MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.055 : 5,
+                  left: 20,
+                  right: 20,
+                  bottom: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
