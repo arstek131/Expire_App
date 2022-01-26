@@ -6,15 +6,21 @@ import 'package:expire_app/models/recipe_details.dart';
 import 'package:http/http.dart';
 
 class HttpService{
+  /*
+    Altre chiavi API:
+    1) b385898bef554001872e9e2710451a8d
+    2) d53be8e7bdf642a6a61c4c1773958dba
+  */
+
 
   static Map<String, String> queryParameters = {
-    'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
+    'apiKey': 'b385898bef554001872e9e2710451a8d',
     'ingredients': 'egg',//atm hardcoded, will be dynamically replaced
     'number': '5',
   };
 
   static final queryParameters2 = {
-    'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba'
+    'apiKey': 'b385898bef554001872e9e2710451a8d'
   };
 
 
@@ -28,6 +34,8 @@ class HttpService{
 
     if(res.statusCode == 200){
       List<dynamic> body = jsonDecode(res.body);
+
+      print(uri.toString());
 
       List<Recipe> recipes = body.map((dynamic item) => Recipe.fromJson(item)).toList();
 
@@ -48,11 +56,10 @@ class HttpService{
 
     if(res.statusCode == 200){
       Map<String, dynamic> body = jsonDecode(res.body);
-      print(uri.toString());
+
 
 
       RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
-      //Se stampo qualcosa qui, tipo anche "print("ciaooo")" non va, si inceppa nel mapping
       print(recipesDetails.title);
       print(recipesDetails.analyzedInstructions[0].steps.length);
 

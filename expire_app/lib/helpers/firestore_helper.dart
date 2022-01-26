@@ -146,6 +146,7 @@ class FirestoreHelper {
     );
   }
 
+
   /* other */
   Future<void> addUser({required String userId, String? familyId}) async {
     // generate new family if none given and add username to user list

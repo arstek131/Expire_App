@@ -30,53 +30,6 @@ Main screen
  */
 
 class RecipeScreen extends StatelessWidget {
-  /*Future getAPIdata() async {
-    final queryParameters = {
-      'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
-      'ingredients': 'tomato',
-      'number': '1',
-    };
-    final uri = Uri.https(
-        'api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
-    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    final response = await http.get(uri, headers: headers);
-
-    var jsondata = jsonDecode(response.body);
-    //final result = recipeFromJson(response.body);
-    print(jsondata);
-    //return result;
-  }
-
-   */
-
-
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: httpService.getRecipes(),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
-        if (snapshot.hasData) {
-          List<Recipe>? recipes = snapshot.data;
-
-          return ListView(
-            children: recipes!
-                .map((Recipe recipe) => ListTile(
-                      title: Text(recipe.title!),
-                      subtitle: Text(recipe.id.toString()),
-                    ))
-                .toList(),
-          );
-        }
-
-        return Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-
- */
 
   @override
   Widget build(BuildContext context) {
@@ -87,30 +40,35 @@ class RecipeScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
           if (snapshot.hasData) {
             List<Recipe>? recipes = snapshot.data;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ListView.builder(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 12,
-                        ),
-                        child: RecipeCard(
-                          recipe: snapshot.data![index],
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
+            if(snapshot.data!.length > 0){
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ListView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 12,
+                          ),
+                          child: RecipeCard(
+                            recipe: snapshot.data![index],
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                ),
+              );
+            }
+           else return Center(
+              child: Text('No recipes available'),
             );
           }
           return Center(child: CircularProgressIndicator());
@@ -175,9 +133,11 @@ class _RecipeCardState extends State<RecipeCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.recipe.title!,
-                      style: Theme.of(context).textTheme.subtitle1,
+                    Center(
+                      child: Text(
+                        widget.recipe.title!,
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
                     ),
                     SizedBox(
                       height: 8,
@@ -192,11 +152,6 @@ class _RecipeCardState extends State<RecipeCard> {
                     SizedBox(
                       width: 20,
                     ),
-                    Icon(FlutterIcons.timer_mco),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text('2'),
                     Spacer(),
                     InkWell(
                       onTap: () {
