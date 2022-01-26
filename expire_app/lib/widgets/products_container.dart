@@ -1,5 +1,6 @@
 /* dart */
 import 'package:expire_app/screens/product_details.dart';
+import 'package:expire_app/widgets/product_grid_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
@@ -28,6 +29,9 @@ class ProductsContainer extends StatefulWidget {
   final ProductsViewMode _productsViewMode;
 
   ProductsContainer(this._productsViewMode);
+
+  bool first = true;
+  bool last = true;
 
   @override
   _ProductsContainerState createState() => _ProductsContainerState();
@@ -138,14 +142,13 @@ class _ProductsContainerState extends State<ProductsContainer> {
                         ),
                       ),
                     ),
-                    if (widget._productsViewMode == ProductsViewMode.List)
-                      Consumer<FiltersProvider>(
-                        builder: (_, filterData, __) {
-                          final filteredProducts = data.getItems(filter: filterData.filter);
+                    Consumer<FiltersProvider>(
+                      builder: (_, filterData, __) {
+                        final filteredProducts = data.getItems(filter: filterData.filter);
 
+                        if (widget._productsViewMode == ProductsViewMode.List) {
                           return ListView.builder(
                             controller: ScrollController(initialScrollOffset: 0),
-                            //physics: BouncingScrollPhysics(),
                             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                             itemCount: filteredProducts.length + 1,
                             itemBuilder: (ctx, i) {
@@ -180,8 +183,71 @@ class _ProductsContainerState extends State<ProductsContainer> {
                               }
                             },
                           );
-                        },
-                      )
+                        } else {
+                          return Container(
+                            padding: EdgeInsets.only(bottom: 70),
+                            child: GridView.builder(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              controller: ScrollController(initialScrollOffset: 0),
+                              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 5,
+                              ),
+                              itemCount: filteredProducts.length,
+                              itemBuilder: (ctx, i) {
+                                if (!filteredProducts.isEmpty) {
+                                  Product product = filteredProducts[i];
+
+                                  bool first = (i == 0);
+                                  bool second = (i == 1);
+                                  bool second_last = (i == data.items.length - 2);
+                                  bool last = (i == data.items.length - 1);
+
+                                  return GestureDetector(
+                                    onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id),
+                                    child: Container(
+                                      padding: EdgeInsets.all(5.0),
+                                      decoration: BoxDecoration(
+                                        color: styles.ghostWhite,
+                                        //borderRadius: BorderRadius.all(Radius.circular(15)
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(first ? 15.0 : 0.0),
+                                          topRight: Radius.circular(second ? 15.0 : 0.0),
+                                          bottomRight: Radius.circular(
+                                            last && filteredProducts.length.isEven ? 15.0 : 0.0,
+                                          ),
+                                          bottomLeft: Radius.circular(
+                                            second_last && filteredProducts.length.isEven
+                                                ? 15.0
+                                                : last && filteredProducts.length.isOdd
+                                                    ? 15.0
+                                                    : 0.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: ProductGridTile(
+                                          product, first, second, second_last, last, filteredProducts.length.isEven),
+                                    ),
+                                  );
+                                } else {
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 100),
+                                    child: Text(
+                                      "No products found.",
+                                      style: styles.subheading,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    )
                   ],
                 );
               }

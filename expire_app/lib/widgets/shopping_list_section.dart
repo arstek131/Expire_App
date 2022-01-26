@@ -59,7 +59,7 @@ class _ShoppingListDetailState extends State<ShoppingListSection> {
             height: 500,
             child: Consumer<ShoppingListProvider>(
               builder: (_, data, __) => ListView.builder(
-                  physics: BouncingScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                   itemCount: data.shoppingLists.length,
                   itemBuilder: (context, index) {
                     ShoppingList shoppingList = data.shoppingLists[index];

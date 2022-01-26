@@ -161,25 +161,23 @@ class ShoppingListProvider extends ChangeNotifier {
 
     // if exists, increase quantity
     if (_list.any((element) => element.title == shoppingListElement.title || element.id == shoppingListElement.id)) {
-      print("Update");
       _list[_list.indexWhere((element) => element.id == shoppingListElement.id || element.title == shoppingListElement.title)]
           .quantity += quantity;
     }
     // else add
     else {
-      print("Add");
       _list.add(shoppingListElement);
     }
     notifyListeners();
 
     /* remote insertion */
     if (_auth.isAuth) {
-      FirestoreHelper.instance
+      await FirestoreHelper.instance
           .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
     }
     /* local insertion in DB */
     else {
-      _db.addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement);
+      await _db.addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement);
     }
   }
 

@@ -48,8 +48,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     setState(() {
       if (_productsViewMode == ProductsViewMode.List) {
         _productsViewMode = ProductsViewMode.Grid;
-      } else if (_productsViewMode == ProductsViewMode.Grid) {
-        _productsViewMode = ProductsViewMode.ListGrid;
       } else {
         _productsViewMode = ProductsViewMode.List;
       }
@@ -109,11 +107,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
             Container(
               margin: const EdgeInsets.only(bottom: 0),
               padding: EdgeInsets.only(
-                  top:
-                      MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.055 : 5,
-                  left: 20,
-                  right: 20,
-                  bottom: 0),
+                  top: MediaQuery.of(context).orientation == Orientation.portrait ? 10 : 5, left: 20, right: 20, bottom: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -164,17 +158,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                             color: styles.ghostWhite,
                             size: 21,
                           )
-                        : _productsViewMode == ProductsViewMode.Grid
-                            ? FaIcon(
-                                FontAwesomeIcons.th,
-                                color: styles.ghostWhite,
-                                size: 21,
-                              )
-                            : FaIcon(
-                                FontAwesomeIcons.thLarge,
-                                color: styles.ghostWhite,
-                                size: 21,
-                              ),
+                        : FaIcon(
+                            FontAwesomeIcons.th,
+                            color: styles.ghostWhite,
+                            size: 21,
+                          ),
                     color: styles.ghostWhite,
                   ),
                 ],

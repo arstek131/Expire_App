@@ -68,7 +68,8 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
                     ? ShoppingListTile(
                         shoppingList: data.shoppingLists[index],
                         first: (index == 0),
-                        last: (index == data.shoppingLists.length - 1))
+                        last: (index == data.shoppingLists.length - 1),
+                      )
                     : SizedBox(
                         height: 120,
                       ),

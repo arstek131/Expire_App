@@ -1098,7 +1098,7 @@ class _AddItemModalState extends State<AddItemModal> {
                             SizedBox(
                               height: 80,
                               child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
+                               physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                                 itemCount: _choicesList.length,
                                 itemBuilder: (context, i) => Padding(
                                   padding: const EdgeInsets.only(right: 15.0),

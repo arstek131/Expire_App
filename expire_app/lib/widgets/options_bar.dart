@@ -172,7 +172,7 @@ class _OptionBarState extends State<OptionsBar> {
                 child: SizedBox(
                   height: 50,
                   child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                     itemCount: _choicesList.length,
                     itemBuilder: (context, i) => Padding(
                       padding: const EdgeInsets.only(right: 15.0),

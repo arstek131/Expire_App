@@ -35,6 +35,8 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
     String listId = ModalRoute.of(context)!.settings.arguments as String;
     List<ShoppingListElement> products = Provider.of<ShoppingListProvider>(context).getProductsFromListId(listId: listId);
 
@@ -85,21 +87,28 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                   ),
                 ),
               )
-            : Container(
-                margin: EdgeInsets.only(top: 10),
-                child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemCount: products.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index < products.length) {
-                      return ChangeNotifierProvider(
-                        create: (_) => TilePointerProvider(),
-                        child: ShoppingListElementTile(listId, products[index]),
-                      );
-                    } else {
-                      return SizedBox(height: 120);
-                    }
-                  },
+            : RefreshIndicator(
+                key: _refreshIndicatorKey,
+                color: Colors.blue,
+                onRefresh: () {
+                  return Provider.of<ShoppingListProvider>(context, listen: false).fetchShoppingLists();
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    itemCount: products.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < products.length) {
+                        return ChangeNotifierProvider(
+                          create: (_) => TilePointerProvider(),
+                          child: ShoppingListElementTile(listId, products[index]),
+                        );
+                      } else {
+                        return SizedBox(height: 120);
+                      }
+                    },
+                  ),
                 ),
               ),
       ),
@@ -189,9 +198,8 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                           ),
                                         );
                                       }
-
                                       return ListView.builder(
-                                        physics: BouncingScrollPhysics(),
+                                        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                                         itemCount: products.length,
                                         itemBuilder: (context, i) {
                                           bool selected = selectedProducts.any((element) => element.id == products[i].id);
@@ -417,8 +425,6 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                   margin: EdgeInsets.zero,
                                   child: IconButton(
                                     onPressed: () {
-                                      print(productName);
-                                      print(quantity);
                                       if (productName == "" || quantity == 0) {
                                         Navigator.of(context).pop();
                                       } else {

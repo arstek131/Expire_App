@@ -157,7 +157,6 @@ class ProductsProvider extends ChangeNotifier {
     if (_auth.isAuth) {
       // todo: take images from url and save them locally!
       _items = await FirestoreHelper.instance.getProductsFromFamilyId(userInfo.UserInfo.instance.familyId!);
-      sortProducts(_ordering);
 
       if (this._initProvider) {
         this._initProvider = false;
@@ -219,6 +218,7 @@ class ProductsProvider extends ChangeNotifier {
       _items = await _db.getProducts();
     }
 
+    sortProducts(_ordering);
     await Future.delayed(Duration(milliseconds: 300));
     notifyListeners();
   }

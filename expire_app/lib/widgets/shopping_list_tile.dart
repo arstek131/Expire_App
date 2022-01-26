@@ -1,3 +1,4 @@
+import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
@@ -189,7 +190,11 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
             ),
           ),
           trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () => Navigator.of(context).pushNamed(ShoppingListDetailScreen.routeName, arguments: widget.shoppingList.id),
+          onTap: () => Navigator.of(context)
+              .pushNamed(ShoppingListDetailScreen.routeName, arguments: widget.shoppingList.id)
+              .then((value) => !FirebaseAuthHelper.instance.isAuth
+                  ? Provider.of<ShoppingListProvider>(context, listen: false).fetchShoppingLists()
+                  : null),
         ),
       ),
     );
