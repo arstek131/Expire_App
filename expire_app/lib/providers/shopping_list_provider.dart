@@ -174,11 +174,13 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      await FirestoreHelper.instance
+      FirestoreHelper.instance
           .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
     }
     /* local insertion in DB */
-    else {}
+    else {
+      _db.addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement);
+    }
   }
 
   Future<void> incrementProductQuantity({required String listId, required String productId}) async {
@@ -190,7 +192,13 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
 
     /* remote increment */
-    FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+    if (_auth.isAuth) {
+      FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+    }
+    /* local increment */
+    else {
+      _db.updateQuantity(elementId: productId, quantity: element.quantity);
+    }
   }
 
   Future<void> decrementProductQuantity({required String listId, required String productId}) async {
@@ -201,8 +209,14 @@ class ShoppingListProvider extends ChangeNotifier {
 
     notifyListeners();
 
-    /* remote increment */
-    FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+    /* remote decrement */
+    if (_auth.isAuth) {
+      FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+    }
+    /* local decrement */
+    else {
+      _db.updateQuantity(elementId: productId, quantity: element.quantity);
+    }
   }
 
   Future<void> updateCompletedShoppingList(String shoppingListid, bool completed) async {
@@ -226,7 +240,13 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
 
     /* remote update */
-    FirestoreHelper.instance.updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
+    if (_auth.isAuth) {
+      FirestoreHelper.instance.updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
+    }
+    /* local DB update */
+    else {
+      _db.updateCheckedElementList(elementId: elementId, checked: checked);
+    }
   }
 
   Future<void> deleteShoppingListElement(String shoppingListid, String elementId) async {
@@ -235,7 +255,13 @@ class ShoppingListProvider extends ChangeNotifier {
     list.removeWhere((element) => element.id == elementId);
 
     /* remote removal */
-    FirestoreHelper.instance.deleteShoppingListElement(shoppingListid, elementId);
+    if (_auth.isAuth) {
+      FirestoreHelper.instance.deleteShoppingListElement(shoppingListid, elementId);
+    }
+    /* local removal */
+    else {
+      _db.deleteShoppingListElement(elementId);
+    }
   }
 
   int getUniqueNameId() {

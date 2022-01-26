@@ -117,6 +117,7 @@ class DBManager {
     }
   }
 
+  /***  product ***/
   Future<List<Product>> getProducts() async {
     this.checkInit();
 
@@ -245,6 +246,7 @@ class DBManager {
     _db.rawDelete('DELETE FROM PRODUCT WHERE ID = ?', [productId]);
   }
 
+  /***  shopping list ***/
   Future<List<ShoppingList>> getShoppingLists() async {
     List<ShoppingList> lists = [];
 
@@ -260,20 +262,18 @@ class DBManager {
 
       // get associated products to list
       final queryRes2 = await _db.rawQuery('SELECT * FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ?', [listJSON['ID']]);
-      for (final shoppingListElement in queryRes2) {
+      for (final shoppingListElementJSON in queryRes2) {
         list.products.add(
           ShoppingListElement(
-            id: shoppingListElement['ID'] as String,
-            title: shoppingListElement['TITLE'] as String,
-            checked: shoppingListElement['CHECKED'] == 0 ? false : true,
-            quantity: int.parse(shoppingListElement['QUANTITY'] as String),
+            id: shoppingListElementJSON['ID'] as String,
+            title: shoppingListElementJSON['TITLE'] as String,
+            checked: (shoppingListElementJSON['CHECKED'] as int) == 0 ? false : true,
+            quantity: shoppingListElementJSON['QUANTITY'] as int,
           ),
         );
       }
-
       lists.add(list);
     }
-
     return lists;
   }
 
@@ -296,7 +296,7 @@ class DBManager {
           list.id, // SHOPPING LIST ID
           product.title, // TITLE
           product.quantity, // QUANTITY
-          product.checked, // CHECKED
+          product.checked ? 1 : 0, // CHECKED
         ],
       );
     }
@@ -311,6 +311,44 @@ class DBManager {
     _db.rawUpdate('UPDATE SHOPPINGLIST SET COMPLETED = ? WHERE ID = ?', [completed ? 1 : 0, listId]);
   }
 
+  /***  shopping list element ***/
+  Future<void> addElementToShoppingList({required String listId, required ShoppingListElement shoppingListElement}) async {
+    final queryRes = await _db.rawQuery('SELECT * FROM SHOPPINGLISTELEMENT WHERE SHOPPING_LIST_ID = ? and (ID = ? OR TITLE = ?)',
+        [listId, shoppingListElement.id, shoppingListElement.title]);
+
+    // no product found in list, add
+    if (queryRes.isEmpty) {
+      _db.rawInsert(
+        'INSERT INTO SHOPPINGLISTELEMENT(ID, SHOPPING_LIST_ID, TITLE, QUANTITY, CHECKED) VALUES(?, ?, ?, ?, ?)',
+        [
+          shoppingListElement.id, // ID
+          listId, // SHOPPING LIST ID
+          shoppingListElement.title, // TITLE
+          shoppingListElement.quantity, // QUANTITY
+          shoppingListElement.checked ? 1 : 0, // CHECKED
+        ],
+      );
+    }
+    // product found, increase quantity
+    else {
+      _db.rawUpdate('UPDATE SHOPPINGLISTELEMENT SET QUANTITY = QUANTITY + ? WHERE SHOPPING_LIST_ID = ? AND (ID = ? OR TITLE = ?)',
+          [shoppingListElement.quantity, listId, shoppingListElement.id, shoppingListElement.title]);
+    }
+  }
+
+  Future<void> updateCheckedElementList({required String elementId, required bool checked}) async {
+    _db.rawUpdate('UPDATE SHOPPINGLISTELEMENT SET CHECKED = ? WHERE ID = ?', [checked ? 1 : 0, elementId]);
+  }
+
+  Future<void> updateQuantity({required String elementId, required int quantity}) async {
+    _db.rawUpdate('UPDATE SHOPPINGLISTELEMENT SET QUANTITY = ? WHERE ID = ?', [quantity, elementId]);
+  }
+
+  Future<void> deleteShoppingListElement(String elementId) async {
+    _db.rawDelete('DELETE FROM SHOPPINGLISTELEMENT WHERE ID = ?', [elementId]);
+  }
+
+  /* helpers */
   Nutriments? _parseNutriments(Map<String, dynamic> JSONnutriments) {
     if (JSONnutriments.isEmpty) {
       return null;
@@ -343,49 +381,4 @@ class DBManager {
 
     return levels;
   }
-
-  /*static Future<void> insert(String table, Map<String, Object> data) async {
-    final sqlDB = await DBHelper.database();
-    sqlDB.insert(table, data, conflictAlgorithm: sql.ConflictAlgorithm.replace);
-  }
-
-  static Future<List<Map<String, dynamic>>> getData({required String table, String? where = null, whereArgs = null}) async {
-    final sqlDB = await DBHelper.database();
-    return sqlDB.query(table, where: where, whereArgs: whereArgs);
-  }
-
-  static Future<void> delete(String table, String id) async {
-    final sqlDB = await DBHelper.database();
-    sqlDB.rawDelete(
-      'DELETE FROM $table WHERE id = ?',
-      [id],
-    );
-  }
-
-  static Future<String?> getFamilyIdFromUserId(String userId) async {
-    final data = await DBHelper.getData(table: 'family', where: "userId == (?)", whereArgs: [userId]);
-
-    return data.isEmpty ? null : data[0]['familyId'];
-  }
-
-  static Future<String?> getDisplayNameFromUserId(String userId) async {
-    final data = await DBHelper.getData(table: 'users', where: "userId == (?)", whereArgs: [userId]);
-
-    return data.isEmpty ? null : data[0]['displayName'];
-  }
-
-  static Future<String> getCreatorId({required String productId}) async {
-    final data = await DBHelper.getData(table: 'user_products', where: "id == (?)", whereArgs: [productId]);
-    return data[0]['creatorId'];
-  }
-
-  static Future<List<Map<String, dynamic>>> getProductsFromFamilyId({required String familyId}) async {
-    final sqlDB = await DBHelper.database();
-
-    final data = await sqlDB.rawQuery(""" SELECT * FROM user_products
-    WHERE creatorID IN (SELECT userId FROM family WHERE familyId = '$familyId')
-    """);
-
-    return data;
-  }*/
 }
