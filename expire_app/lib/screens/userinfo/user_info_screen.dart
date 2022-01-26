@@ -26,7 +26,32 @@ import '../../providers/auth_provider.dart';
 
 import '../../helpers/firestore_helper.dart';
 
-class UserInfoScreen extends StatelessWidget {
+class UserInfoScreen extends StatefulWidget {
+  @override
+  State<UserInfoScreen> createState() => _UserInfoScreenState();
+
+  static showErrorDialog(BuildContext context, String msg, String title,
+      {bool shouldLeave = false}) {
+    Widget dismissBtn = TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          if (shouldLeave) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Text('Dismiss'));
+    //TODO manage platform specific error dialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(msg),
+      actions: [dismissBtn],
+    );
+
+    showDialog(context: context, builder: (context) => alert);
+  }
+}
+
+class _UserInfoScreenState extends State<UserInfoScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -49,8 +74,11 @@ class UserInfoScreen extends StatelessWidget {
               ),
             ],
             leading: Text(
-              "Hi, Ale!",
-              style: Theme.of(context).textTheme.headline5?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              'Hi, ' + FirebaseAuthHelper.instance.displayName.toString(),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(30),
@@ -66,7 +94,9 @@ class UserInfoScreen extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Div(text: 'Account', subtext: 'Adjust account settings to your needs'),
+                Div(
+                    text: 'Account',
+                    subtext: 'Adjust account settings to your needs'),
                 SizedBox(height: 20),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,11 +108,15 @@ class UserInfoScreen extends StatelessWidget {
                       imageWidth: 75,
                       imageHeigth: 70,
                       txtcolor: Colors.black,
-                      gradientColors: [HexColor("#7DC8E7"), HexColor("#7DC8E7")],
+                      gradientColors: [
+                        HexColor("#7DC8E7"),
+                        HexColor("#7DC8E7")
+                      ],
                       text: 'Completed',
                       imagePath: 'assets/icons/imac_icon.png',
                       alB: Alignment.centerLeft,
                       alE: Alignment.centerRight,
+                      callback: () {},
                     ),
                     SizedBox(width: 10),
                     CustomBtn2(
@@ -91,12 +125,18 @@ class UserInfoScreen extends StatelessWidget {
                       imageWidth: 28,
                       imageHeigth: 28,
                       txtcolor: Colors.white,
-                      gradientColors: [HexColor("##7D88E7"), HexColor("#7D88E7").withAlpha(74)],
+                      gradientColors: [
+                        HexColor("##7D88E7"),
+                        HexColor("#7D88E7").withAlpha(74)
+                      ],
                       text: 'Change name',
                       imagePath: 'assets/icons/time_Square.png',
                       //45 degrees gradient
                       alB: Alignment(-1.0, -4.0),
                       alE: Alignment(1.0, 4.0),
+                      callback: () async {
+                        _changeDisplayName(context);
+                      },
                     ),
                     SizedBox(width: 3),
                   ],
@@ -104,7 +144,9 @@ class UserInfoScreen extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                Div(text: 'Family', subtext: 'Manage synchronization with family members'),
+                Div(
+                    text: 'Family',
+                    subtext: 'Manage synchronization with family members'),
                 SizedBox(height: 20),
                 //AddMemberButton(),
                 Row(
@@ -116,7 +158,10 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 75,
                       imageHeigth: 70,
-                      gradientColors: [HexColor("#6DB5CB"), HexColor("#7DC8E7")],
+                      gradientColors: [
+                        HexColor("#6DB5CB"),
+                        HexColor("#7DC8E7")
+                      ],
                       text: 'Share family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () async {
@@ -129,13 +174,20 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 28,
                       imageHeigth: 28,
-                      gradientColors: [HexColor("#FE7235"), HexColor("#F97D47")],
+                      gradientColors: [
+                        HexColor("#FE7235"),
+                        HexColor("#F97D47")
+                      ],
                       text: 'Leave family',
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant =
+                            await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
-                          showErrorDialog(context, 'You don\'t belong to any family, so you can\'t leave!', 'Attention');
+                          UserInfoScreen.showErrorDialog(
+                              context,
+                              'You don\'t belong to any family, so you can\'t leave!',
+                              'Attention');
                         } else {
                           //TODO implement
                           print('Able to leave family');
@@ -155,16 +207,23 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 28,
                       imageHeigth: 28,
-                      gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
+                      gradientColors: [
+                        HexColor("#5751FF"),
+                        HexColor("#5751FF")
+                      ],
                       text: 'Family info',
                       imagePath: 'assets/icons/Close_Square.png',
                       callback: () async {
-                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant =
+                            await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
-                          showErrorDialog(context, 'You don\'t have a family!', 'Attention');
+                          UserInfoScreen.showErrorDialog(context, 'You don\'t have a family!',
+                              'Attention');
                         } else {
-                          Map<String, dynamic> res = resultant as Map<String, dynamic>;
-                          MaterialPageRoute materialPageRoute = new MaterialPageRoute(
+                          Map<String, dynamic> res =
+                              resultant as Map<String, dynamic>;
+                          MaterialPageRoute materialPageRoute =
+                              new MaterialPageRoute(
                             builder: (context) => FamilyInfoScreen(
                               famusers: res['users'],
                               familyid: res['familyid'],
@@ -180,11 +239,15 @@ class UserInfoScreen extends StatelessWidget {
                       buttonWidth: width,
                       imageWidth: 75,
                       imageHeigth: 70,
-                      gradientColors: [HexColor("#5751FF"), HexColor("#5751FF")],
+                      gradientColors: [
+                        HexColor("#5751FF"),
+                        HexColor("#5751FF")
+                      ],
                       text: 'Join family',
                       imagePath: 'assets/icons/imac_icon.png',
                       callback: () async {
-                        dynamic resultant = await FamilyInfoScreen.getFamilyList();
+                        dynamic resultant =
+                            await FamilyInfoScreen.getFamilyList();
                         if (resultant is bool) {
                           SignUp.showFamilyRedeemModal(
                               context,
@@ -196,7 +259,8 @@ class UserInfoScreen extends StatelessWidget {
                               () {},
                               () {});
                         } else {
-                          showErrorDialog(context, 'You can\'t join another family!', 'Attention');
+                          UserInfoScreen.showErrorDialog(context,
+                              'You can\'t join another family!', 'Attention');
                         }
                       },
                     ),
@@ -212,8 +276,10 @@ class UserInfoScreen extends StatelessWidget {
                 ),
                 LastMenu(
                   text: "Legal Notes",
-                  press: () =>
-                      showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
+                  press: () => showAboutDialog(
+                      context: context,
+                      applicationVersion: "1.0",
+                      applicationLegalese: lorem(words: 30)),
                 ),
                 LastMenu(
                   text: "Settings and Privacy",
@@ -227,8 +293,11 @@ class UserInfoScreen extends StatelessWidget {
                   child: Text("LOGOUT"),
                   onPressed: () async {
                     Navigator.of(context).pushReplacementNamed('/');
-                    await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
-                    await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
+                    await Provider.of<ProductsProvider>(context, listen: false)
+                        .cleanProviderState();
+                    await Provider.of<ShoppingListProvider>(context,
+                            listen: false)
+                        .cleanProviderState();
                     FirebaseAuthHelper.instance.logOut();
                   },
                 ),
@@ -243,11 +312,20 @@ class UserInfoScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _changeDisplayName(BuildContext context) async{
+    await FirebaseAuthHelper.instance.setDisplayName("uuuu");
+    setState(() {});
+
+
+  }
+
   Future<void> _shareFamily(BuildContext context) async {
-    String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
+    String? familyid = await FirestoreHelper.instance
+        .getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
     //print(familyid);
     if (familyid == null) {
-      UserInfoScreen.showErrorDialog(context, "Ops..........", 'Could not find your family dimmerd');
+      UserInfoScreen.showErrorDialog(
+          context, "Ops..........", 'Could not find your family dimmerd');
     } else {
       showDialog(
         barrierColor: Colors.black.withOpacity(0.9),
@@ -259,26 +337,9 @@ class UserInfoScreen extends StatelessWidget {
       );
     }
   }
-
-  static showErrorDialog(BuildContext context, String msg, String title, {bool shouldLeave = false}) {
-    Widget dismissBtn = TextButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-          if (shouldLeave) {
-            Navigator.of(context).pop();
-          }
-        },
-        child: Text('Dismiss'));
-    //TODO manage platform specific error dialog
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(msg),
-      actions: [dismissBtn],
-    );
-
-    showDialog(context: context, builder: (context) => alert);
-  }
 }
+
+
 
 class ShareFamFunQR extends StatelessWidget {
   final String familyid;
@@ -290,7 +351,8 @@ class ShareFamFunQR extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0)),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(25.0)),
         height: 300,
         padding: EdgeInsets.symmetric(vertical: 30.0),
         child: Column(
@@ -479,12 +541,6 @@ class CustomBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      /*onTap: () async {
-        print('prova');
-        String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
-        print(familyid);
-      },
-       */
       onTap: callback,
       highlightColor: Colors.white,
       child: Container(
@@ -556,6 +612,7 @@ class CustomBtn2 extends StatelessWidget {
   final EdgeInsets margin;
   final AlignmentGeometry alB;
   final AlignmentGeometry alE;
+  final VoidCallback callback;
 
   const CustomBtn2({
     Key? key,
@@ -571,14 +628,13 @@ class CustomBtn2 extends StatelessWidget {
     required this.alB,
     required this.alE,
     required this.txtcolor,
+    required this.callback,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        print('prova');
-      },
+      onTap: callback,
       highlightColor: Colors.white,
       child: Container(
         margin: margin,
