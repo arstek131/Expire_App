@@ -254,7 +254,7 @@ class Ingredients extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     vertical: 2.0,
                   ),
-                  child: Text('⚫️ ' + recipeModel.extendedIngredients[index].nameClean.toString()), //recipeModel.extendedIngredients![index].nameClean.toString()),
+                  child: Text('\u2022  ' + recipeModel.extendedIngredients[index].nameClean.toString()), //recipeModel.extendedIngredients![index].nameClean.toString()),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

@@ -58,7 +58,6 @@ class _StatisticsContainerState extends State<StatisticsContainer> {
         ],
       );
     }
-
     return Container();
   }
 }
