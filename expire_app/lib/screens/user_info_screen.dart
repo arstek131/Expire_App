@@ -15,6 +15,8 @@ import '../app_styles.dart';
 
 /* providers */
 import '../providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import '../providers/bottom_navigator_bar_size_provider.dart';
 
 import '../helpers/firestore_helper.dart';
 
@@ -31,7 +33,6 @@ class UserInfoScreen extends StatefulWidget {
           }
         },
         child: Text('Dismiss'));
-    //TODO manage platform specific error dialog
     AlertDialog alert = AlertDialog(
       title: Text(title),
       content: Text(msg),
@@ -55,7 +56,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   @override
   void initState() {
-    _barTopPadding = _deviceInfo.deviceHeight * 0.08;
+    _barTopPadding = _deviceInfo.deviceHeight * 0.045;
 
     super.initState();
   }
@@ -167,14 +168,16 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                           _avatarRadius = 25;
                           _emailTextHeight = 0;
                         });
+                        Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
                       } else {
                         setState(() {
-                          _barTopPadding = _deviceInfo.deviceHeight * 0.08;
+                          _barTopPadding = _deviceInfo.deviceHeight * 0.045;
                           _barBottomPadding = 20;
                           _scrolling = false;
                           _avatarRadius = 35;
                           _emailTextHeight = 30;
                         });
+                        Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
                       }
                       return true;
                     },

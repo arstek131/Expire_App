@@ -36,11 +36,11 @@ class FirestoreHelper {
     }
   }
 
-  Future<List<dynamic>> getUsersFromFamilyId({required String familyId}) async {
+  Future<List<String>> getUsersFromFamilyId({required String familyId}) async {
     final response = await firestore.collection('families').doc(familyId).get();
 
     if (response.data() != null) {
-      return response.data()!["_users"];
+      return List<String>.from(response.data()!["_users"]);
     } else {
       return [];
     }

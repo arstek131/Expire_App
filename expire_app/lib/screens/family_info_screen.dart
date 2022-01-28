@@ -1,123 +1,89 @@
-import 'package:expire_app/helpers/firebase_auth_helper.dart';
-import 'package:expire_app/helpers/firestore_helper.dart';
+/* dart */
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../app_styles.dart';
-import 'user_info_screen.dart';
+/* helpers */
+import '../helpers/firestore_helper.dart';
+import '../helpers/user_info.dart' as userinfo;
+
+/* styles */
+import '../app_styles.dart' as styles;
 
 class FamilyInfoScreen extends StatefulWidget {
-  final List<String> famusers;
-  final String familyid;
-
-  const FamilyInfoScreen({Key? key, required this.famusers, required this.familyid}) : super(key: key);
-
-  static Future<dynamic> getFamilyList() async {
-    String? familyid = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: FirebaseAuthHelper.instance.userId!);
-    List<dynamic>? familyUsers = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: familyid!);
-    if (familyUsers.length >= 2) {
-      return {'users': List<String>.from(familyUsers, growable: true), 'familyid': familyid as String};
-    } else {
-      return false;
-    }
-  }
+  static const routeName = "/family_info";
+  const FamilyInfoScreen();
 
   @override
   _FamilyInfoScreenState createState() => _FamilyInfoScreenState();
 }
 
 class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
-  RefreshController controller = RefreshController(initialRefresh: false);
-  List<String> savedUsersid = [];
-  List<String> savedUsersDisplayName = [];
+  userinfo.UserInfo _userInfo = userinfo.UserInfo.instance;
 
-  @override
-  void initState() {
-    savedUsersid = widget.famusers;
-    super.initState();
+  var usersId = [];
+  var displayNames = [];
+
+  Future<void> fetchUsersData() async {
+    usersId = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: _userInfo.familyId!);
+
+    for (final userId in usersId) {
+      displayNames.add(await FirestoreHelper.instance.getDisplayNameFromUserId(userId: userId));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Family users"),
-          centerTitle: true,
-        ),
-        body: SmartRefresher(
-          controller: controller,
-          onRefresh: onRefresh,
-          child: FutureBuilder<List<String>>(
-            future: getUsersDisplayName(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: savedUsersDisplayName.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      onTap: () {},
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.0),
+      appBar: AppBar(
+        title: Text("Family users"),
+        centerTitle: true,
+      ),
+      backgroundColor: styles.primaryColor,
+      body: FutureBuilder<void>(
+        future: fetchUsersData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                backgroundColor: Colors.white,
+              ),
+            );
+          } else {
+            return ListView.builder(
+              physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+              itemCount: usersId.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+                    leading: CircleAvatar(
+                      radius: 27,
+                      backgroundColor: styles.deepAmber,
+                      child: CircleAvatar(
+                        radius: 26,
+                        backgroundImage: AssetImage(
+                          "assets/images/sorre.png",
+                        ),
                       ),
-                      title: Text(savedUsersDisplayName[index]),
-                      leading: Container(
-                        color: Colors.white,
-                        width: 60,
-                        height: 60,
-                        child: const FlutterLogo(),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.black,
-                        size: 13,
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('could not fetch data'));
-              } else {
-                return CircularProgressIndicator(
-                  strokeWidth: 2,
-                  backgroundColor: Colors.white,
-                );
-              }
-            },
-          ),
-        ));
-  }
-
-  Future<List<String>> getUsersDisplayName() async {
-    List<String> displayNames = [];
-
-    for (int i = 0; i < savedUsersid.length; ++i) {
-      String? tmp = await FirestoreHelper.instance.getDisplayNameFromUserId(userId: savedUsersid[i]);
-      if (tmp != null) {
-        displayNames.add(tmp);
-      }
-    }
-    savedUsersDisplayName = displayNames;
-    return displayNames;
-  }
-
-  Future<void> onRefresh() async {
-    dynamic resultant = await FamilyInfoScreen.getFamilyList();
-
-    if (resultant is bool) {
-      UserInfoScreen.showErrorDialog(
-        context,
-        'your family ti ha abbandonato piezz e merd',
-        'attention',
-        shouldLeave: true,
-      );
-      controller.refreshFailed();
-    } else {
-      Map<String, dynamic> res = resultant as Map<String, dynamic>;
-      savedUsersid = res['users'] as List<String>;
-    }
-    getUsersDisplayName();
-    controller.refreshCompleted();
+                    ),
+                    title: AutoSizeText(
+                      displayNames[index],
+                      style: styles.subheading.copyWith(fontSize: 20),
+                    ),
+                    subtitle: AutoSizeText(
+                      "Id: ${usersId[index]}",
+                      style: styles.subheading.copyWith(fontSize: 11),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: styles.ghostWhite,
+                    ),
+                    onTap: () {});
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 }

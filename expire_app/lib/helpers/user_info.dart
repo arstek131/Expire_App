@@ -48,6 +48,11 @@ class UserInfo {
   }
 
   set displayName(displayName) {
+    if (_auth.isAuth) {
+      FirebaseAuthHelper.instance.setDisplayName(displayName);
+    } else {
+      SharedPreferences.getInstance().then((prefs) => prefs.setString('localDisplayName', displayName));
+    }
     _displayName = displayName;
   }
 
