@@ -1,5 +1,9 @@
+import 'package:expire_app/models/chartdata.dart';
+import 'package:expire_app/providers/chart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:googleapis/workflowexecutions/v1.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 /* helpers */
 import '../helpers/firebase_auth_helper.dart';
@@ -16,6 +20,13 @@ class StatisticsContainer extends StatefulWidget {
 
 class _StatisticsContainerState extends State<StatisticsContainer> {
   FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  late List<GDPData> _chartData = [];
+
+  @override
+  void initState() {
+    _chartData = getChartData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +69,40 @@ class _StatisticsContainerState extends State<StatisticsContainer> {
         ],
       );
     }
-    return Container();
+    return SafeArea(
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: SfCircularChart(
+              title: ChartTitle(text: 'Lorem Ipsum'),
+              legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+              series: <CircularSeries>[
+                DoughnutSeries<GDPData, String>(
+                    dataSource: _chartData,
+                    xValueMapper: (GDPData data, _) => data.continent,
+                    yValueMapper: (GDPData data, _) => data.gdp,
+                    dataLabelSettings: DataLabelSettings(isVisible: true))
+              ],
+            ),
+          ),
+        ));
   }
+
+  List<GDPData> getChartData() {
+    final List<GDPData> charData = [
+      GDPData('Oceania', 1600),
+      GDPData('Africa', 2490),
+      GDPData('S America', 2900),
+      GDPData('Europe', 23050),
+      GDPData('N America', 24880),
+      GDPData('Asia', 34390),
+    ];
+    return charData;
+  }
+}
+
+class GDPData {
+  GDPData(this.continent, this.gdp);
+
+  final String continent;
+  final int gdp;
 }
