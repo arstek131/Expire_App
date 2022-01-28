@@ -13,19 +13,21 @@ class HttpService{
   */
 
 
-  static Map<String, String> queryParameters = {
-    'apiKey': 'b385898bef554001872e9e2710451a8d',
-    'ingredients': 'egg',//atm hardcoded, will be dynamically replaced
-    'number': '5',
-  };
+
 
   static final queryParameters2 = {
-    'apiKey': 'b385898bef554001872e9e2710451a8d'
+    'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba'
   };
 
 
 
- static Future<List<Recipe>> getRecipes() async{
+ static Future<List<Recipe>> getRecipes(String ingredients) async{
+
+   Map<String, String> queryParameters = {
+     'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
+     'ingredients': ingredients,
+     'number': '10',
+   };
 
     final uri = Uri.https(
         'api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
@@ -60,8 +62,8 @@ class HttpService{
 
 
       RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
-      print(recipesDetails.title);
-      print(recipesDetails.analyzedInstructions[0].steps.length);
+      //print(recipesDetails.title);
+      //print(recipesDetails.analyzedInstructions[0].steps.length);
 
       return recipesDetails;
     }else{
