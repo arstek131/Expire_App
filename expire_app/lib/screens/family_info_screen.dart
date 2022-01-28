@@ -3,7 +3,7 @@ import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../app_styles.dart';
+import '../app_styles.dart';
 import 'user_info_screen.dart';
 
 class FamilyInfoScreen extends StatefulWidget {

@@ -81,7 +81,7 @@ class FirestoreHelper {
 
     for (var product in productsRef.docs) {
       Nutriments? nutriments = parseNutriments(product['nutriments']);
-
+      print(product.id);
       products.add(
         Product(
           id: product.id,
@@ -89,7 +89,7 @@ class FirestoreHelper {
           expiration: DateTime.parse(product['expiration']),
           dateAdded: DateTime.parse(product['dateAdded']),
           creatorId: product['creatorId'],
-          creatorName: (await getDisplayNameFromUserId(userId: product['creatorId']))!,
+          creatorName: (await getDisplayNameFromUserId(userId: product['creatorId'])) ?? 'Uknown',
           image: product['imageUrl'],
           nutriments: nutriments,
           ingredientsText: product['ingredientsText'],
@@ -105,6 +105,7 @@ class FirestoreHelper {
           quantity: product['quantity'],
         ),
       );
+      print("test");
     }
     return products;
   }
@@ -138,14 +139,12 @@ class FirestoreHelper {
 
   /* setters */
   Future<void> setDisplayName({required String userId, required String displayName}) async {
-    await firestore.collection('users').doc(userId).set(
+    await firestore.collection('users').doc(userId).update(
       {
         'displayName': displayName,
       },
-      SetOptions(merge: true),
     );
   }
-
 
   /* other */
   Future<void> addUser({required String userId, String? familyId}) async {
@@ -167,9 +166,90 @@ class FirestoreHelper {
     }
 
     // add user to set of users
-    await firestore.collection("users").doc(userId).set({
-      'familyId': familyId,
+    await firestore.collection("users").doc(userId).set(
+      {
+        'familyId': familyId,
+      },
+    );
+  }
+
+  Future<void> leaveFamily() async {
+    // generate new family
+    final familyReference = await firestore.collection('families').add(
+      {
+        '_users': [
+          userInfo.userId,
+        ]
+      },
+    );
+    final newFamilyId = familyReference.id;
+
+    print("User ${userInfo.userId} moving from family ${userInfo.familyId} to family ${newFamilyId}");
+
+    /* delete user from family usersList */
+    await firestore.collection('families').doc(userInfo.familyId).update({
+      "_users": FieldValue.arrayRemove([userInfo.userId]),
     });
+
+    /* move products to new family */
+
+    /* update family id into users collection */
+    await firestore.collection('users').doc(userInfo.userId).update(
+      {
+        'familyId': newFamilyId,
+      },
+    );
+  }
+
+  Future<void> mergeFamilies({required String familyId, bool mergeProducts = false, bool singleMember = false}) async {
+    /* add user inside usersList */
+    firestore.collection('families').doc(familyId).update(
+      {
+        "_users": FieldValue.arrayUnion([userInfo.userId]),
+      },
+    );
+
+    /* update familyId into users collection */
+    await firestore.collection('users').doc(userInfo.userId).update(
+      {
+        'familyId': familyId,
+      },
+    );
+
+    /* move products to the new family */
+    if (mergeProducts) {
+      final productsRef = await firestore
+          .collection('families')
+          .doc(userInfo.familyId)
+          .collection('products')
+          .where('creatorId', isEqualTo: userInfo.userId)
+          .get();
+
+      for (final x in productsRef.docs) {
+        // add product to new family
+        final productId = x.id;
+        final productJSON = x.data();
+
+        final newFamilyproductRef = await firestore.collection('families').doc(familyId).collection('products');
+        await newFamilyproductRef.doc(productId).set(productJSON);
+
+        // remove product form old family
+        await firestore.collection('families').doc(userInfo.familyId).collection('products').doc(productId).delete();
+      }
+    }
+
+    /* delete old family if no other users */
+    if (singleMember) {
+      await firestore.collection('families').doc(userInfo.familyId).delete();
+    }
+    /* else just delete user from usersList */
+    else {
+      await firestore.collection('families').doc(userInfo.familyId).update(
+        {
+          "_users": FieldValue.arrayRemove([userInfo.userId]),
+        },
+      );
+    }
   }
 
   Future<String?> addProduct({required Product product, dynamic image}) async {

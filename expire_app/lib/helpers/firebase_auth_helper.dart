@@ -52,6 +52,10 @@ class FirebaseAuthHelper {
     return _signInMethod;
   }
 
+  String? get email {
+    return isAuth ? _auth.currentUser!.email : null;
+  }
+
   /* setters */
 
   Future<void>? setDisplayName(String? displayName) async {
