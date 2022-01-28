@@ -38,7 +38,7 @@ class SignUp extends StatefulWidget {
   final GlobalKey<FormState> _formKey;
   final PageController _pageController;
 
-  static void showFamilyRedeemModal(
+  /*static void showFamilyRedeemModal(
     BuildContext context,
     Map<String, String?> authData,
     VoidCallback ifOk,
@@ -65,7 +65,7 @@ class SignUp extends StatefulWidget {
     } else {
       ifNotOk();
     }
-  }
+  }*/
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -312,7 +312,33 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => SignUp.showFamilyRedeemModal(context, _authData, () {
+                          onTap: () async {
+                            String? familyId = await showModalBottomSheet<String?>(
+                              isScrollControlled: true,
+                              enableDrag: true,
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              builder: (BuildContext ctx) {
+                                return FamilyIdChoiceModal();
+                              },
+                            );
+                            if (familyId != null) {
+                              _authData['familyId'] = familyId;
+                              setState(() {
+                                _isFamilyIdSet = true;
+                              });
+                            } else {
+                              setState(() {
+                                _isFamilyIdSet = false;
+                              });
+                            }
+                          },
+                          /*onTap: () => SignUp.showFamilyRedeemModal(context, _authData, () {
                             setState(() {
                               _isFamilyIdSet = true;
                             });
@@ -320,7 +346,7 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               _isFamilyIdSet = false;
                             });
-                          }),
+                          }),*/
                           child: RichText(
                             text: TextSpan(
                               children: [

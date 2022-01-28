@@ -174,7 +174,8 @@ class ProductsProvider extends ChangeNotifier {
                 dateAdded: DateTime.parse(change.doc['dateAdded']),
                 creatorId: change.doc['creatorId'],
                 image: change.doc['imageUrl'],
-                creatorName: (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId']))!,
+                creatorName:
+                    (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId'])) ?? "Uknown",
                 nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
                 ingredientsText: change.doc['ingredientsText'],
                 nutriscore: change.doc['nutriscore'],

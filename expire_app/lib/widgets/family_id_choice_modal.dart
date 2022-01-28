@@ -22,9 +22,6 @@ class FamilyIdChoiceModal extends StatefulWidget {
 }
 
 class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
-  var screenHeight = window.physicalSize.height / window.devicePixelRatio;
-  var screenWidth = window.physicalSize.width / window.devicePixelRatio;
-
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String? referenceId;

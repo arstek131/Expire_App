@@ -42,14 +42,10 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
     return Flexible(
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo is UserScrollNotification) {
-            // scrolling up
-            if (scrollInfo.direction == ScrollDirection.forward) {
-              Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
-            } else if (scrollInfo.direction == ScrollDirection.reverse) {
-              // scrolling down
-              Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
-            }
+          if (scrollInfo.metrics.pixels > 10) {
+            Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
+          } else {
+            Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();
           }
           return true;
         },

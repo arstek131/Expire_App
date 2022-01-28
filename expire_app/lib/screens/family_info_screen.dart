@@ -1,0 +1,89 @@
+/* dart */
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+
+/* helpers */
+import '../helpers/firestore_helper.dart';
+import '../helpers/user_info.dart' as userinfo;
+
+/* styles */
+import '../app_styles.dart' as styles;
+
+class FamilyInfoScreen extends StatefulWidget {
+  static const routeName = "/family_info";
+  const FamilyInfoScreen();
+
+  @override
+  _FamilyInfoScreenState createState() => _FamilyInfoScreenState();
+}
+
+class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
+  userinfo.UserInfo _userInfo = userinfo.UserInfo.instance;
+
+  var usersId = [];
+  var displayNames = [];
+
+  Future<void> fetchUsersData() async {
+    usersId = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: _userInfo.familyId!);
+
+    for (final userId in usersId) {
+      displayNames.add(await FirestoreHelper.instance.getDisplayNameFromUserId(userId: userId));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Family users"),
+        centerTitle: true,
+      ),
+      backgroundColor: styles.primaryColor,
+      body: FutureBuilder<void>(
+        future: fetchUsersData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                backgroundColor: Colors.white,
+              ),
+            );
+          } else {
+            return ListView.builder(
+              physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+              itemCount: usersId.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+                    leading: CircleAvatar(
+                      radius: 27,
+                      backgroundColor: styles.deepAmber,
+                      child: CircleAvatar(
+                        radius: 26,
+                        backgroundImage: AssetImage(
+                          "assets/images/sorre.png",
+                        ),
+                      ),
+                    ),
+                    title: AutoSizeText(
+                      displayNames[index],
+                      style: styles.subheading.copyWith(fontSize: 20),
+                    ),
+                    subtitle: AutoSizeText(
+                      "Id: ${usersId[index]}",
+                      style: styles.subheading.copyWith(fontSize: 11),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: styles.ghostWhite,
+                    ),
+                    onTap: () {});
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}

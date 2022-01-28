@@ -18,10 +18,10 @@ class UserInfo {
   String? _userId;
   String? _familyId;
   String? _displayName;
+  String? _email;
   FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
 
   /* getters */
-
   String? get userId {
     return _userId;
   }
@@ -34,8 +34,11 @@ class UserInfo {
     return _displayName;
   }
 
-  /* setters */
+  String? get email {
+    return _email;
+  }
 
+  /* setters */
   set userId(userId) {
     _userId = userId;
   }
@@ -45,7 +48,16 @@ class UserInfo {
   }
 
   set displayName(displayName) {
+    if (_auth.isAuth) {
+      FirebaseAuthHelper.instance.setDisplayName(displayName);
+    } else {
+      SharedPreferences.getInstance().then((prefs) => prefs.setString('localDisplayName', displayName));
+    }
     _displayName = displayName;
+  }
+
+  set email(email) {
+    _email = email;
   }
 
   /* other */
@@ -55,6 +67,7 @@ class UserInfo {
       _userId = FirebaseAuthHelper.instance.userId;
       _displayName = FirebaseAuthHelper.instance.displayName;
       _familyId = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: _userId!);
+      _email = FirebaseAuthHelper.instance.email;
     }
     // if unregistered, get data from shared preferences
     else {
@@ -62,6 +75,7 @@ class UserInfo {
       _userId = prefs.getString("localUserId");
       _displayName = prefs.getString("localDisplayName");
       _familyId = prefs.getString("localFamilyId");
+      _email = null;
     }
   }
 }

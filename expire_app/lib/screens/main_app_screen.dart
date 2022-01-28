@@ -21,7 +21,7 @@ import '../providers/products_provider.dart';
 /* Screens */
 import '../screens/products_overview_screen.dart';
 import 'recipe_screen.dart';
-import 'userinfo/user_info_screen.dart';
+import 'user_info_screen.dart';
 import '../screens/name_input_screen.dart';
 
 /* helpers */

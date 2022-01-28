@@ -54,7 +54,12 @@ dependencies:
   flutter_custom_clippers: ^2.0.0
   flutter_lorem: ^2.0.0
   circular_menu : ^1.2.3
+
   syncfusion_flutter_charts: ^19.4.47
+
+
+  auto_size_text: ^3.0.0
+  
 
   # firebase
   cloud_firestore: ^3.1.5

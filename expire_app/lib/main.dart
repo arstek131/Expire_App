@@ -5,6 +5,7 @@ import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
 import 'package:expire_app/providers/tile_pointer_provider.dart';
+import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/screens/product_details.dart';
 import 'package:expire_app/screens/shopping_list_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -112,6 +113,7 @@ class _MyAppState extends State<MyApp> {
           MainAppScreen.routeName: (ctx) => MainAppScreen(),
           ProductDetails.routeName: (ctx) => ProductDetails(),
           ShoppingListDetailScreen.routeName: (ctx) => ShoppingListDetailScreen(),
+          FamilyInfoScreen.routeName: (ctx) => FamilyInfoScreen(),
         },
       ),
     );
