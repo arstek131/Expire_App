@@ -1,5 +1,8 @@
-class ChartData {
+import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
+class ChartData {
   ChartData({this.sugar, this.fat, this.saturatedfat, this.salt});
 
   late List<Sugar>? sugar;
@@ -8,51 +11,54 @@ class ChartData {
   late List<Salt>? salt;
 }
 
-
 class Sugar {
-  Sugar(this.type, this.value);
+  Sugar(this.type, this.value, this.color);
 
-   String type;
-   int value;
+  String type;
+  int value;
+  Color color;
 
-   @override
+  @override
   String toString() {
-    return ('Sugar: '+'type: $type -> value: $value');
+    return ('Sugar: ' + 'type: $type -> value: $value');
   }
 }
 
 class Fat {
-  Fat(this.type, this.value);
+  Fat(this.type, this.value, this.color);
 
-   String type;
-   int value;
+  String type;
+  int value;
+  Color color;
 
   @override
   String toString() {
-    return ('Fat: '+'type: $type -> value: $value');
+    return ('Fat: ' + 'type: $type -> value: $value');
   }
 }
 
 class SaturatedFat {
-  SaturatedFat(this.type, this.value);
+  SaturatedFat(this.type, this.value, this.color);
 
-   String type;
-   int value;
+  String type;
+  int value;
+  Color color;
 
   @override
   String toString() {
-    return ('Saturated-fat: '+'type: $type -> value: $value');
+    return ('Saturated-fat: ' + 'type: $type -> value: $value');
   }
 }
 
 class Salt {
-  Salt(this.type, this.value);
+  Salt(this.type, this.value, this.color);
 
-   String type;
-   int value;
+  String type;
+  int value;
+  Color color;
 
   @override
   String toString() {
-    return ('Salt: '+'type: $type -> value: $value');
+    return ('Salt: ' + 'type: $type -> value: $value');
   }
 }

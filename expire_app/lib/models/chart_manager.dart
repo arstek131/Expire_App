@@ -1,8 +1,7 @@
 import 'package:expire_app/models/chartdata.dart';
-import 'package:expire_app/models/http_service.dart';
-import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/providers/products_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChartManager {
@@ -15,21 +14,21 @@ class ChartManager {
         Provider.of<ProductsProvider>(context, listen: false);
 
     ChartData l = ChartData(sugar: [
-      Sugar('High', 0),
-      Sugar('Moderate', 0),
-      Sugar('Low', 0)
+      Sugar('High', 0, Colors.redAccent),
+      Sugar('Moderate', 0, Colors.amberAccent),
+      Sugar('Low', 0, Colors.greenAccent)
     ], fat: [
-      Fat('High', 0),
-      Fat('Moderate', 0),
-      Fat('Low', 0)
+      Fat('High', 0, Colors.redAccent),
+      Fat('Moderate', 0, Colors.amberAccent),
+      Fat('Low', 0, Colors.greenAccent)
     ], saturatedfat: [
-      SaturatedFat('High', 0),
-      SaturatedFat('Moderate', 0),
-      SaturatedFat('Low', 0)
+      SaturatedFat('High', 0, Colors.redAccent),
+      SaturatedFat('Moderate', 0, Colors.amberAccent),
+      SaturatedFat('Low', 0, Colors.greenAccent)
     ], salt: [
-      Salt('High', 0),
-      Salt('Moderate', 0),
-      Salt('Low', 0)
+      Salt('High', 0, Colors.redAccent),
+      Salt('Moderate', 0, Colors.amberAccent),
+      Salt('Low', 0, Colors.greenAccent)
     ]);
 
     List<dynamic> values = [];
