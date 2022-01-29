@@ -91,7 +91,7 @@ class _OptionBarState extends State<OptionsBar> {
                     AnimatedContainer(
                       duration: Duration(milliseconds: 150),
                       curve: Curves.easeInOut,
-                      width: max(200 - inputWidth, 0),
+                      width: max((_deviceInfo.isPhone ? 200 : 250) - inputWidth, 0),
                       height: !(_deviceInfo.isPhone && _deviceInfo.isLandscape(context)) ? null : 30,
                       child: AnimatedOpacity(
                         opacity: inputWidth > 0 ? 0 : 1,

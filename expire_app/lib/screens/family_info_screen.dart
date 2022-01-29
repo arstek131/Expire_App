@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 /* helpers */
 import '../helpers/firestore_helper.dart';
 import '../helpers/user_info.dart' as userinfo;
+import '../helpers/device_info.dart' as deviceInfo;
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -19,6 +20,7 @@ class FamilyInfoScreen extends StatefulWidget {
 
 class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
   userinfo.UserInfo _userInfo = userinfo.UserInfo.instance;
+  deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   var usersId = [];
   var displayNames = [];
@@ -35,6 +37,7 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 70,
         title: Text("Family users"),
         centerTitle: true,
       ),
@@ -50,37 +53,70 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
               ),
             );
           } else {
-            return ListView.builder(
-              physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-              itemCount: usersId.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
-                    leading: CircleAvatar(
-                      radius: 27,
-                      backgroundColor: styles.deepAmber,
-                      child: CircleAvatar(
-                        radius: 26,
-                        backgroundImage: AssetImage(
-                          "assets/images/sorre.png",
-                        ),
-                      ),
-                    ),
-                    title: AutoSizeText(
-                      displayNames[index],
-                      style: styles.subheading.copyWith(fontSize: 20),
-                    ),
-                    subtitle: AutoSizeText(
-                      "Id: ${usersId[index]}",
-                      style: styles.subheading.copyWith(fontSize: 11),
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: styles.ghostWhite,
-                    ),
-                    onTap: () {});
-              },
-            );
+            return _deviceInfo.isTablet
+                ? GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    itemCount: usersId.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                          contentPadding: EdgeInsets.symmetric(vertical: 7, horizontal: _deviceInfo.isPhone ? 10 : 50),
+                          leading: CircleAvatar(
+                            radius: 27,
+                            backgroundColor: styles.deepAmber,
+                            child: CircleAvatar(
+                              radius: 26,
+                              backgroundImage: AssetImage(
+                                "assets/images/sorre.png",
+                              ),
+                            ),
+                          ),
+                          title: AutoSizeText(
+                            displayNames[index],
+                            style: styles.subheading.copyWith(fontSize: 20),
+                          ),
+                          subtitle: AutoSizeText(
+                            "Id: ${usersId[index]}",
+                            style: styles.subheading.copyWith(fontSize: 11),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            color: styles.ghostWhite,
+                          ),
+                          onTap: () {});
+                    },
+                  )
+                : ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    itemCount: usersId.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                          contentPadding: EdgeInsets.symmetric(vertical: 7, horizontal: _deviceInfo.isPhone ? 10 : 50),
+                          leading: CircleAvatar(
+                            radius: 27,
+                            backgroundColor: styles.deepAmber,
+                            child: CircleAvatar(
+                              radius: 26,
+                              backgroundImage: AssetImage(
+                                "assets/images/sorre.png",
+                              ),
+                            ),
+                          ),
+                          title: AutoSizeText(
+                            displayNames[index],
+                            style: styles.subheading.copyWith(fontSize: 20),
+                          ),
+                          subtitle: AutoSizeText(
+                            "Id: ${usersId[index]}",
+                            style: styles.subheading.copyWith(fontSize: 11),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            color: styles.ghostWhite,
+                          ),
+                          onTap: () {});
+                    },
+                  );
           }
         },
       ),

@@ -2,6 +2,7 @@ import 'package:expire_app/providers/tile_pointer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import '../helpers/device_info.dart';
 
 /* models */
 import '../models/shopping_list_element.dart';
@@ -24,19 +25,22 @@ class ShoppingListElementTile extends StatefulWidget {
 }
 
 class _ShoppingListElementTileState extends State<ShoppingListElementTile> {
+  DeviceInfo _deviceInfo = DeviceInfo.instance;
+
   @override
   Widget build(BuildContext context) {
     final _tilePointerProvider = Provider.of<TilePointerProvider>(context, listen: false);
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_deviceInfo.isPhone ? 10.0 : 0)),
       elevation: 10,
       color: (widget.shoppingListElement.checked ? Colors.grey.shade500 : styles.ghostWhite),
+      clipBehavior: Clip.hardEdge,
       child: Listener(
         onPointerMove: (PointerMoveEvent event) {
           _tilePointerProvider.horizontalScroll = event.position.dx;
 
-          if (_tilePointerProvider.offsetPercentage > 0.5) {
+          if (_tilePointerProvider.offsetPercentage > (_deviceInfo.isPhone ? 0.5 : 0.25)) {
             _tilePointerProvider.overThreshold = true;
             if (_tilePointerProvider.flag) {
               _tilePointerProvider.flag = false;
@@ -52,6 +56,7 @@ class _ShoppingListElementTileState extends State<ShoppingListElementTile> {
           initPos: event.position.dx,
           totalWidth: MediaQuery.of(context).size.width,
         ),
+
         child: Dismissible(
           key: UniqueKey(),
           onDismissed: (direction) {

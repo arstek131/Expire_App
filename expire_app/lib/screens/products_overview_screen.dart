@@ -1,4 +1,5 @@
 /* dart */
+import 'package:expire_app/helpers/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -109,7 +110,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
               padding: EdgeInsets.only(
                   top: MediaQuery.of(context).orientation == Orientation.portrait ? 10 : 5, left: 20, right: 20, bottom: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: DeviceInfo.instance.isPhone ? MainAxisAlignment.spaceBetween : MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -172,15 +173,29 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
               future: Provider.of<ProductsProvider>(context, listen: false).fetchProducts(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Expanded(
-                    child: ListView(
-                      children: [
-                        ProductListTilePlaceholder(first: true),
-                        ProductListTilePlaceholder(),
-                        ProductListTilePlaceholder(last: true),
-                      ],
-                    ),
-                  );
+                  return DeviceInfo.instance.isPhone
+                      ? Expanded(
+                          child: ListView(
+                            children: [
+                              ProductListTilePlaceholder(first: true),
+                              ProductListTilePlaceholder(),
+                              ProductListTilePlaceholder(last: true),
+                            ],
+                          ),
+                        )
+                      : Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: DeviceInfo.instance.deviceWidth / 2.7,
+                            child: Column(
+                              children: [
+                                ProductListTilePlaceholder(),
+                                ProductListTilePlaceholder(),
+                                ProductListTilePlaceholder(),
+                              ],
+                            ),
+                          ),
+                        );
                 } else {
                   return ProductsContainer(_productsViewMode);
                 }

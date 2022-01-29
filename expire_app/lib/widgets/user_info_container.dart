@@ -59,305 +59,507 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: ListView(
-            physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-            children: [
-              SectionDivider(
-                text: 'Account',
-                subtext: 'Adjust account settings to your needs',
-                icon: Icon(
-                  Icons.supervised_user_circle_rounded,
-                  color: styles.ghostWhite,
-                  size: 30,
-                ),
-              ),
-              if (_deviceInfo.isPhonePotrait(context))
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
+          padding: EdgeInsets.symmetric(
+              horizontal: _deviceInfo.isPhone
+                  ? 30
+                  : _deviceInfo.isTabletLandscape(context)
+                      ? 80
+                      : 60,
+              vertical: 15),
+          child: _deviceInfo.isTablet
+              ? ListView(
+                  physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                   children: [
-                    SizedBox(width: 3),
-                    CustomBtn(
-                      buttonHeight: 160,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.5,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: Colors.pink.shade800,
-                      text: 'Change name',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.signature,
-                        color: styles.ghostWhite,
-                        size: 35,
-                      ),
-                      callback: () async {
-                        _changeDisplayName(context);
-                      },
-                    ),
-                    SizedBox(width: 5),
-                    CustomBtn(
-                      buttonHeight: 120,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.5,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: Colors.deepOrange.shade600,
-                      text: 'Delete account',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.userSlash,
-                        color: styles.ghostWhite,
-                        size: 30,
-                      ),
-                      callback: () {},
-                    ),
-                  ],
-                ),
-              if (_deviceInfo.isPhoneLandscape(context))
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(width: 3),
-                    CustomBtn(
-                      buttonHeight: 160,
-                      buttonWidth: _deviceInfo.deviceWidth / 1.1,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: Colors.pink.shade800,
-                      text: 'Change name',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.signature,
-                        color: styles.ghostWhite,
-                        size: 35,
-                      ),
-                      callback: () async {
-                        _changeDisplayName(context);
-                      },
-                    ),
-                    SizedBox(width: 5),
-                    CustomBtn(
-                      buttonHeight: 120,
-                      buttonWidth: _deviceInfo.deviceWidth / 1.1,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: Colors.deepOrange.shade600,
-                      text: 'Delete account',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.userSlash,
-                        color: styles.ghostWhite,
-                        size: 30,
-                      ),
-                      callback: () {},
-                    ),
-                  ],
-                ),
-              SizedBox(height: 10),
-              SectionDivider(
-                text: 'Family',
-                subtext: 'Manage synchronization with family members',
-                icon: Icon(
-                  Icons.family_restroom,
-                  color: styles.ghostWhite,
-                  size: 30,
-                ),
-              ),
-              if (_deviceInfo.isPhonePotrait(context))
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(width: 3),
-                    Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomBtn(
-                          buttonHeight: 220,
-                          buttonWidth: _deviceInfo.deviceWidth / 2.5, //150,
-                          imageWidth: 75,
-                          imageHeigth: 70,
-                          bgcolor: Color(0xFF6DB5CB),
-                          text: 'Share family',
-                          imagePath: 'assets/icons/imac_icon.png',
-                          callback: () async {
-                            _shareFamily(context);
-                          },
-                          icon: Icon(
-                            Icons.mobile_screen_share_outlined,
-                            color: styles.ghostWhite,
-                            size: 50,
-                          ),
+                        Column(
+                          children: [
+                            SectionDivider(
+                              text: 'Account',
+                              subtext: 'Adjust account settings to your needs',
+                              icon: Icon(
+                                Icons.supervised_user_circle_rounded,
+                                color: styles.ghostWhite,
+                                size: 30,
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 3),
+                                CustomBtn(
+                                  buttonHeight: 160,
+                                  buttonWidth: _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5),
+                                  imageWidth: 28,
+                                  imageHeigth: 28,
+                                  bgcolor: Colors.pink.shade800,
+                                  text: 'Change name',
+                                  imagePath: 'assets/icons/Close_Square.png',
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.signature,
+                                    color: styles.ghostWhite,
+                                    size: 35,
+                                  ),
+                                  callback: () async {
+                                    _changeDisplayName(context);
+                                  },
+                                ),
+                                SizedBox(width: 5),
+                                CustomBtn(
+                                  buttonHeight: 120,
+                                  buttonWidth: _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5),
+                                  imageWidth: 28,
+                                  imageHeigth: 28,
+                                  bgcolor: Colors.deepOrange.shade600,
+                                  text: 'Delete account',
+                                  imagePath: 'assets/icons/Close_Square.png',
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.userSlash,
+                                    color: styles.ghostWhite,
+                                    size: 30,
+                                  ),
+                                  callback: () {},
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        CustomBtn(
-                          buttonHeight: 150,
-                          buttonWidth: _deviceInfo.deviceWidth / 2.5, //150,
-                          imageWidth: 75,
-                          imageHeigth: 70,
-                          bgcolor: Colors.pink.shade800,
-                          text: 'Family members',
-                          imagePath: 'assets/icons/imac_icon.png',
-                          callback: () => Navigator.of(context).pushNamed(FamilyInfoScreen.routeName),
-                          icon: Icon(
-                            Icons.search,
-                            color: styles.ghostWhite,
-                            size: 50,
-                          ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SectionDivider(
+                              text: 'Family',
+                              subtext: 'Manage synchronization with family members',
+                              icon: Icon(
+                                Icons.family_restroom,
+                                color: styles.ghostWhite,
+                                size: 30,
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 3),
+                                Column(
+                                  children: [
+                                    CustomBtn(
+                                      buttonHeight: 220,
+                                      buttonWidth: _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5),
+                                      imageWidth: 75,
+                                      imageHeigth: 70,
+                                      bgcolor: Color(0xFF6DB5CB),
+                                      text: 'Share family',
+                                      imagePath: 'assets/icons/imac_icon.png',
+                                      callback: () async {
+                                        _shareFamily(context);
+                                      },
+                                      icon: Icon(
+                                        Icons.mobile_screen_share_outlined,
+                                        color: styles.ghostWhite,
+                                        size: 50,
+                                      ),
+                                    ),
+                                    CustomBtn(
+                                      buttonHeight: 150,
+                                      buttonWidth:
+                                          _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5), //150,
+                                      imageWidth: 75,
+                                      imageHeigth: 70,
+                                      bgcolor: Colors.pink.shade800,
+                                      text: 'Family members',
+                                      imagePath: 'assets/icons/imac_icon.png',
+                                      callback: () => Navigator.of(context).pushNamed(FamilyInfoScreen.routeName),
+                                      icon: Icon(
+                                        Icons.search,
+                                        color: styles.ghostWhite,
+                                        size: 50,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 5),
+                                Column(
+                                  children: [
+                                    CustomBtn(
+                                      buttonHeight: 140,
+                                      buttonWidth: _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5),
+                                      imageWidth: 28,
+                                      imageHeigth: 28,
+                                      bgcolor: Colors.deepOrange.shade600,
+                                      text: 'Leave family',
+                                      imagePath: 'assets/icons/Close_Square.png',
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.signOutAlt,
+                                        color: styles.ghostWhite,
+                                        size: 35,
+                                      ),
+                                      callback: () async {
+                                        _leaveFamily(context);
+                                      },
+                                    ),
+                                    CustomBtn(
+                                      buttonHeight: 230,
+                                      buttonWidth: _deviceInfo.deviceWidth / (_deviceInfo.isLandscape(context) ? 5.5 : 8.5),
+                                      imageWidth: 28,
+                                      imageHeigth: 28,
+                                      bgcolor: styles.deepGreen,
+                                      text: 'Join family',
+                                      imagePath: 'assets/icons/Close_Square.png',
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.signInAlt,
+                                        color: styles.ghostWhite,
+                                        size: 35,
+                                      ),
+                                      callback: () async {
+                                        _joinFamily(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ],
                     ),
-                    SizedBox(width: 5),
-                    Column(
-                      children: [
-                        CustomBtn(
-                          buttonHeight: 140,
-                          buttonWidth: _deviceInfo.deviceWidth / 2.5,
-                          imageWidth: 28,
-                          imageHeigth: 28,
-                          bgcolor: Colors.deepOrange.shade600,
-                          text: 'Leave family',
-                          imagePath: 'assets/icons/Close_Square.png',
-                          icon: FaIcon(
-                            FontAwesomeIcons.signOutAlt,
-                            color: styles.ghostWhite,
-                            size: 35,
-                          ),
-                          callback: () async {
-                            _leaveFamily(context);
-                          },
-                        ),
-                        CustomBtn(
-                          buttonHeight: 230,
-                          buttonWidth: _deviceInfo.deviceWidth / 2.5,
-                          imageWidth: 28,
-                          imageHeigth: 28,
-                          bgcolor: styles.deepGreen,
-                          text: 'Join family',
-                          imagePath: 'assets/icons/Close_Square.png',
-                          icon: FaIcon(
-                            FontAwesomeIcons.signInAlt,
-                            color: styles.ghostWhite,
-                            size: 35,
-                          ),
-                          callback: () async {
-                            _joinFamily(context);
-                          },
-                        ),
-                      ],
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Legal Notes",
+                      press: () =>
+                          showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Settings and Privacy",
+                      press: () {},
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Help",
+                      press: () {},
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    SizedBox(height: 40),
+                    ElevatedButton(
+                      child: Text("LOGOUT"),
+                      onPressed: () async {
+                        await _logout();
+                      },
+                    ),
+                    SizedBox(
+                      height: 100,
                     ),
                   ],
                 )
-              else if (_deviceInfo.isPhoneLandscape(context))
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+              : ListView(
+                  physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                   children: [
-                    CustomBtn(
-                      buttonHeight: _deviceInfo.deviceHeight / 4.5,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
-                      imageWidth: 75,
-                      imageHeigth: 70,
-                      bgcolor: Color(0xFF6DB5CB),
-                      text: 'Share family',
-                      imagePath: 'assets/icons/imac_icon.png',
-                      callback: () async {
-                        _shareFamily(context);
-                      },
+                    SectionDivider(
+                      text: 'Account',
+                      subtext: 'Adjust account settings to your needs',
                       icon: Icon(
-                        Icons.mobile_screen_share_outlined,
+                        Icons.supervised_user_circle_rounded,
                         color: styles.ghostWhite,
-                        size: 50,
+                        size: 30,
                       ),
                     ),
-                    CustomBtn(
-                      buttonHeight: 150,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
-                      imageWidth: 75,
-                      imageHeigth: 70,
-                      bgcolor: Color(0xFFFE7235),
-                      text: 'Family members',
-                      imagePath: 'assets/icons/imac_icon.png',
-                      callback: () => Navigator.of(context).pushNamed(FamilyInfoScreen.routeName),
+                    if (_deviceInfo.isPhonePotrait(context))
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 3),
+                          CustomBtn(
+                            buttonHeight: 160,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.7,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: Colors.pink.shade800,
+                            text: 'Change name',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.signature,
+                              color: styles.ghostWhite,
+                              size: 35,
+                            ),
+                            callback: () async {
+                              _changeDisplayName(context);
+                            },
+                          ),
+                          SizedBox(width: 5),
+                          CustomBtn(
+                            buttonHeight: 120,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.7,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: Colors.deepOrange.shade600,
+                            text: 'Delete account',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.userSlash,
+                              color: styles.ghostWhite,
+                              size: 30,
+                            ),
+                            callback: () {},
+                          ),
+                        ],
+                      ),
+                    if (_deviceInfo.isPhoneLandscape(context))
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(width: 3),
+                          CustomBtn(
+                            buttonHeight: 160,
+                            buttonWidth: _deviceInfo.deviceWidth / 1.1,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: Colors.pink.shade800,
+                            text: 'Change name',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.signature,
+                              color: styles.ghostWhite,
+                              size: 35,
+                            ),
+                            callback: () async {
+                              _changeDisplayName(context);
+                            },
+                          ),
+                          SizedBox(width: 5),
+                          CustomBtn(
+                            buttonHeight: 120,
+                            buttonWidth: _deviceInfo.deviceWidth / 1.1,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: Colors.deepOrange.shade600,
+                            text: 'Delete account',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.userSlash,
+                              color: styles.ghostWhite,
+                              size: 30,
+                            ),
+                            callback: () {},
+                          ),
+                        ],
+                      ),
+                    SizedBox(height: 10),
+                    SectionDivider(
+                      text: 'Family',
+                      subtext: 'Manage synchronization with family members',
                       icon: Icon(
-                        Icons.search,
+                        Icons.family_restroom,
                         color: styles.ghostWhite,
-                        size: 50,
+                        size: 30,
                       ),
                     ),
-                    CustomBtn(
-                      buttonHeight: 200,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.1,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: styles.deepGreen,
-                      text: 'Join family',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.signInAlt,
-                        color: styles.ghostWhite,
-                        size: 35,
+                    if (_deviceInfo.isPhonePotrait(context))
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 3),
+                          Column(
+                            children: [
+                              CustomBtn(
+                                buttonHeight: 220,
+                                buttonWidth: _deviceInfo.deviceWidth / 2.7, //150,
+                                imageWidth: 75,
+                                imageHeigth: 70,
+                                bgcolor: Color(0xFF6DB5CB),
+                                text: 'Share family',
+                                imagePath: 'assets/icons/imac_icon.png',
+                                callback: () async {
+                                  _shareFamily(context);
+                                },
+                                icon: Icon(
+                                  Icons.mobile_screen_share_outlined,
+                                  color: styles.ghostWhite,
+                                  size: 50,
+                                ),
+                              ),
+                              CustomBtn(
+                                buttonHeight: 150,
+                                buttonWidth: _deviceInfo.deviceWidth / 2.7, //150,
+                                imageWidth: 75,
+                                imageHeigth: 70,
+                                bgcolor: Colors.pink.shade800,
+                                text: 'Family members',
+                                imagePath: 'assets/icons/imac_icon.png',
+                                callback: () => Navigator.of(context).pushNamed(FamilyInfoScreen.routeName),
+                                icon: Icon(
+                                  Icons.search,
+                                  color: styles.ghostWhite,
+                                  size: 50,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 5),
+                          Column(
+                            children: [
+                              CustomBtn(
+                                buttonHeight: 140,
+                                buttonWidth: _deviceInfo.deviceWidth / 2.7,
+                                imageWidth: 28,
+                                imageHeigth: 28,
+                                bgcolor: Colors.deepOrange.shade600,
+                                text: 'Leave family',
+                                imagePath: 'assets/icons/Close_Square.png',
+                                icon: FaIcon(
+                                  FontAwesomeIcons.signOutAlt,
+                                  color: styles.ghostWhite,
+                                  size: 35,
+                                ),
+                                callback: () async {
+                                  _leaveFamily(context);
+                                },
+                              ),
+                              CustomBtn(
+                                buttonHeight: 230,
+                                buttonWidth: _deviceInfo.deviceWidth / 2.7,
+                                imageWidth: 28,
+                                imageHeigth: 28,
+                                bgcolor: styles.deepGreen,
+                                text: 'Join family',
+                                imagePath: 'assets/icons/Close_Square.png',
+                                icon: FaIcon(
+                                  FontAwesomeIcons.signInAlt,
+                                  color: styles.ghostWhite,
+                                  size: 35,
+                                ),
+                                callback: () async {
+                                  _joinFamily(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    else if (_deviceInfo.isPhoneLandscape(context))
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CustomBtn(
+                            buttonHeight: _deviceInfo.deviceHeight / 4.5,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
+                            imageWidth: 75,
+                            imageHeigth: 70,
+                            bgcolor: Color(0xFF6DB5CB),
+                            text: 'Share family',
+                            imagePath: 'assets/icons/imac_icon.png',
+                            callback: () async {
+                              _shareFamily(context);
+                            },
+                            icon: Icon(
+                              Icons.mobile_screen_share_outlined,
+                              color: styles.ghostWhite,
+                              size: 50,
+                            ),
+                          ),
+                          CustomBtn(
+                            buttonHeight: 150,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
+                            imageWidth: 75,
+                            imageHeigth: 70,
+                            bgcolor: Color(0xFFFE7235),
+                            text: 'Family members',
+                            imagePath: 'assets/icons/imac_icon.png',
+                            callback: () => Navigator.of(context).pushNamed(FamilyInfoScreen.routeName),
+                            icon: Icon(
+                              Icons.search,
+                              color: styles.ghostWhite,
+                              size: 50,
+                            ),
+                          ),
+                          CustomBtn(
+                            buttonHeight: 200,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.1,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: styles.deepGreen,
+                            text: 'Join family',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.signInAlt,
+                              color: styles.ghostWhite,
+                              size: 35,
+                            ),
+                            callback: () async {
+                              _joinFamily(context);
+                            },
+                          ),
+                          CustomBtn(
+                            buttonHeight: 140,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.1,
+                            imageWidth: 28,
+                            imageHeigth: 28,
+                            bgcolor: Colors.deepOrange.shade600,
+                            text: 'Leave family',
+                            imagePath: 'assets/icons/Close_Square.png',
+                            icon: FaIcon(
+                              FontAwesomeIcons.signOutAlt,
+                              color: styles.ghostWhite,
+                              size: 35,
+                            ),
+                            callback: () async {
+                              _leaveFamily(context);
+                            },
+                          ),
+                        ],
                       ),
-                      callback: () async {
-                        _joinFamily(context);
+                    //else
+                    //...
+
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Legal Notes",
+                      press: () =>
+                          showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Settings and Privacy",
+                      press: () {},
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    LastMenu(
+                      text: "Help",
+                      press: () {},
+                    ),
+                    Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
+                    SizedBox(height: 40),
+                    ElevatedButton(
+                      child: Text("LOGOUT"),
+                      onPressed: () async {
+                        await _logout();
                       },
                     ),
-                    CustomBtn(
-                      buttonHeight: 140,
-                      buttonWidth: _deviceInfo.deviceWidth / 2.1,
-                      imageWidth: 28,
-                      imageHeigth: 28,
-                      bgcolor: Colors.deepOrange.shade600,
-                      text: 'Leave family',
-                      imagePath: 'assets/icons/Close_Square.png',
-                      icon: FaIcon(
-                        FontAwesomeIcons.signOutAlt,
-                        color: styles.ghostWhite,
-                        size: 35,
-                      ),
-                      callback: () async {
-                        _leaveFamily(context);
-                      },
+                    SizedBox(
+                      height: 100,
                     ),
                   ],
                 ),
-              //else
-              //...
-
-              SizedBox(
-                height: 40,
-              ),
-              Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
-              LastMenu(
-                text: "Legal Notes",
-                press: () => showAboutDialog(context: context, applicationVersion: "1.0", applicationLegalese: lorem(words: 30)),
-              ),
-              Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
-              LastMenu(
-                text: "Settings and Privacy",
-                press: () {},
-              ),
-              Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
-              LastMenu(
-                text: "Help",
-                press: () {},
-              ),
-              Divider(height: 1, color: styles.ghostWhite.withOpacity(0.7)),
-              SizedBox(height: 40),
-              ElevatedButton(
-                child: Text("LOGOUT"),
-                onPressed: () async {
-                  await _logout();
-                },
-              ),
-              SizedBox(
-                height: 100,
-              ),
-            ],
-          ),
         ),
         if (_isLeavingFamily || _isMergingFamily)
           Container(
@@ -984,7 +1186,7 @@ class SectionDivider extends StatelessWidget {
             children: [
               Text(
                 text,
-                style: styles.subtitle,
+                style: deviceInfo.DeviceInfo.instance.isPhone ? styles.subtitle : styles.title.copyWith(fontSize: 35),
               ),
               SizedBox(width: 8),
               icon ?? Container(),

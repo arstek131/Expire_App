@@ -49,15 +49,16 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
 
   late double _barTopPadding;
-  double _barBottomPadding = 20;
+  late double _barBottomPadding;
   bool _scrolling = false;
-  double _avatarRadius = 35;
+  late double _avatarRadius;
   double _emailTextHeight = 30;
 
   @override
   void initState() {
-    _barTopPadding = _deviceInfo.deviceHeight * 0.045;
-
+    _barTopPadding = _deviceInfo.isPhone ? _deviceInfo.deviceHeight * 0.045 : _deviceInfo.deviceWidth * 0.03;
+    _avatarRadius = _deviceInfo.isPhone ? 35 : 45;
+    _barBottomPadding = _deviceInfo.isPhone ? 20 : 20;
     super.initState();
   }
 
@@ -101,10 +102,18 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 200),
                 padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).orientation == Orientation.portrait ? _barTopPadding : 0,
-                  left: 30,
-                  right: 40,
-                  bottom: MediaQuery.of(context).orientation == Orientation.portrait ? _barBottomPadding : 10,
+                  top: _deviceInfo.isPhonePotrait(context) || _deviceInfo.isTablet ? _barTopPadding : 0,
+                  left: _deviceInfo.isPhone
+                      ? 30
+                      : _deviceInfo.isTabletLandscape(context)
+                          ? 100
+                          : 70,
+                  right: _deviceInfo.isPhone
+                      ? 40
+                      : _deviceInfo.isTabletLandscape(context)
+                          ? 110
+                          : 80,
+                  bottom: _barBottomPadding,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,7 +127,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                             "Hi ${_userInfo.displayName}!",
                             overflow: TextOverflow.fade,
                             maxLines: 2,
-                            style: _scrolling ? styles.subtitle : styles.title,
+                            style: _scrolling
+                                ? styles.subtitle
+                                : _deviceInfo.isPhone
+                                    ? styles.title
+                                    : styles.title.copyWith(fontSize: 40),
                           ),
                         ),
                         if (_userInfo.email != null)
@@ -165,16 +178,17 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                           _barTopPadding = 0;
                           _barBottomPadding = 10;
                           _scrolling = true;
-                          _avatarRadius = 25;
+                          _avatarRadius = _deviceInfo.isPhone ? 25 : 35;
                           _emailTextHeight = 0;
                         });
                         Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyShrink();
                       } else {
                         setState(() {
-                          _barTopPadding = _deviceInfo.deviceHeight * 0.045;
-                          _barBottomPadding = 20;
+                          _barTopPadding =
+                              _deviceInfo.isPhone ? _deviceInfo.deviceHeight * 0.045 : _deviceInfo.deviceWidth * 0.03;
+                          _barBottomPadding = _deviceInfo.isPhone ? 20 : 20;
                           _scrolling = false;
-                          _avatarRadius = 35;
+                          _avatarRadius = _deviceInfo.isPhone ? 35 : 45;
                           _emailTextHeight = 30;
                         });
                         Provider.of<BottomNavigationBarSizeProvider>(context, listen: false).notifyGrow();

@@ -8,6 +8,9 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
+/* helper */
+import '../helpers/device_info.dart' as deviceinfo;
+
 /* styles */
 import '../app_styles.dart' as styles;
 
@@ -28,20 +31,24 @@ class ShoppingListTile extends StatefulWidget {
 }
 
 class _ShoppingListTileState extends State<ShoppingListTile> {
+  deviceinfo.DeviceInfo _deviceInfo = deviceinfo.DeviceInfo.instance;
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0.7),
+      margin: EdgeInsets.symmetric(horizontal: _deviceInfo.isPhone ? 10 : 0, vertical: 0.7),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(widget.first ? 15.0 : 0.0),
-          topRight: Radius.circular(widget.first ? 15.0 : 0.0),
-          bottomLeft: Radius.circular(widget.last ? 15.0 : 0.0),
-          bottomRight: Radius.circular(widget.last ? 15.0 : 0.0),
-        ), /*BorderRadius.circular(10.0)*/
+        borderRadius: _deviceInfo.isPhone
+            ? BorderRadius.only(
+                topLeft: Radius.circular(widget.first ? 15.0 : 0.0),
+                topRight: Radius.circular(widget.first ? 15.0 : 0.0),
+                bottomLeft: Radius.circular(widget.last ? 15.0 : 0.0),
+                bottomRight: Radius.circular(widget.last ? 15.0 : 0.0),
+              )
+            : BorderRadius.zero, /*BorderRadius.circular(10.0)*/
       ),
       elevation: 10,
       color: widget.shoppingList.completed ? Colors.grey.shade500 : styles.ghostWhite,
+      clipBehavior: Clip.hardEdge,
       child: Dismissible(
         key: UniqueKey(),
         onDismissed: (direction) {
@@ -190,11 +197,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
             ),
           ),
           trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () => Navigator.of(context)
-              .pushNamed(ShoppingListDetailScreen.routeName, arguments: widget.shoppingList.id)
-              .then((value) => !FirebaseAuthHelper.instance.isAuth
-                  ? Provider.of<ShoppingListProvider>(context, listen: false).fetchShoppingLists()
-                  : null),
+          //onTap: () {},
         ),
       ),
     );

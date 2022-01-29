@@ -69,4 +69,24 @@ class DeviceInfo {
   bool isTabletLandscape(BuildContext context) {
     return this._isTablet && this.isLandscape(context);
   }
+
+  double sizeDispatcher({
+    required BuildContext context,
+    required double phonePotrait,
+    required double phoneLandscape,
+    required double tabletPotrait,
+    required double tabletLandscape,
+  }) {
+    if (isPhonePotrait(context)) {
+      return phonePotrait;
+    } else if (isPhoneLandscape(context)) {
+      return phoneLandscape;
+    } else if (isTabletPotrait(context)) {
+      return tabletPotrait;
+    } else if (isTabletLandscape(context)) {
+      return tabletLandscape;
+    } else {
+      throw Exception("Device is in a metastate between potrait/landscape and phone/tablet form");
+    }
+  }
 }
