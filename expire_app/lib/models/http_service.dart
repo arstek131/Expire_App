@@ -58,6 +58,7 @@ class HttpService{
 
     if(res.statusCode == 200){
       Map<String, dynamic> body = jsonDecode(res.body);
+      print(uri.toString());
 
 
 
