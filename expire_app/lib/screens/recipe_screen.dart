@@ -5,31 +5,12 @@ import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/models/http_service.dart';
 import 'package:expire_app/models/recipe.dart';
-import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:expire_app/models/mock_recipemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import '../app_styles.dart' as styles;
 
 import 'recipe_details_screen.dart';
-
-/*
-Main screen
-  1) FROM -> /recipes/findByIngredients
-    -id (id of the recipe)
-    -title
-    -image
-    -readyInMinutes (retrieved from 2)
-
-  2) FROM -> recipes/{id}/information
-    -readyInMinutes (used also in 1)
-    -extendedIngredients (for ingredients section), list of ingredients
-    -analyzedInstructions (for preparation section)
-    -servings
- */
 
 class RecipeScreen extends StatelessWidget {
   FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
