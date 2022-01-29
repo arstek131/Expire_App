@@ -1,11 +1,11 @@
 class ChartData {
 
-  ChartData(this.sugar, this.fat, this.saturatedfat, this.salt);
+  ChartData({this.sugar, this.fat, this.saturatedfat, this.salt});
 
-  final List<Sugar> sugar;
-  final List<Fat> fat;
-  final List<SaturatedFat> saturatedfat;
-  final List<Salt> salt;
+  late List<Sugar>? sugar;
+  late List<Fat>? fat;
+  late List<SaturatedFat>? saturatedfat;
+  late List<Salt>? salt;
 }
 
 
@@ -14,6 +14,11 @@ class Sugar {
 
    String type;
    int value;
+
+   @override
+  String toString() {
+    return ('Sugar: '+'type: $type -> value: $value');
+  }
 }
 
 class Fat {
@@ -21,6 +26,11 @@ class Fat {
 
    String type;
    int value;
+
+  @override
+  String toString() {
+    return ('Fat: '+'type: $type -> value: $value');
+  }
 }
 
 class SaturatedFat {
@@ -28,6 +38,11 @@ class SaturatedFat {
 
    String type;
    int value;
+
+  @override
+  String toString() {
+    return ('Saturated-fat: '+'type: $type -> value: $value');
+  }
 }
 
 class Salt {
@@ -35,4 +50,9 @@ class Salt {
 
    String type;
    int value;
+
+  @override
+  String toString() {
+    return ('Salt: '+'type: $type -> value: $value');
+  }
 }

@@ -308,7 +308,7 @@ class ExtendedIngredient {
     amount: json["amount"],
     unit: json["unit"],
     meta: List<String>.from(json["meta"].map((x) => x)),
-    metaInformation: List<String>.from(json["metaInformation"].map((x) => x)),
+    metaInformation: json.containsKey('metaInformation') && json['metaInformation'] != null ? List<String>.from(json["metaInformation"].map((x) => x)) :[] ,
     measures: Measures.fromJson(json["measures"]),
   );
 

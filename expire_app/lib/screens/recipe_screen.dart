@@ -125,7 +125,7 @@ class RecipeScreen extends StatelessWidget {
                           child: Text('No recipes available'),
                         );
                     } else if (snapshot.hasError) {
-                      return Text('Error');
+                      return Text('No recipes available');
                     }
                     return Container(
                         alignment: Alignment.center,
