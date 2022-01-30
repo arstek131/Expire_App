@@ -18,13 +18,14 @@ class FirestoreHelper {
   static final FirestoreHelper _instance = FirestoreHelper._privateConstructor();
   //static FirestoreHelper get instance => _instance;
   factory FirestoreHelper({mockFirestore, mockUserInfo}) {
-    //_instance.firestore = mockFirestore ?? FirebaseFirestore.instance;
+    _instance.firestore =
+        mockFirestore ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : null);
     _instance.userInfo = mockUserInfo ?? userinfo.UserInfo.instance;
     return _instance;
   }
 
   /* varialbes */
-  final firestore = !Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : FakeFirebaseFirestore();
+  late dynamic firestore;
   late final userInfo;
 
   /* getters */
