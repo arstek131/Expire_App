@@ -83,6 +83,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Expire app',
         theme: ThemeData(
           primarySwatch: Colors.indigo,
