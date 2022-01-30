@@ -7,21 +7,6 @@ import 'package:flutter/material.dart';
 import '../app_styles.dart' as styles;
 import 'recipe_details_screen.dart';
 
-/*
-Main screen
-  1) FROM -> /recipes/findByIngredients
-    -id (id of the recipe)
-    -title
-    -image
-    -readyInMinutes (retrieved from 2)
-
-  2) FROM -> recipes/{id}/information
-    -readyInMinutes (used also in 1)
-    -extendedIngredients (for ingredients section), list of ingredients
-    -analyzedInstructions (for preparation section)
-    -servings
- */
-
 class RecipeScreen extends StatelessWidget {
   FirebaseAuthHelper _auth = FirebaseAuthHelper();
 

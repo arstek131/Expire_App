@@ -1,5 +1,3 @@
-import 'package:expire_app/models/http_service.dart';
-import 'package:expire_app/models/mock_recipemodel.dart';
 import 'package:expire_app/models/recipe_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -10,10 +8,9 @@ import '../app_styles.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
   final String idOfRecipe;
-  final MockRecipeModel? recipeModel;
   final RecipeDetails? recipeDetails;
 
-  const RecipeDetailsScreen({Key? key, this.recipeModel, this.recipeDetails, required this.idOfRecipe}) : super(key: key);
+  const RecipeDetailsScreen({Key? key, this.recipeDetails, required this.idOfRecipe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
