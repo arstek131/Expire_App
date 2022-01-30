@@ -34,17 +34,14 @@ void main() {
   when(mockUserInfo.displayName).thenReturn("displayName");
   when(mockUserInfo.familyId).thenReturn("familyId");
 
-  /* ADDING A PRODUCT */
+  /***
+   * Note: Resetting stubs every time is necessary because call count are not resetted between each tests
+   * making it impossible to test callcount() or verifyNever().
+   * By calling the reset function, also stubs are deleted and needs therefore to be re-defined.
+   */
+
   group('[Add product]', () {
     // SETUP
-
-    ProductsProvider productsProvider = new ProductsProvider(
-      mockFirebaseAuthHelper: mockFirebaseAuthHelper,
-      mockFirestoreHelper: mockFirestoreHelper,
-      mockUserInfo: mockUserInfo,
-      mockDBManager: mockDBManager,
-    );
-
     Product? product = Product(
       id: 'id',
       title: 'title',
@@ -72,6 +69,14 @@ void main() {
       reset(mockFirebaseAuthHelper);
       reset(mockFirestoreHelper);
       reset(mockDBManager);
+
+      ProductsProvider productsProvider = new ProductsProvider(
+        mockFirebaseAuthHelper: mockFirebaseAuthHelper,
+        mockFirestoreHelper: mockFirestoreHelper,
+        mockUserInfo: mockUserInfo,
+        mockDBManager: mockDBManager,
+      );
+
       when(mockFirebaseAuthHelper.isAuth).thenReturn(true); // indifferent
       when(mockFirestoreHelper.addProduct(product: anyNamed('product'), image: anyNamed('image'))).thenAnswer((_) async => null);
 
@@ -88,8 +93,14 @@ void main() {
       reset(mockFirestoreHelper);
       reset(mockDBManager);
 
+      ProductsProvider productsProvider = new ProductsProvider(
+        mockFirebaseAuthHelper: mockFirebaseAuthHelper,
+        mockFirestoreHelper: mockFirestoreHelper,
+        mockUserInfo: mockUserInfo,
+        mockDBManager: mockDBManager,
+      );
+
       when(mockFirebaseAuthHelper.isAuth).thenReturn(false); // indifferent
-      when(mockFirestoreHelper.addProduct(product: anyNamed('product'), image: anyNamed('image'))).thenAnswer((_) async => null);
       when(mockDBManager.addProduct(product: anyNamed('product'), imageRaw: anyNamed('imageRaw')))
           .thenAnswer((_) async => null); // indifferent
 
@@ -99,18 +110,24 @@ void main() {
       // VERIFY
       verifyNever(mockFirestoreHelper.addProduct(product: anyNamed('product'), image: anyNamed('image')));
       verify(mockDBManager.addProduct(product: anyNamed('product'), imageRaw: anyNamed('imageRaw'))).called(1);
-      expect(productsProvider.items.length, 2);
-      identical(productsProvider.items[1], product);
+      expect(productsProvider.items.length, 1);
+      identical(productsProvider.items[0], product);
     });
     test('Auth, Firebase access', () async {
       // SETUP
       reset(mockFirebaseAuthHelper);
       reset(mockFirestoreHelper);
       reset(mockDBManager);
+
+      ProductsProvider productsProvider = new ProductsProvider(
+        mockFirebaseAuthHelper: mockFirebaseAuthHelper,
+        mockFirestoreHelper: mockFirestoreHelper,
+        mockUserInfo: mockUserInfo,
+        mockDBManager: mockDBManager,
+      );
+
       when(mockFirebaseAuthHelper.isAuth).thenReturn(true); // indifferent
       when(mockFirestoreHelper.addProduct(product: anyNamed('product'), image: anyNamed('image'))).thenAnswer((_) async => null);
-      when(mockDBManager.addProduct(product: anyNamed('product'), imageRaw: anyNamed('imageRaw')))
-          .thenAnswer((_) async => null); // indifferent
 
       // RUN
       await productsProvider.addProduct(product);
@@ -118,8 +135,8 @@ void main() {
       // VERIFY
       verify(mockFirestoreHelper.addProduct(product: anyNamed('product'), image: anyNamed('image'))).called(1);
       verifyNever(mockDBManager.addProduct(product: anyNamed('product'), imageRaw: anyNamed('imageRaw')));
-      expect(productsProvider.items.length, 3);
-      identical(productsProvider.items[2], product);
+      expect(productsProvider.items.length, 1);
+      identical(productsProvider.items[0], product);
     });
   });
 

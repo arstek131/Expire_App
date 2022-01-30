@@ -22,7 +22,7 @@ import '../models/product.dart';
 
 class ProductsProvider extends ChangeNotifier {
   ProductsProvider({mockFirebaseAuthHelper, mockFirestoreHelper, mockUserInfo, mockDBManager}) {
-    // dependencies
+    // injectable mock-dependencies
     _auth = mockFirebaseAuthHelper ?? FirebaseAuthHelper();
     _firestore = mockFirestoreHelper ?? FirestoreHelper();
     _userInfo = mockUserInfo ?? userInfo.UserInfo.instance;

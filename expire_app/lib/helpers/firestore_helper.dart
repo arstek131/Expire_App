@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/models/shopping_list_element.dart';
@@ -16,15 +17,15 @@ class FirestoreHelper {
   FirestoreHelper._privateConstructor();
   static final FirestoreHelper _instance = FirestoreHelper._privateConstructor();
   //static FirestoreHelper get instance => _instance;
-  factory FirestoreHelper({dynamic mockFirestore}) {
+  factory FirestoreHelper({mockFirestore, mockUserInfo}) {
     //_instance.firestore = mockFirestore ?? FirebaseFirestore.instance;
+    _instance.userInfo = mockUserInfo ?? userinfo.UserInfo.instance;
     return _instance;
   }
 
   /* varialbes */
-  late dynamic firestore = !Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : null;
-
-  final userInfo = userinfo.UserInfo.instance;
+  final firestore = !Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : FakeFirebaseFirestore();
+  late final userInfo;
 
   /* getters */
   Future<bool> familyExists({required String familyId}) async {

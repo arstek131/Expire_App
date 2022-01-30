@@ -1,5 +1,6 @@
 /* flutter */
 import 'dart:async';
+import 'dart:io';
 
 /* Firebse */
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,15 +17,23 @@ import '../helpers/user_info.dart' as userInfo;
 import '../models/shopping_list_element.dart';
 
 class ShoppingListProvider extends ChangeNotifier {
-  ShoppingListProvider();
+  ShoppingListProvider({mockFirebaseAuthHelper, mockFirestoreHelper, mockUserInfo, mockDBManager}) {
+    // injectable mock-dependencies
+    _auth = mockFirebaseAuthHelper ?? FirebaseAuthHelper();
+    _firestore = mockFirestoreHelper ?? FirestoreHelper();
+    _userInfo = mockUserInfo ?? userInfo.UserInfo.instance;
+    _db = mockDBManager ?? DBManager();
+  }
 
   List<ShoppingList> _shoppingLists = [];
 
-  bool initProvider = true;
+  bool initProvider = Platform.environment.containsKey('FLUTTER_TEST') ? false : true;
   StreamSubscription<QuerySnapshot>? streamSub;
 
-  FirebaseAuthHelper _auth = FirebaseAuthHelper();
-  DBManager _db = DBManager();
+  late FirebaseAuthHelper _auth;
+  late DBManager _db;
+  late userInfo.UserInfo _userInfo;
+  late FirestoreHelper _firestore;
 
   List<ShoppingList> get shoppingLists {
     return [..._shoppingLists];
@@ -33,18 +42,15 @@ class ShoppingListProvider extends ChangeNotifier {
   Future<void> fetchShoppingLists() async {
     if (_auth.isAuth) {
       // todo: take images from url and save them locally!
-      _shoppingLists = await FirestoreHelper().getShoppingListsFromFamilyId(userInfo.UserInfo.instance.familyId!);
+      _shoppingLists = await _firestore.getShoppingListsFromFamilyId(_userInfo.familyId!);
 
-      print(initProvider);
       if (this.initProvider) {
         print("init provider...");
         this.initProvider = false;
 
         // attach firestore listener
-        CollectionReference reference = FirebaseFirestore.instance
-            .collection('families')
-            .doc(userInfo.UserInfo.instance.familyId!)
-            .collection('shopping_lists');
+        CollectionReference reference =
+            FirebaseFirestore.instance.collection('families').doc(_userInfo.familyId!).collection('shopping_lists');
         streamSub = reference.snapshots().listen(
           (querySnapshot) {
             querySnapshot.docChanges.forEach((change) async {
@@ -91,11 +97,11 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addNewShoppingList({required String title}) async {
+  Future<String?> addNewShoppingList({required String title, List<ShoppingListElement>? products}) async {
     var uuid = const Uuid();
     String id = uuid.v1();
 
-    final shoppingList = ShoppingList(id: id, title: title, products: [], completed: false);
+    final shoppingList = ShoppingList(id: id, title: title, products: products ?? [], completed: false);
 
     /* local insertion */
     _shoppingLists.add(shoppingList);
@@ -104,12 +110,14 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      FirestoreHelper().addShoppingList(
+      _firestore.addShoppingList(
         list: shoppingList,
       );
     } else {
       _db.addShoppingList(list: shoppingList);
     }
+
+    return id;
   }
 
   void modifyShoppingList(ShoppingList shoppingList) {
@@ -128,7 +136,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     if (_auth.isAuth) {
       /* remote delete */
-      FirestoreHelper().deleteShoppingList(id);
+      _firestore.deleteShoppingList(id);
     }
     /* local DB deletion */
     else {
@@ -149,7 +157,7 @@ class ShoppingListProvider extends ChangeNotifier {
     return shoppingList.products;
   }
 
-  Future<void> addElementToShoppingList(
+  Future<String?> addElementToShoppingList(
       {required String listId, required String shoppingListElementTitle, required int quantity}) async {
     var uuid = const Uuid();
     String id = uuid.v1();
@@ -171,13 +179,15 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      await FirestoreHelper()
-          .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
+      await _firestore.addElementToShoppingList(
+          listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
     }
     /* local insertion in DB */
     else {
       await _db.addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement);
     }
+
+    return id;
   }
 
   Future<void> incrementProductQuantity({required String listId, required String productId}) async {
@@ -190,7 +200,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote increment */
     if (_auth.isAuth) {
-      FirestoreHelper().updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+      _firestore.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
     }
     /* local increment */
     else {
@@ -208,7 +218,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote decrement */
     if (_auth.isAuth) {
-      FirestoreHelper().updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+      _firestore.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
     }
     /* local decrement */
     else {
@@ -223,7 +233,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     if (_auth.isAuth) {
       /* remote update */
-      FirestoreHelper().updateCompleted(listId: shoppingListid, completed: completed);
+      _firestore.updateCompleted(listId: shoppingListid, completed: completed);
     } else {
       _db.updateCompletedShoppingList(listId: shoppingListid, completed: completed);
     }
@@ -238,7 +248,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote update */
     if (_auth.isAuth) {
-      FirestoreHelper().updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
+      _firestore.updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
     }
     /* local DB update */
     else {
@@ -253,7 +263,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote removal */
     if (_auth.isAuth) {
-      FirestoreHelper().deleteShoppingListElement(shoppingListid, elementId);
+      _firestore.deleteShoppingListElement(shoppingListid, elementId);
     }
     /* local removal */
     else {
