@@ -1102,7 +1102,7 @@ class ShareFamFunQR extends StatelessWidget {
                 color: styles.ghostWhite,
                 width: 60,
                 height: 60,
-                child: const FlutterLogo(),
+                child: Image(image: AssetImage('assets/logo/expiry_app_logo.png'),),
               ),
             ],
           ),
