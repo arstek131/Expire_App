@@ -2,9 +2,7 @@ import 'package:expire_app/app_styles.dart' as styles;
 import 'package:expire_app/models/onboard_data.dart';
 import 'package:expire_app/size_configs.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../main.dart';
 import 'auth_screen.dart';
 
 class OnBoardingPage extends StatefulWidget {

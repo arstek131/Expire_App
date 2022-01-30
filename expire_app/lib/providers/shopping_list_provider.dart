@@ -1,20 +1,19 @@
 /* flutter */
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:uuid/uuid.dart';
-
-/* models */
-import 'package:expire_app/models/shopping_list.dart';
-import '../models/shopping_list_element.dart';
-
-/* helpers */
-import '../helpers/user_info.dart' as userInfo;
-import '../helpers/firestore_helper.dart';
-import '../helpers/firebase_auth_helper.dart';
-import '../helpers/db_manager.dart';
 
 /* Firebse */
 import 'package:cloud_firestore/cloud_firestore.dart';
+/* models */
+import 'package:expire_app/models/shopping_list.dart';
+import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+
+import '../helpers/db_manager.dart';
+import '../helpers/firebase_auth_helper.dart';
+import '../helpers/firestore_helper.dart';
+/* helpers */
+import '../helpers/user_info.dart' as userInfo;
+import '../models/shopping_list_element.dart';
 
 class ShoppingListProvider extends ChangeNotifier {
   ShoppingListProvider();
@@ -24,8 +23,8 @@ class ShoppingListProvider extends ChangeNotifier {
   bool initProvider = true;
   StreamSubscription<QuerySnapshot>? streamSub;
 
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
-  DBManager _db = DBManager.instance;
+  FirebaseAuthHelper _auth = FirebaseAuthHelper();
+  DBManager _db = DBManager();
 
   List<ShoppingList> get shoppingLists {
     return [..._shoppingLists];
@@ -34,7 +33,7 @@ class ShoppingListProvider extends ChangeNotifier {
   Future<void> fetchShoppingLists() async {
     if (_auth.isAuth) {
       // todo: take images from url and save them locally!
-      _shoppingLists = await FirestoreHelper.instance.getShoppingListsFromFamilyId(userInfo.UserInfo.instance.familyId!);
+      _shoppingLists = await FirestoreHelper().getShoppingListsFromFamilyId(userInfo.UserInfo.instance.familyId!);
 
       print(initProvider);
       if (this.initProvider) {
@@ -105,7 +104,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.addShoppingList(
+      FirestoreHelper().addShoppingList(
         list: shoppingList,
       );
     } else {
@@ -129,7 +128,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     if (_auth.isAuth) {
       /* remote delete */
-      FirestoreHelper.instance.deleteShoppingList(id);
+      FirestoreHelper().deleteShoppingList(id);
     }
     /* local DB deletion */
     else {
@@ -172,7 +171,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      await FirestoreHelper.instance
+      await FirestoreHelper()
           .addElementToShoppingList(listId: listId, shoppingListElement: shoppingListElement); // wait to avoid clogging in writes
     }
     /* local insertion in DB */
@@ -191,7 +190,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote increment */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+      FirestoreHelper().updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
     }
     /* local increment */
     else {
@@ -209,7 +208,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote decrement */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
+      FirestoreHelper().updateQuantity(listId: listId, elementId: productId, quantity: element.quantity);
     }
     /* local decrement */
     else {
@@ -224,7 +223,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     if (_auth.isAuth) {
       /* remote update */
-      FirestoreHelper.instance.updateCompleted(listId: shoppingListid, completed: completed);
+      FirestoreHelper().updateCompleted(listId: shoppingListid, completed: completed);
     } else {
       _db.updateCompletedShoppingList(listId: shoppingListid, completed: completed);
     }
@@ -239,7 +238,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote update */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
+      FirestoreHelper().updateChecked(listId: shoppingListid, elementId: elementId, checked: checked);
     }
     /* local DB update */
     else {
@@ -254,7 +253,7 @@ class ShoppingListProvider extends ChangeNotifier {
 
     /* remote removal */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.deleteShoppingListElement(shoppingListid, elementId);
+      FirestoreHelper().deleteShoppingListElement(shoppingListid, elementId);
     }
     /* local removal */
     else {

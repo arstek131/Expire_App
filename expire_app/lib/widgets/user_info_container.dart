@@ -1,33 +1,24 @@
 /* dart */
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:expire_app/widgets/display_name_choice_moda.dart';
 import 'package:flutter/material.dart';
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-/* helpers */
-import '../helpers/firebase_auth_helper.dart';
-import '../helpers/firestore_helper.dart';
-import '../helpers/device_info.dart' as deviceInfo;
-import '../helpers/user_info.dart' as userInfo;
-import '../widgets/family_id_choice_modal.dart';
-
 /* providers */
 import 'package:provider/provider.dart';
-import '../providers/shopping_list_provider.dart';
-import '../providers/products_provider.dart';
-
-/* widgets */
-import '../widgets/sign_up.dart';
-
-/* screens */
-//import 'package:expire_app/screens/family_info_screen.dart';
-import 'package:expire_app/screens/user_info_screen.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+import '../helpers/device_info.dart' as deviceInfo;
+/* helpers */
+import '../helpers/firebase_auth_helper.dart';
+import '../helpers/firestore_helper.dart';
+import '../helpers/user_info.dart' as userInfo;
+import '../providers/products_provider.dart';
+import '../providers/shopping_list_provider.dart';
+import '../widgets/family_id_choice_modal.dart';
 
 class UserInfoContainer extends StatefulWidget {
   const UserInfoContainer();
@@ -38,7 +29,7 @@ class UserInfoContainer extends StatefulWidget {
 
 class _UserInfoContainerState extends State<UserInfoContainer> {
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper _auth = FirebaseAuthHelper();
   userInfo.UserInfo _userInfo = userInfo.UserInfo.instance;
 
   bool _isLeavingFamily = false;
@@ -49,8 +40,8 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
     await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
 
-    if (FirebaseAuthHelper.instance.isAuth) {
-      FirebaseAuthHelper.instance.logOut();
+    if (FirebaseAuthHelper().isAuth) {
+      FirebaseAuthHelper().logOut();
     }
   }
 
@@ -689,7 +680,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     }
 
     /* no other members */
-    final usersId = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: _userInfo.familyId!);
+    final usersId = await FirestoreHelper().getUsersFromFamilyId(familyId: _userInfo.familyId!);
     if (usersId.length == 1) {
       await showDialog(
         context: context,
@@ -784,7 +775,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       setState(() {
         _isLeavingFamily = true;
       });
-      await FirestoreHelper.instance.leaveFamily();
+      await FirestoreHelper().leaveFamily();
 
       setState(() {
         _isLeavingFamily = false;
@@ -894,7 +885,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     }
 
     /* no other members */
-    bool singleMember = (await FirestoreHelper.instance.getUsersFromFamilyId(familyId: _userInfo.familyId!)).length == 1;
+    bool singleMember = (await FirestoreHelper().getUsersFromFamilyId(familyId: _userInfo.familyId!)).length == 1;
     if (!singleMember) {
       bool choice = await showDialog(
             context: context,
@@ -1040,7 +1031,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       _isMergingFamily = true;
     });
 
-    FirestoreHelper.instance.mergeFamilies(
+    FirestoreHelper().mergeFamilies(
       familyId: chosenFamilyId,
       mergeProducts: mergeProducts,
       singleMember: singleMember,

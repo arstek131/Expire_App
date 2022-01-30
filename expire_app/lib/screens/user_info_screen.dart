@@ -1,24 +1,17 @@
 /* dart */
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:expire_app/widgets/user_info_container.dart';
-import '../helpers/user_info.dart' as userInfo;
-import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-
-/* helpers */
-import '../helpers/device_info.dart' as deviceInfo;
-import '../helpers/firebase_auth_helper.dart';
+import 'package:expire_app/widgets/user_info_container.dart';
+import 'package:flutter/material.dart';
+/* providers */
+import 'package:provider/provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
-import '../app_styles.dart';
-
-/* providers */
-import '../providers/auth_provider.dart';
-import 'package:provider/provider.dart';
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+import '../helpers/firebase_auth_helper.dart';
+import '../helpers/user_info.dart' as userInfo;
 import '../providers/bottom_navigator_bar_size_provider.dart';
-
-import '../helpers/firestore_helper.dart';
 
 class UserInfoScreen extends StatefulWidget {
   @override
@@ -46,7 +39,7 @@ class UserInfoScreen extends StatefulWidget {
 class _UserInfoScreenState extends State<UserInfoScreen> {
   userInfo.UserInfo _userInfo = userInfo.UserInfo.instance;
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper _auth = FirebaseAuthHelper();
 
   late double _barTopPadding;
   late double _barBottomPadding;

@@ -1,28 +1,31 @@
 /* flutter */
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/models/shopping_list_element.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
-import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
-import 'dart:typed_data';
+import 'package:sqflite/sqflite.dart' as sql;
 
-/* helpers */
-import '../constants.dart' as constants;
 import '../helpers/user_info.dart' as userInfo;
 
 class DBManager {
   /* singleton */
   DBManager._privateConstructor();
-
   static final DBManager _instance = DBManager._privateConstructor();
-  static DBManager get instance => _instance;
+
+  factory DBManager({bool? init}) {
+    if (init != null) {
+      _instance._init = init;
+    }
+    return _instance;
+  }
 
   userInfo.UserInfo _user = userInfo.UserInfo.instance;
 
-  bool _init = false;
+  bool _init = Platform.environment.containsKey('FLUTTER_TEST') ? true : false;
   late sql.Database _db;
   static const DB_name = 'DB.db';
 
@@ -113,14 +116,13 @@ class DBManager {
 
   void checkInit() {
     if (this._init == false) {
-      throw Exception("init() function was not called. Please use await DBManager.instance.init() to initialize database.");
+      throw Exception("init() function was not called. Please use await DBManager().init() to initialize database.");
     }
   }
 
   /***  product ***/
   Future<List<Product>> getProducts() async {
     this.checkInit();
-
     List<Product> products = [];
 
     final productsJSON = await _db.rawQuery('SELECT * FROM PRODUCT');

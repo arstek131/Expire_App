@@ -1,41 +1,45 @@
 /* dart */
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:expire_app/providers/filters_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
 import 'package:uuid/uuid.dart';
-
-/* Firebse */
-import '../helpers/firestore_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../helpers/firebase_auth_helper.dart';
-
-/* models */
-import '../models/product.dart';
-import '../models/filter.dart';
-
-/* helpers */
-import '../helpers/user_info.dart' as userInfo;
-import '../helpers/db_manager.dart';
 
 /* enums */
 import '../enums/ordering.dart';
+import '../helpers/db_manager.dart';
+import '../helpers/firebase_auth_helper.dart';
+/* Firebse */
+import '../helpers/firestore_helper.dart';
+/* helpers */
+import '../helpers/user_info.dart' as userInfo;
+import '../models/filter.dart';
+/* models */
+import '../models/product.dart';
 
 class ProductsProvider extends ChangeNotifier {
-  ProductsProvider();
+  ProductsProvider({mockFirebaseAuthHelper, mockFirestoreHelper, mockUserInfo, mockDBManager}) {
+    // dependencies
+    _auth = mockFirebaseAuthHelper ?? FirebaseAuthHelper();
+    _firestore = mockFirestoreHelper ?? FirestoreHelper();
+    _userInfo = mockUserInfo ?? userInfo.UserInfo.instance;
+    _db = mockDBManager ?? DBManager();
+  }
 
-  bool _initProvider = true;
+  bool _initProvider = Platform.environment.containsKey('FLUTTER_TEST') ? false : true;
   Ordering _ordering = Ordering.ExpiringSoon;
 
   StreamSubscription<QuerySnapshot>? streamSub;
 
   List<Product> _items = [];
 
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
-  DBManager _db = DBManager.instance;
+  late dynamic /*FirebaseAuthHelper*/ _auth;
+  late FirestoreHelper _firestore;
+  late DBManager _db;
+  late userInfo.UserInfo _userInfo;
 
   List<Product> get items {
     return [..._items];
@@ -156,14 +160,14 @@ class ProductsProvider extends ChangeNotifier {
     // fetch from server
     if (_auth.isAuth) {
       // todo: take images from url and save them locally!
-      _items = await FirestoreHelper.instance.getProductsFromFamilyId(userInfo.UserInfo.instance.familyId!);
+      _items = await _firestore.getProductsFromFamilyId(_userInfo.familyId!);
 
       if (this._initProvider) {
         this._initProvider = false;
 
         // attach firestore listener
         CollectionReference reference =
-            FirebaseFirestore.instance.collection('families').doc(userInfo.UserInfo.instance.familyId!).collection('products');
+            FirebaseFirestore.instance.collection('families').doc(_userInfo.familyId!).collection('products');
         streamSub = reference.snapshots().listen(
           (querySnapshot) {
             querySnapshot.docChanges.forEach((change) async {
@@ -174,9 +178,8 @@ class ProductsProvider extends ChangeNotifier {
                 dateAdded: DateTime.parse(change.doc['dateAdded']),
                 creatorId: change.doc['creatorId'],
                 image: change.doc['imageUrl'],
-                creatorName:
-                    (await FirestoreHelper.instance.getDisplayNameFromUserId(userId: change.doc['creatorId'])) ?? "Uknown",
-                nutriments: FirestoreHelper.instance.parseNutriments(change.doc['nutriments']),
+                creatorName: (await _firestore.getDisplayNameFromUserId(userId: change.doc['creatorId'])) ?? "Uknown",
+                nutriments: _firestore.parseNutriments(change.doc['nutriments']),
                 ingredientsText: change.doc['ingredientsText'],
                 nutriscore: change.doc['nutriscore'],
                 allergens: change.doc['allergens'] == null ? null : List<String>.from(change.doc['allergens']),
@@ -224,7 +227,7 @@ class ProductsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addProduct(Product product) async {
+  Future<String> addProduct(Product product) async {
     var uuid = const Uuid();
     String productId = uuid.v1();
 
@@ -234,8 +237,8 @@ class ProductsProvider extends ChangeNotifier {
       title: product.title,
       expiration: product.expiration,
       dateAdded: product.dateAdded,
-      creatorId: userInfo.UserInfo.instance.userId!,
-      creatorName: userInfo.UserInfo.instance.displayName!,
+      creatorId: _userInfo.userId!,
+      creatorName: _userInfo.displayName!,
       image: product.image,
       nutriments: product.nutriments,
       ingredientsText: product.ingredientsText,
@@ -251,8 +254,6 @@ class ProductsProvider extends ChangeNotifier {
       quantity: product.quantity,
     );
 
-    print(newProduct.ingredientLevels);
-
     _items.add(newProduct);
     sortProducts(_ordering);
 
@@ -260,7 +261,7 @@ class ProductsProvider extends ChangeNotifier {
 
     /* remote insertion */
     if (_auth.isAuth) {
-      await FirestoreHelper.instance.addProduct(
+      await _firestore.addProduct(
         product: newProduct,
         image: product.image,
       );
@@ -289,11 +290,13 @@ class ProductsProvider extends ChangeNotifier {
         }
       }
 
-      _db.addProduct(
+      await _db.addProduct(
         product: newProduct,
         imageRaw: imageRaw,
       );
     }
+
+    return productId;
   }
 
   void modifyProduct(Product product) {
@@ -312,7 +315,7 @@ class ProductsProvider extends ChangeNotifier {
 
     /* remote delete */
     if (_auth.isAuth) {
-      FirestoreHelper.instance.deleteProduct(productId);
+      _firestore.deleteProduct(productId);
     }
     /* local DB deletion */
     else {

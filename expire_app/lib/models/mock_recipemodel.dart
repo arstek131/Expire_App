@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MockRecipeModel {
   String title, writer, description;
   int cookingTime;
@@ -19,8 +17,7 @@ class MockRecipeModel {
     MockRecipeModel(
       title: 'Pizza con crema tartufata dell\'Alto Adige',
       writer: "Mamma di lattari",
-      description:
-      'Ed ecco qua tutte le nostre limited edition, un’esplosione di colori e sapori!🍕',
+      description: 'Ed ecco qua tutte le nostre limited edition, un’esplosione di colori e sapori!🍕',
       cookingTime: 10,
       servings: 4,
       imgPath: 'assets/images/mock_img1.png',
@@ -37,8 +34,7 @@ class MockRecipeModel {
     MockRecipeModel(
       title: 'Classic Omelet and Greens ',
       writer: "Padre di Lattari",
-      description:
-      'Sneak some spinach into your morning meal for a boost of nutrients to start your day off right.',
+      description: 'Sneak some spinach into your morning meal for a boost of nutrients to start your day off right.',
       cookingTime: 10,
       servings: 4,
       imgPath: 'assets/images/mock_img2.png',
@@ -55,8 +51,7 @@ class MockRecipeModel {
     MockRecipeModel(
       title: 'Sheet Pan Sausage and Egg Breakfast Bake ',
       writer: "Cugino di Lattari",
-      description:
-      'A hearty breakfast that easily feeds a family of four, all on one sheet pan? Yes, please.',
+      description: 'A hearty breakfast that easily feeds a family of four, all on one sheet pan? Yes, please.',
       cookingTime: 10,
       servings: 4,
       imgPath: 'assets/images/mock_img3.png',
@@ -74,7 +69,7 @@ class MockRecipeModel {
       title: 'Shakshuka',
       writer: "Fratello di Lattari",
       description:
-      'Just wait til you break this one out at the breakfast table: sweet tomatoes, runny yolks, and plenty of toasted bread for dipping.',
+          'Just wait til you break this one out at the breakfast table: sweet tomatoes, runny yolks, and plenty of toasted bread for dipping.',
       cookingTime: 10,
       servings: 4,
       imgPath: 'assets/images/mock_img4.png',

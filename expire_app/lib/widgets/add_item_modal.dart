@@ -1,58 +1,40 @@
 /* dart */
+import 'dart:convert';
+import 'dart:io' as pltf show Platform;
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
-import 'package:expire_app/main.dart';
 import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:openfoodfacts/model/EcoscoreData.dart';
-import 'package:openfoodfacts/model/NutrientLevels.dart';
-import 'package:openfoodfacts/model/Nutriments.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as syspaths;
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'dart:convert';
 import 'package:flutter_scandit/flutter_scandit.dart';
-import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:enum_to_string/enum_to_string.dart';
-import 'dart:convert';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io' as pltf show Platform;
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // google apis
 import 'package:googleapis/vision/v1.dart' as vision;
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:flutter/services.dart';
-
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:openfoodfacts/model/Nutriments.dart';
+import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
 /* provider */
 import 'package:provider/provider.dart';
-import '../providers/products_provider.dart';
-import '../providers/auth_provider.dart';
-
-/* models */
-import '../models/product.dart';
-import '../models/categories.dart' as categories;
-import '../models/openfoodfacts_exceptions.dart' show ProductNotFoundException;
-
-/* enums */
-import '../enums/product_insertion_method.dart';
-
-/* firebase */
-import 'package:expire_app/helpers/firestore_helper.dart';
-
-/* constants */
-import '../constants.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* constants */
+import '../constants.dart';
+/* enums */
+import '../enums/product_insertion_method.dart';
+import '../models/categories.dart' as categories;
+import '../models/openfoodfacts_exceptions.dart' show ProductNotFoundException;
+/* models */
+import '../models/product.dart';
+import '../providers/products_provider.dart';
 
 
 class CredentialsProvider {
@@ -205,6 +187,7 @@ class _AddItemModalState extends State<AddItemModal> {
 
   Future<void> _submit() async {
     // save remote or local image to storage + localDB + firestore
+
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
@@ -365,7 +348,7 @@ class _AddItemModalState extends State<AddItemModal> {
 
   Future<void> _extractTextFromImage(TextEditingController controller) async
   {
-    if(!FirebaseAuthHelper.instance.isAuth)
+    if(!FirebaseAuthHelper().isAuth)
     {
       await showDialog(
         context: context,
@@ -1748,7 +1731,7 @@ class HealthInfoInput extends StatelessWidget {
                         ),
                       ),
                       validator: (value) {
-                        if (!isNumeric(value)) {
+                        if (value != "N/A" && !isNumeric(value)) {
                           return ' ';
                         }
                         return null;

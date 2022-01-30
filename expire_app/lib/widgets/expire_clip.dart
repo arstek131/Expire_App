@@ -2,11 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-/* enum */
-import '../enums/expire_status.dart';
-
 /* styles */
 import '../app_styles.dart' as styles;
+/* enum */
+import '../enums/expire_status.dart';
 
 class ExpireClip extends StatelessWidget {
   ExpireStatus expireStatus;

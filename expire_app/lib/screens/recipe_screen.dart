@@ -1,19 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
-import 'package:expire_app/models/http_service.dart';
-import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:expire_app/models/mock_recipemodel.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import '../app_styles.dart' as styles;
 
+import '../app_styles.dart' as styles;
 import 'recipe_details_screen.dart';
 
 /*
@@ -32,7 +23,7 @@ Main screen
  */
 
 class RecipeScreen extends StatelessWidget {
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper _auth = FirebaseAuthHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +35,9 @@ class RecipeScreen extends StatelessWidget {
           children: [
             Container(
               padding: EdgeInsets.only(
-                  top:
-                      MediaQuery.of(context).orientation == Orientation.portrait
-                          ? MediaQuery.of(context).size.height * 0.055
-                          : 0.0),
+                  top: MediaQuery.of(context).orientation == Orientation.portrait
+                      ? MediaQuery.of(context).size.height * 0.055
+                      : 0.0),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -72,16 +62,10 @@ class RecipeScreen extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.only(
-                  top:
-                      MediaQuery.of(context).orientation == Orientation.portrait
-                          ? 56
-                          : 0,
+                  top: MediaQuery.of(context).orientation == Orientation.portrait ? 56 : 0,
                   left: 20,
                   right: 30,
-                  bottom:
-                      MediaQuery.of(context).orientation == Orientation.portrait
-                          ? 30
-                          : 10,
+                  bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 30 : 10,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -99,8 +83,7 @@ class RecipeScreen extends StatelessWidget {
                 color: secondaryColor,
                 child: FutureBuilder<List<Recipe>>(
                   future: recipeManager.getRecipes(context),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Recipe>> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
                     if (snapshot.hasData) {
                       List<Recipe> recipes = snapshot.data!;
                       if (recipes.length > 0) {
@@ -128,9 +111,7 @@ class RecipeScreen extends StatelessWidget {
                       return Text('No recipes available');
                     }
                     return Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 30),
-                        child: CircularProgressIndicator());
+                        alignment: Alignment.center, margin: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                   },
                 ),
               )
@@ -187,8 +168,7 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: deepIndigo, borderRadius: BorderRadius.circular(15)),
+      decoration: BoxDecoration(color: deepIndigo, borderRadius: BorderRadius.circular(15)),
       child: ListTile(
         onTap: () => Navigator.push(
           context,
@@ -207,8 +187,7 @@ class RecipeCard extends StatelessWidget {
         title: Container(
             height: 80,
             alignment: Alignment.centerLeft,
-            child: Text(r.title!,
-                style: robotoMedium16.copyWith(color: Colors.white))),
+            child: Text(r.title!, style: robotoMedium16.copyWith(color: Colors.white))),
         trailing: Container(
           alignment: Alignment.centerRight,
           width: 20,

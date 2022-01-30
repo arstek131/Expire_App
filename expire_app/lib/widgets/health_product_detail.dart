@@ -1,16 +1,12 @@
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/widgets/ingredient_analysis_clip.dart';
-
 import 'package:flutter/material.dart';
-import 'package:openfoodfacts/model/NutrientLevels.dart';
-
-/* widget */
-import '../widgets/healt_product_list_tile.dart';
-import '../widgets/nutri_score_clip.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* widget */
+import '../widgets/healt_product_list_tile.dart';
+import '../widgets/nutri_score_clip.dart';
 
 class HealthProductDetail extends StatelessWidget {
   HealthProductDetail({required this.product});

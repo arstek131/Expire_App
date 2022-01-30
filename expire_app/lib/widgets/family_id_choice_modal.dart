@@ -1,20 +1,18 @@
 /* dart */
+import 'dart:io' as pltf show Platform;
+import 'dart:ui';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 //import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_scandit/flutter_scandit.dart';
-import 'package:googleapis/versionhistory/v1.dart';
-import 'dart:io' as pltf show Platform;
-
-/* helpers */
-import '../helpers/firestore_helper.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
-
 /* const */
 import '../constants.dart';
+/* helpers */
+import '../helpers/firestore_helper.dart';
 
 class FamilyIdChoiceModal extends StatefulWidget {
   @override
@@ -38,7 +36,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
       _isLoading = true;
     });
     try {
-      bool familyExists = await FirestoreHelper.instance.familyExists(familyId: referenceId!);
+      bool familyExists = await FirestoreHelper().familyExists(familyId: referenceId!);
       setState(() {
         _isValid = familyExists;
       });

@@ -1,28 +1,22 @@
 /* dart */
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
-
-/* models */
-import '../models/product.dart';
-
-/* widgets */
-import '../widgets/expire_clip.dart';
-import '../widgets/image_dispatcher.dart';
-
-/* provider */
-import '../providers/products_provider.dart';
-
-/* helpers */
-import '../enums/expire_status.dart';
 
 /* style */
 import '../app_styles.dart' as styles;
+/* helpers */
+import '../enums/expire_status.dart';
+/* models */
+import '../models/product.dart';
+/* provider */
+import '../providers/products_provider.dart';
+/* widgets */
+import '../widgets/expire_clip.dart';
+import '../widgets/image_dispatcher.dart';
 
 class ProductListTile extends StatefulWidget {
   final Product product;

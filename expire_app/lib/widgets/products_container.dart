@@ -5,31 +5,24 @@ import 'package:expire_app/screens/product_details.dart';
 import 'package:expire_app/widgets/product_details_container.dart';
 import 'package:expire_app/widgets/product_grid_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-/* providers */
-import '../providers/products_provider.dart';
-import '../providers/bottom_navigator_bar_size_provider.dart';
-import '../providers/filters_provider.dart';
-
-/* models */
-import '../models/product.dart';
-
-/* helpers */
-import '../helpers/device_info.dart' as deviceInfo;
-
-/* widgets */
-import '../widgets/product_list_tile.dart';
-
-/* enums */
-import '../enums/products_view_mode.dart';
-
-/* helpers */
+import 'package:provider/provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* enums */
+import '../enums/products_view_mode.dart';
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+/* models */
+import '../models/product.dart';
+import '../providers/bottom_navigator_bar_size_provider.dart';
+import '../providers/filters_provider.dart';
+/* providers */
+import '../providers/products_provider.dart';
+/* widgets */
+import '../widgets/product_list_tile.dart';
 
 class ProductsContainer extends StatefulWidget {
   final ProductsViewMode _productsViewMode;

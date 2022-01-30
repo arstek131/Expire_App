@@ -1,29 +1,29 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/models/shopping_list_element.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:openfoodfacts/model/Nutriments.dart';
-import 'dart:io';
 import 'package:uuid/uuid.dart';
-import 'package:openfoodfacts/openfoodfacts.dart' as openfoodfacts;
-import 'package:openfoodfacts/model/Nutriments.dart';
 
 /* helper */
 import '../helpers/user_info.dart' as userinfo;
-import '../helpers/firebase_auth_helper.dart';
 
 class FirestoreHelper {
   /* singleton */
   FirestoreHelper._privateConstructor();
   static final FirestoreHelper _instance = FirestoreHelper._privateConstructor();
-  static FirestoreHelper get instance => _instance;
+  //static FirestoreHelper get instance => _instance;
+  factory FirestoreHelper({dynamic mockFirestore}) {
+    //_instance.firestore = mockFirestore ?? FirebaseFirestore.instance;
+    return _instance;
+  }
 
   /* varialbes */
-  final firestore = FirebaseFirestore.instance;
+  late dynamic firestore = !Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : null;
+
   final userInfo = userinfo.UserInfo.instance;
 
   /* getters */
@@ -81,7 +81,6 @@ class FirestoreHelper {
 
     for (var product in productsRef.docs) {
       Nutriments? nutriments = parseNutriments(product['nutriments']);
-      print(product.id);
       products.add(
         Product(
           id: product.id,
@@ -105,7 +104,6 @@ class FirestoreHelper {
           quantity: product['quantity'],
         ),
       );
-      print("test");
     }
     return products;
   }

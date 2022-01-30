@@ -1,26 +1,13 @@
-import 'dart:convert';
-
-import 'package:expire_app/enums/expire_status.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/providers/products_provider.dart';
-import 'package:expire_app/widgets/eco_product_detail.dart';
-import 'package:expire_app/widgets/expire_clip.dart';
-import 'package:expire_app/widgets/health_product_detail.dart';
-import 'package:expire_app/widgets/image_dispatcher.dart';
 import 'package:expire_app/widgets/product_details_container.dart';
-import 'package:expire_app/widgets/shopping_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:math';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:openfoodfacts/openfoodfacts.dart' as opf;
-import 'package:openfoodfacts/utils/TagType.dart';
-import '../helpers/device_info.dart' as deviceinfo;
 
 /* styles */
 import '../app_styles.dart' as styles;
+import '../helpers/device_info.dart' as deviceinfo;
 
 enum Pages { Health, Eco, ShoppingList, Score }
 

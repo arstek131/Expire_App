@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'products_provider.dart';
-
 class BottomNavigationBarSizeProvider extends ChangeNotifier {
   double _height = 75.0;
   double _bottomPadding = 20.0;

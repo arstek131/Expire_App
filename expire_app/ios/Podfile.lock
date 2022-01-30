@@ -4,8 +4,8 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
-  - cloud_firestore (3.1.6):
-    - Firebase/Firestore (= 8.10.0)
+  - cloud_firestore (3.1.7):
+    - Firebase/Firestore (= 8.11.0)
     - firebase_core
     - Flutter
   - FBAEMKit (12.1.0):
@@ -16,51 +16,51 @@ PODS:
   - FBSDKCoreKit_Basics (12.1.0)
   - FBSDKLoginKit (12.1.0):
     - FBSDKCoreKit (= 12.1.0)
-  - Firebase/Auth (8.10.0):
+  - Firebase/Auth (8.11.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 8.10.0)
-  - Firebase/CoreOnly (8.10.0):
-    - FirebaseCore (= 8.10.0)
-  - Firebase/Firestore (8.10.0):
+    - FirebaseAuth (~> 8.11.0)
+  - Firebase/CoreOnly (8.11.0):
+    - FirebaseCore (= 8.11.0)
+  - Firebase/Firestore (8.11.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (~> 8.10.0)
-  - Firebase/Storage (8.10.0):
+    - FirebaseFirestore (~> 8.11.0)
+  - Firebase/Storage (8.11.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 8.10.0)
-  - firebase_auth (3.3.5):
-    - Firebase/Auth (= 8.10.0)
+    - FirebaseStorage (~> 8.11.0)
+  - firebase_auth (3.3.6):
+    - Firebase/Auth (= 8.11.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.11.0):
-    - Firebase/CoreOnly (= 8.10.0)
+  - firebase_core (1.12.0):
+    - Firebase/CoreOnly (= 8.11.0)
     - Flutter
-  - firebase_storage (10.2.5):
-    - Firebase/Storage (= 8.10.0)
+  - firebase_storage (10.2.6):
+    - Firebase/Storage (= 8.11.0)
     - firebase_core
     - Flutter
-  - FirebaseAuth (8.10.0):
+  - FirebaseAuth (8.11.0):
     - FirebaseCore (~> 8.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
     - GTMSessionFetcher/Core (~> 1.5)
-  - FirebaseCore (8.10.0):
+  - FirebaseCore (8.11.0):
     - FirebaseCoreDiagnostics (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.6)
-    - GoogleUtilities/Logger (~> 7.6)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Logger (~> 7.7)
   - FirebaseCoreDiagnostics (8.11.0):
     - GoogleDataTransport (~> 9.1)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
-  - FirebaseFirestore (8.10.0):
-    - FirebaseFirestore/AutodetectLeveldb (= 8.10.0)
-  - FirebaseFirestore/AutodetectLeveldb (8.10.0):
+  - FirebaseFirestore (8.11.0):
+    - FirebaseFirestore/AutodetectLeveldb (= 8.11.0)
+  - FirebaseFirestore/AutodetectLeveldb (8.11.0):
     - FirebaseFirestore/Base
     - FirebaseFirestore/WithLeveldb
-  - FirebaseFirestore/Base (8.10.0)
-  - FirebaseFirestore/WithLeveldb (8.10.0):
+  - FirebaseFirestore/Base (8.11.0)
+  - FirebaseFirestore/WithLeveldb (8.11.0):
     - FirebaseFirestore/Base
-  - FirebaseStorage (8.10.0):
+  - FirebaseStorage (8.11.0):
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
   - Flutter (1.0.0)
@@ -126,8 +126,6 @@ PODS:
   - ScanditCaptureCore (6.10.1)
   - shared_preferences_ios (0.0.1):
     - Flutter
-  - sign_in_apple (0.0.1):
-    - Flutter
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
@@ -138,7 +136,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
-  - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.10.0`)
+  - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.11.0`)
   - Flutter (from `Flutter`)
   - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
@@ -149,7 +147,6 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
-  - sign_in_apple (from `.symlinks/plugins/sign_in_apple/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
 SPEC REPOS:
@@ -187,7 +184,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   FirebaseFirestore:
     :git: https://github.com/invertase/firestore-ios-sdk-frameworks.git
-    :tag: 8.10.0
+    :tag: 8.11.0
   Flutter:
     :path: Flutter
   flutter_barcode_scanner:
@@ -208,32 +205,30 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   shared_preferences_ios:
     :path: ".symlinks/plugins/shared_preferences_ios/ios"
-  sign_in_apple:
-    :path: ".symlinks/plugins/sign_in_apple/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
 
 CHECKOUT OPTIONS:
   FirebaseFirestore:
     :git: https://github.com/invertase/firestore-ios-sdk-frameworks.git
-    :tag: 8.10.0
+    :tag: 8.11.0
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
-  cloud_firestore: 03020d987c2828e9b2d87f6940d365ddb089394f
+  cloud_firestore: 86f87680a19c805cb0c80b75ecb17ca2d18085f9
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
   FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
   FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
-  Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
-  firebase_auth: 9d959bddc3b255ddfb67cf630a5bbb6186964356
-  firebase_core: 2ca2d6cc8a11693e701b37126afae4800be5dbac
-  firebase_storage: 740e81d4bef3360d50447dda37da9b8914a2acc0
-  FirebaseAuth: 59a2d2b933b5b79e18fb1e6ad230c6abdaa73d26
-  FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
+  Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
+  firebase_auth: ccdb84a0d52a2d7897898ae8121689da6e13d71f
+  firebase_core: 443bccfd6aa6b42f07be365b500773dc69db2d87
+  firebase_storage: e1ac35b46a4ead41de4d8d6dd44728c476fb87b3
+  FirebaseAuth: d96d73aba85d192d7a7aa0b86dd6d7f8ec170b4b
+  FirebaseCore: 2f4f85b453cc8fea4bb2b37e370007d2bcafe3f0
   FirebaseCoreDiagnostics: 64d9709d804a6c25bd77841371c1fcfd909d5601
-  FirebaseFirestore: 59f8b4382e214b21af226875bd2cf85b84d9af11
-  FirebaseStorage: 815410224b548172c578f02554a86bbc8f817f50
+  FirebaseFirestore: 8a0c6a06219bbaad86c72bcb66688c28995dde84
+  FirebaseStorage: 4d05cb1112ff8822a0f9f5090da8bd6d550602ec
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_facebook_auth: dfd6b2563406c538098e2127512d385c9ffd70ad
@@ -247,17 +242,16 @@ SPEC CHECKSUMS:
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
-  image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
+  image_picker: 0d37d1cb66231c2473a0e3ccb8d062d0c2b3d297
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   ScanditBarcodeCapture: 0fa7f9e6ad8545d9eba63d849ba74106f6db82b2
   ScanditCaptureCore: d2f78d96b897f898364bdd720b30b8649d84dc53
   shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
-  sign_in_apple: 4a2b1a8a30acd281c854cb1abcf17e03d92538e4
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
 
-PODFILE CHECKSUM: 40fbcfcdfd955b6a6f0204fa3f053815dc6e3cde
+PODFILE CHECKSUM: eeea99b663acf34da3e3a67c5323d92cdca8e239
 
 COCOAPODS: 1.11.2

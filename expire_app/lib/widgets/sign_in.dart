@@ -2,23 +2,18 @@ import 'dart:io';
 
 import 'package:expire_app/screens/main_app_screen.dart';
 import 'package:expire_app/screens/name_input_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../models/http_exception.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/* helpers */
-import '../helpers/device_info.dart' as deviceInfo;
-
-/* firebase */
-import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+/* firebase */
+import '../helpers/firebase_auth_helper.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({
@@ -67,7 +62,7 @@ class _SignInState extends State<SignIn> {
     });
     try {
       // Sign user up
-      await FirebaseAuthHelper.instance.signInWithEmail(
+      await FirebaseAuthHelper().signInWithEmail(
         email: _authData['email']!,
         password: _authData['password']!,
       );
@@ -369,7 +364,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  FirebaseAuthHelper.instance.googleLogIn();
+                                  FirebaseAuthHelper().googleLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -403,7 +398,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  FirebaseAuthHelper.instance.facebookLogIn();
+                                  FirebaseAuthHelper().facebookLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

@@ -5,21 +5,14 @@ import 'package:expire_app/widgets/expire_clip.dart';
 import 'package:expire_app/widgets/image_dispatcher.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:intl/intl.dart';
-import '../helpers/user_info.dart' as userInfo;
-
-/* models */
-import '../models/product.dart';
-
-/* helpers */
-import '../helpers/firestore_helper.dart';
-
-/* enums */
-import '../enums/expire_status.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* enums */
+import '../enums/expire_status.dart';
+import '../helpers/user_info.dart' as userInfo;
+/* models */
+import '../models/product.dart';
 
 class ProductGridTile extends StatefulWidget {
   final Product product;

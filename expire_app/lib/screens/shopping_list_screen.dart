@@ -1,24 +1,16 @@
 /* flutter  */
-import 'package:expire_app/models/shopping_list.dart';
-import 'package:expire_app/widgets/family_id_choice_modal.dart';
 import 'package:expire_app/widgets/shopping_list_title_placeholder.dart';
 import 'package:expire_app/widgets/shopping_lists_container.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 /* provider */
 import 'package:provider/provider.dart';
-import '../providers/shopping_list_provider.dart';
-
-/* widgets */
-import '../widgets/options_bar.dart';
-import '../widgets/product_list_tile_placeholder.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
-
 /* helper */
 import '../helpers/device_info.dart' as deviceinfo;
+import '../providers/shopping_list_provider.dart';
 
 class ShoppingListScreen extends StatefulWidget {
   const ShoppingListScreen();

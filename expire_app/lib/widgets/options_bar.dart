@@ -1,19 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:math';
+import 'package:provider/provider.dart';
 
 /* style */
 import '../app_styles.dart' as styles;
-
-/* providers */
-import '../providers/filters_provider.dart';
-import 'package:provider/provider.dart';
-
 /* helpers */
 import '../helpers/device_info.dart' as deviceInfo;
-
 /* models */
 import '../models/categories.dart' as categories;
+/* providers */
+import '../providers/filters_provider.dart';
 
 class OptionsBar extends StatefulWidget {
   OptionsBar();

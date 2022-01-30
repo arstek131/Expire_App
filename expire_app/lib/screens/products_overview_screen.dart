@@ -2,26 +2,22 @@
 import 'package:expire_app/helpers/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 /* providers */
 import 'package:provider/provider.dart';
-import '../providers/products_provider.dart';
-import '../providers/filters_provider.dart';
-
-/* widgets */
-import '../widgets/options_bar.dart';
-import '../widgets/products_container.dart';
-import '../widgets/product_list_tile_placeholder.dart';
-
-/* enums */
-import '../enums/products_view_mode.dart';
-import '../enums/ordering.dart';
-
-/* helpers */
-import '../helpers/user_info.dart' as userinfo;
 
 /* styles */
 import '../app_styles.dart' as styles;
+import '../enums/ordering.dart';
+/* enums */
+import '../enums/products_view_mode.dart';
+/* helpers */
+import '../helpers/user_info.dart' as userinfo;
+import '../providers/filters_provider.dart';
+import '../providers/products_provider.dart';
+/* widgets */
+import '../widgets/options_bar.dart';
+import '../widgets/product_list_tile_placeholder.dart';
+import '../widgets/products_container.dart';
 
 enum ViewMode {
   HideExpired,

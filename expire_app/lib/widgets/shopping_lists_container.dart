@@ -6,17 +6,15 @@ import 'package:expire_app/widgets/shopping_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-/* helper */
-import '../helpers/device_info.dart' as deviceinfo;
-
-/* providers */
-import '../providers/shopping_list_provider.dart';
 import 'package:provider/provider.dart';
-import '../providers/bottom_navigator_bar_size_provider.dart';
 
 /* style */
 import '../app_styles.dart' as styles;
+/* helper */
+import '../helpers/device_info.dart' as deviceinfo;
+import '../providers/bottom_navigator_bar_size_provider.dart';
+/* providers */
+import '../providers/shopping_list_provider.dart';
 
 class ShoppingListsContainer extends StatefulWidget {
   const ShoppingListsContainer({Key? key}) : super(key: key);
@@ -93,7 +91,7 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
                                           arguments: data.shoppingLists[index].id,
                                         )
                                         .then(
-                                          (value) => !FirebaseAuthHelper.instance.isAuth
+                                          (value) => !FirebaseAuthHelper().isAuth
                                               ? Provider.of<ShoppingListProvider>(context, listen: false).fetchShoppingLists()
                                               : null,
                                         );

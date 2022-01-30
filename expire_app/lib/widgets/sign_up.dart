@@ -1,30 +1,19 @@
 /* dart */
-import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-
-/* providers */
-import '../providers/auth_provider.dart';
-
-/* models */
-import '../models/http_exception.dart';
-
-/* widgets */
-import '../widgets/family_id_choice_modal.dart';
-
-/* screens */
-import 'family_id_choice_modal.dart';
-
-/* firebase */
-import '../helpers/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-/* helpers */
-import '../helpers/device_info.dart' as deviceInfo;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* helpers */
+import '../helpers/device_info.dart' as deviceInfo;
+/* firebase */
+import '../helpers/firebase_auth_helper.dart';
+/* widgets */
+import '../widgets/family_id_choice_modal.dart';
+/* screens */
+import 'family_id_choice_modal.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({
@@ -105,7 +94,7 @@ class _SignUpState extends State<SignUp> {
     });
 
     try {
-      await FirebaseAuthHelper.instance.signUpWithEmail(
+      await FirebaseAuthHelper().signUpWithEmail(
         email: _authData['email']!,
         password: _authData['password']!,
         familyId: _authData['familyId'],

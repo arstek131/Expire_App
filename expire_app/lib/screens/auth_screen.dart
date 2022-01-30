@@ -2,15 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/* pages */
+import '../screens/onboarding_page.dart';
 /* widgets */
 import '../widgets/sign_in.dart';
 import '../widgets/sign_up.dart';
-
-/* pages */
-import '../screens/onboarding_page.dart';
-
-/* helpers */
-import '../models/onboard_data.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';

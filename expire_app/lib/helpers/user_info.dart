@@ -1,5 +1,4 @@
 /* dart */
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /* firebase */
@@ -19,7 +18,7 @@ class UserInfo {
   String? _familyId;
   String? _displayName;
   String? _email;
-  FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper _auth = FirebaseAuthHelper();
 
   /* getters */
   String? get userId {
@@ -49,7 +48,7 @@ class UserInfo {
 
   set displayName(displayName) {
     if (_auth.isAuth) {
-      FirebaseAuthHelper.instance.setDisplayName(displayName);
+      FirebaseAuthHelper().setDisplayName(displayName);
     } else {
       SharedPreferences.getInstance().then((prefs) => prefs.setString('localDisplayName', displayName));
     }
@@ -64,10 +63,10 @@ class UserInfo {
   Future<void> initUserInfoProvider() async {
     // if registered user, fetch data
     if (_auth.isAuth) {
-      _userId = FirebaseAuthHelper.instance.userId;
-      _displayName = FirebaseAuthHelper.instance.displayName;
-      _familyId = await FirestoreHelper.instance.getFamilyIdFromUserId(userId: _userId!);
-      _email = FirebaseAuthHelper.instance.email;
+      _userId = FirebaseAuthHelper().userId;
+      _displayName = FirebaseAuthHelper().displayName;
+      _familyId = await FirestoreHelper().getFamilyIdFromUserId(userId: _userId!);
+      _email = FirebaseAuthHelper().email;
     }
     // if unregistered, get data from shared preferences
     else {

@@ -1,18 +1,16 @@
 import 'package:expire_app/providers/tile_pointer_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import '../helpers/device_info.dart';
-
-/* models */
-import '../models/shopping_list_element.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /* providers */
 import 'package:provider/provider.dart';
-import '../providers/shopping_list_provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+import '../helpers/device_info.dart';
+/* models */
+import '../models/shopping_list_element.dart';
+import '../providers/shopping_list_provider.dart';
 
 class ShoppingListElementTile extends StatefulWidget {
   ShoppingListElementTile(this.listId, this.shoppingListElement);

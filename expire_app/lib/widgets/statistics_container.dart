@@ -6,13 +6,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 /* helpers */
 import '../app_styles.dart';
-import '../helpers/firebase_auth_helper.dart';
-
 /* styles */
 import '../app_styles.dart' as styles;
+import '../helpers/firebase_auth_helper.dart';
 
 class StatisticsContainer extends StatelessWidget {
-  final FirebaseAuthHelper _auth = FirebaseAuthHelper.instance;
+  final FirebaseAuthHelper _auth = FirebaseAuthHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +56,7 @@ class StatisticsContainer extends StatelessWidget {
     }
     return SingleChildScrollView(
       padding: EdgeInsets.only(bottom: 80),
-      child: Consumer<ProductsProvider>(
-          builder: (context, productprovider, child) {
+      child: Consumer<ProductsProvider>(builder: (context, productprovider, child) {
         return Card(
           color: Colors.transparent,
           child: Column(
@@ -77,16 +75,17 @@ class StatisticsContainer extends StatelessWidget {
   SfCircularChart buildChart(int index, String title, BuildContext context) {
     return SfCircularChart(
       title: ChartTitle(text: title, textStyle: subtitle),
-      legend:
-          Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap, textStyle: styles.robotoMedium16.copyWith(color: Colors.white)),
+      legend: Legend(
+          isVisible: true,
+          overflowMode: LegendItemOverflowMode.wrap,
+          textStyle: styles.robotoMedium16.copyWith(color: Colors.white)),
       series: <CircularSeries>[
         DoughnutSeries<dynamic, String>(
-          dataSource: getDataSource(index, context),
-          xValueMapper: (dynamic data, _) => data.type,
-          yValueMapper: (dynamic data, _) => data.value,
-          dataLabelSettings: DataLabelSettings(isVisible: false),
-          pointColorMapper: (dynamic data, _) => data.color
-        ),
+            dataSource: getDataSource(index, context),
+            xValueMapper: (dynamic data, _) => data.type,
+            yValueMapper: (dynamic data, _) => data.value,
+            dataLabelSettings: DataLabelSettings(isVisible: false),
+            pointColorMapper: (dynamic data, _) => data.color),
       ],
     );
   }

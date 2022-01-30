@@ -1,20 +1,15 @@
 /* dart */
-import 'package:expire_app/widgets/expire_clip.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:intl/intl.dart';
-
-/* models */
-import '../models/product.dart';
-
-/* helpers */
-import '../helpers/firestore_helper.dart';
-
-/* enums */
-import '../enums/expire_status.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
+/* enums */
+import '../enums/expire_status.dart';
+/* helpers */
+import '../helpers/firestore_helper.dart';
+/* models */
+import '../models/product.dart';
 
 class ProductSingleGridTile extends StatefulWidget {
   final Product product;
@@ -54,7 +49,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
             leading: CircleAvatar(
               backgroundColor: Colors.deepOrange,
               child: FutureBuilder(
-                future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
+                future: FirestoreHelper().getDisplayNameFromUserId(userId: widget.product.creatorId),
                 builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
                     snapshot.connectionState == ConnectionState.waiting
                         ? Shimmer.fromColors(
@@ -81,7 +76,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
               style: TextStyle(color: Colors.black),
             ),
             subtitle: FutureBuilder(
-              future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
+              future: FirestoreHelper().getDisplayNameFromUserId(userId: widget.product.creatorId),
               builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
                   snapshot.connectionState == ConnectionState.waiting
                       ? Shimmer.fromColors(
@@ -136,7 +131,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () {
-                                                FirestoreHelper.instance.deleteProduct(widget.product.id!);
+                                                FirestoreHelper().deleteProduct(widget.product.id!);
 
                                                 Navigator.of(ctx).pop(true);
                                                 Navigator.of(modalContext).pop(true);
@@ -228,7 +223,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
                     size: 20,
                   ),
                   FutureBuilder(
-                    future: FirestoreHelper.instance.getDisplayNameFromUserId(userId: widget.product.creatorId),
+                    future: FirestoreHelper().getDisplayNameFromUserId(userId: widget.product.creatorId),
                     builder: (BuildContext context, AsyncSnapshot<String?> snapshot) =>
                         snapshot.connectionState == ConnectionState.waiting
                             ? Shimmer.fromColors(
@@ -275,7 +270,7 @@ class _ProductSingleGridTileState extends State<ProductSingleGridTile> {
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
-                            FirestoreHelper.instance.deleteProduct(widget.product.id); //Todo: not working.
+                            FirestoreHelper().deleteProduct(widget.product.id); //Todo: not working.
                             Navigator.of(ctx).pop(true);
                           },
                           child: const Text("DELETE"),

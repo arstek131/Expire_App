@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:openfoodfacts/model/Nutriments.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:flutter/foundation.dart';
 
 class Product {
   /* product info */
@@ -49,4 +50,32 @@ class Product {
     this.brandName,
     this.quantity,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Product &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title &&
+          expiration.millisecondsSinceEpoch == other.expiration.millisecondsSinceEpoch &&
+          creatorId == other.creatorId &&
+          creatorName == other.creatorName &&
+          dateAdded.millisecondsSinceEpoch == other.dateAdded.millisecondsSinceEpoch &&
+          image == other.image &&
+          //nutriments == other.nutriments &&
+          ingredientsText == other.ingredientsText &&
+          nutriscore == other.nutriscore &&
+          listEquals(allergens, other.allergens) &&
+          ecoscore == other.ecoscore &&
+          packaging == other.packaging &&
+          mapEquals(ingredientLevels, other.ingredientLevels) &&
+          isPalmOilFree == other.isPalmOilFree &&
+          isVegetarian == other.isVegetarian &&
+          isVegan == other.isVegan &&
+          brandName == other.brandName &&
+          quantity == other.quantity;
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -1,10 +1,10 @@
+import 'package:expire_app/models/http_service.dart';
 import 'package:expire_app/models/mock_recipemodel.dart';
 import 'package:expire_app/models/recipe_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
-import 'package:expire_app/models/http_service.dart';
 
 import '../app_styles.dart';
 
@@ -13,12 +13,7 @@ class RecipeDetailsScreen extends StatelessWidget {
   final MockRecipeModel? recipeModel;
   final RecipeDetails? recipeDetails;
 
-  const RecipeDetailsScreen(
-      {Key? key,
-      this.recipeModel,
-      this.recipeDetails,
-      required this.idOfRecipe})
-      : super(key: key);
+  const RecipeDetailsScreen({Key? key, this.recipeModel, this.recipeDetails, required this.idOfRecipe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +58,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                     Center(
                       child: Text(
                         recipesDetails!.title, //recipesDetails![0].title!,
-                        style: _textTheme.headline5!
-                            .copyWith(fontWeight: FontWeight.w400),
+                        style: _textTheme.headline5!.copyWith(fontWeight: FontWeight.w400),
                       ),
                     ),
                     SizedBox(
@@ -85,8 +79,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                           width: 4,
                         ),
                         Text(
-                          recipesDetails.readyInMinutes
-                              .toString(), //recipesDetails[0].readyInMinutes.toString(),
+                          recipesDetails.readyInMinutes.toString(), //recipesDetails[0].readyInMinutes.toString(),
                         ),
                         SizedBox(
                           width: 20,
@@ -135,8 +128,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                                 radius: 3,
                                 paintingStyle: PaintingStyle.fill,
                               ),
-                              unselectedLabelColor:
-                                  Colors.black.withOpacity(0.3),
+                              unselectedLabelColor: Colors.black.withOpacity(0.3),
                               labelStyle: subheading.copyWith(fontSize: 17),
                               labelPadding: EdgeInsets.symmetric(
                                 horizontal: 32,
@@ -151,8 +143,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                                   Ingredients(recipeModel: snapshot.data!),
                                   //recipesDetails[0]),
                                   Container(
-                                    child: Preparation(
-                                        recipeModel: snapshot.data!),
+                                    child: Preparation(recipeModel: snapshot.data!),
                                   ),
                                 ],
                               ),
@@ -177,8 +168,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                               width: double.infinity,
                               height: (size.height / 2) + 50,
                               fit: BoxFit.cover,
-                              image: NetworkImage(recipesDetails
-                                  .image), //NetworkImage(recipesDetails[0].image!),
+                              image: NetworkImage(recipesDetails.image), //NetworkImage(recipesDetails[0].image!),
                             ),
                           ),
                         ),
@@ -233,9 +223,7 @@ class Preparation extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: recipeModel.analyzedInstructions.isNotEmpty
-                  ? recipeModel.analyzedInstructions[0].steps.length
-                  : 0,
+              itemCount: recipeModel.analyzedInstructions.isNotEmpty ? recipeModel.analyzedInstructions[0].steps.length : 0,
               //recipeModel.extendedIngredients!.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
@@ -243,12 +231,10 @@ class Preparation extends StatelessWidget {
                     vertical: 2.0,
                   ),
                   child: Text(
-                    recipeModel.analyzedInstructions[0].steps[index].number
-                            .toString() +
+                    recipeModel.analyzedInstructions[0].steps[index].number.toString() +
                         '.'
                             ' ' +
-                        recipeModel.analyzedInstructions[0].steps[index].step
-                            .toString(),
+                        recipeModel.analyzedInstructions[0].steps[index].step.toString(),
                     style: robotoMedium16,
                   ), //recipeModel.extendedIngredients![index].nameClean.toString()),
                 );
@@ -287,9 +273,7 @@ class Ingredients extends StatelessWidget {
                     vertical: 2.0,
                   ),
                   child: Text(
-                    '\u2022  ' +
-                        recipeModel.extendedIngredients[index].nameClean
-                            .capitalize(),
+                    '\u2022  ' + recipeModel.extendedIngredients[index].nameClean.capitalize(),
                     style: robotoMedium16,
                   ), //recipeModel.extendedIngredients![index].nameClean.toString()),
                 );

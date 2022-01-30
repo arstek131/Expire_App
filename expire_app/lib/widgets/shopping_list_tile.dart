@@ -1,18 +1,14 @@
-import 'package:expire_app/helpers/firebase_auth_helper.dart';
-import 'package:expire_app/helpers/firestore_helper.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
-import 'package:expire_app/screens/shopping_list_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-/* helper */
-import '../helpers/device_info.dart' as deviceinfo;
-
 /* styles */
 import '../app_styles.dart' as styles;
+/* helper */
+import '../helpers/device_info.dart' as deviceinfo;
 
 class ShoppingListTile extends StatefulWidget {
   ShoppingListTile({

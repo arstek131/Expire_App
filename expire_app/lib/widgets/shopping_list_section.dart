@@ -1,13 +1,11 @@
-import 'package:expire_app/widgets/shopping_list_tile.dart';
 import 'package:flutter/material.dart';
-import '../app_styles.dart' as styles;
-
-/* providers */
-import '../providers/shopping_list_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../app_styles.dart' as styles;
 /* models */
 import '../models/shopping_list.dart';
+/* providers */
+import '../providers/shopping_list_provider.dart';
 
 class ShoppingListSection extends StatefulWidget {
   String title;

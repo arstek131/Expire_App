@@ -1,24 +1,15 @@
 /* dart */
-import 'dart:io';
-import 'package:expire_app/screens/products_overview_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
-import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-/* providers */
-import 'package:provider/provider.dart';
-import '../helpers/user_info.dart';
-
-/* firebase */
-import '../helpers/firebase_auth_helper.dart';
-
-/* screens */
-import '../screens/main_app_screen.dart';
 
 /* other */
 import '../app_styles.dart' as styles;
+/* firebase */
+import '../helpers/firebase_auth_helper.dart';
+/* screens */
+import '../screens/main_app_screen.dart';
 
 class NameInputScreen extends StatefulWidget {
   static const routeName = '/name-input-screen';
@@ -28,7 +19,7 @@ class NameInputScreen extends StatefulWidget {
 }
 
 class _NameInputScreenState extends State<NameInputScreen> with TickerProviderStateMixin {
-  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, String> _userData = {

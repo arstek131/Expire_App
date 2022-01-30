@@ -1,21 +1,14 @@
 /* dart */
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
-
-/* providers */
-import '../providers/products_provider.dart';
-import '../providers/bottom_navigator_bar_size_provider.dart';
-
-/* widgets */
-import '../widgets/custom_bottom_navigation_bar_item.dart';
-import '../widgets/add_item_modal.dart';
-
-/* models */
-import '../models/product.dart';
 
 /* style */
 import '../app_styles.dart' as styles;
+import '../providers/bottom_navigator_bar_size_provider.dart';
+import '../widgets/add_item_modal.dart';
+/* widgets */
+import '../widgets/custom_bottom_navigation_bar_item.dart';
 
 /* screens */
 

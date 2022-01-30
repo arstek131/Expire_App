@@ -2,13 +2,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+/* styles */
+import '../app_styles.dart' as styles;
+import '../helpers/device_info.dart' as deviceInfo;
 /* helpers */
 import '../helpers/firestore_helper.dart';
 import '../helpers/user_info.dart' as userinfo;
-import '../helpers/device_info.dart' as deviceInfo;
-
-/* styles */
-import '../app_styles.dart' as styles;
 
 class FamilyInfoScreen extends StatefulWidget {
   static const routeName = "/family_info";
@@ -26,10 +25,10 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
   var displayNames = [];
 
   Future<void> fetchUsersData() async {
-    usersId = await FirestoreHelper.instance.getUsersFromFamilyId(familyId: _userInfo.familyId!);
+    usersId = await FirestoreHelper().getUsersFromFamilyId(familyId: _userInfo.familyId!);
 
     for (final userId in usersId) {
-      displayNames.add(await FirestoreHelper.instance.getDisplayNameFromUserId(userId: userId));
+      displayNames.add(await FirestoreHelper().getDisplayNameFromUserId(userId: userId));
     }
   }
 

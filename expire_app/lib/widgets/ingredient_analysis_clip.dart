@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../app_styles.dart' as styles;
 import 'package:intl/intl.dart' show toBeginningOfSentenceCase;
+
+import '../app_styles.dart' as styles;
 
 enum Type { PALM_OIL, VEGETARIAN, VEGAN }
 enum Free { FREE, MAYBE, NOT, UNKNOWN }

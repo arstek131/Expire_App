@@ -1,21 +1,11 @@
 /* dart */
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
-//import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_scandit/flutter_scandit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:googleapis/versionhistory/v1.dart';
-import 'dart:io' as pltf show Platform;
 
-/* helpers */
-import '../helpers/firestore_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
-
-/* const */
-import '../constants.dart';
 
 class DisplayNameChoiceModal extends StatefulWidget {
   const DisplayNameChoiceModal();

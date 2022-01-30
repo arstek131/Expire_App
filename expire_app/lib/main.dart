@@ -1,36 +1,32 @@
 /* dart libraries */
-import 'dart:io';
+
 import 'package:expire_app/helpers/device_info.dart';
 import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
-import 'package:expire_app/providers/tile_pointer_provider.dart';
 import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/screens/product_details.dart';
 import 'package:expire_app/screens/shopping_list_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/* Screens */
-import 'screens/main_app_screen.dart';
-import 'screens/auth_screen.dart';
-import 'screens/name_input_screen.dart';
-import 'screens/onboarding_page.dart';
-
+import 'package:flutter/material.dart';
 /* Providers */
 import 'package:provider/provider.dart';
-import './providers/products_provider.dart';
-import './providers/bottom_navigator_bar_size_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/* helpers */
-import 'helpers/custom_route.dart';
-import './helpers/db_manager.dart';
 import './constants.dart' as constants;
-
+import './helpers/db_manager.dart';
 /* firebase */
 import './helpers/firebase_auth_helper.dart';
+import './providers/bottom_navigator_bar_size_provider.dart';
+import './providers/products_provider.dart';
+/* helpers */
+import 'helpers/custom_route.dart';
+import 'screens/auth_screen.dart';
+/* Screens */
+import 'screens/main_app_screen.dart';
+import 'screens/name_input_screen.dart';
+import 'screens/onboarding_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +43,7 @@ void main() async {
   }
 
   /* DB init */
-  await DBManager.instance.init();
+  await DBManager().init();
 
   /* init device info such as device type, screen size etc...*/
   DeviceInfo.instance;
@@ -63,7 +59,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper.instance;
+  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +85,6 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Expire app',
         theme: ThemeData(
-          textTheme: const TextTheme(/* Insert text theme here pair name : TextStyle(...) */),
           primarySwatch: Colors.indigo,
           pageTransitionsTheme: PageTransitionsTheme(builders: {
             TargetPlatform.android: CustomPageTransitionBuilder(),

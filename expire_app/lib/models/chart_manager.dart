@@ -1,6 +1,5 @@
 import 'package:expire_app/models/chartdata.dart';
 import 'package:expire_app/providers/products_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +9,7 @@ class ChartManager {
   }*/
 
   static List<dynamic> getChartData(BuildContext context, int index) {
-    final ProductsProvider productData =
-        Provider.of<ProductsProvider>(context, listen: false);
+    final ProductsProvider productData = Provider.of<ProductsProvider>(context, listen: false);
 
     ChartData l = ChartData(sugar: [
       Sugar('High', 0, Colors.redAccent),
