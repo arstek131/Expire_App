@@ -2,16 +2,13 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 /* enums */
 import '../enums/sign_in_method.dart';
-
 /* helper */
 import '../helpers/firestore_helper.dart';
-import '../helpers/user_info.dart';
 
 class FirebaseAuthHelper {
   /* singleton */
