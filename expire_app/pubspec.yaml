@@ -141,6 +141,7 @@ flutter:
     - assets/images/missing_image_placeholder.png
     - assets/auth/credentials.json
     - assets/images/missing_image_placeholder.png
+    - assets/images/croc.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

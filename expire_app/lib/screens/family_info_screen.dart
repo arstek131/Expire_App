@@ -66,7 +66,7 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
                             child: CircleAvatar(
                               radius: 26,
                               backgroundImage: AssetImage(
-                                "assets/images/sorre.png",
+                                "assets/images/croc.png",
                               ),
                             ),
                           ),
@@ -97,7 +97,7 @@ class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
                             child: CircleAvatar(
                               radius: 26,
                               backgroundImage: AssetImage(
-                                "assets/images/sorre.png",
+                                "assets/images/croc.png",
                               ),
                             ),
                           ),

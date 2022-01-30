@@ -66,7 +66,7 @@ class _ProductDetailsContainerState extends State<ProductDetailsContainer> {
                             child: CircleAvatar(
                               radius: 35,
                               backgroundImage: AssetImage(
-                                "assets/images/sorre.png",
+                                "assets/images/croc.png",
                               ),
                             ),
                           ),

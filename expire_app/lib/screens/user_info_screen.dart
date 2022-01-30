@@ -153,7 +153,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       child: CircleAvatar(
                         radius: _avatarRadius,
                         backgroundImage: AssetImage(
-                          "assets/images/sorre.png",
+                          "assets/images/croc.png",
                         ),
                       ),
                     ),
