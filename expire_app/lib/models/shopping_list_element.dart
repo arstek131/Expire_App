@@ -31,4 +31,17 @@ class ShoppingListElement {
       'checked': this.checked,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShoppingListElement &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title &&
+          quantity == other.quantity &&
+          checked == other.checked;
+
+  @override
+  int get hashCode => id.hashCode;
 }

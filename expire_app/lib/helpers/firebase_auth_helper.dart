@@ -1,6 +1,5 @@
 /* dart */
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,18 +17,20 @@ class FirebaseAuthHelper {
 
   //static FirebaseAuthHelper get instance => _instance;
 
-  factory FirebaseAuthHelper({dynamic mockAuth}) {
-    //_instance._auth = mockAuth ?? FirebaseAuth.instance;
-
+  factory FirebaseAuthHelper({mockAuth, mockGoogleAuth, mockFirestoreHelper}) {
+    _instance._auth = mockAuth ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : null);
+    _instance._firestore = mockFirestoreHelper ?? FirestoreHelper();
+    _instance.googleSignIn = mockGoogleAuth ?? GoogleSignIn();
     return _instance;
   }
 
   /* variables */
-  late dynamic _auth = !Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : null;
+  late dynamic _auth; //!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : null;
+  late FirestoreHelper _firestore;
   SignInMethod _signInMethod = SignInMethod.None; // default
 
   // OAuth
-  GoogleSignIn googleSignIn = GoogleSignIn();
+  late GoogleSignIn googleSignIn;
   FacebookAuth facebookAuth = FacebookAuth.instance;
 
   /* getters */
@@ -65,7 +66,7 @@ class FirebaseAuthHelper {
 
   Future<void>? setDisplayName(String? displayName) async {
     if (isAuth && displayName != null) {
-      await FirestoreHelper().setDisplayName(userId: FirebaseAuthHelper().userId!, displayName: displayName);
+      await _firestore.setDisplayName(userId: FirebaseAuthHelper().userId!, displayName: displayName);
     }
 
     return isAuth ? _auth.currentUser!.updateDisplayName(displayName) : null;
@@ -90,7 +91,7 @@ class FirebaseAuthHelper {
     }
     _signInMethod = SignInMethod.EmailAndPassword;
 
-    await FirestoreHelper().addUser(userId: userCredential.user!.uid, familyId: familyId);
+    await _firestore.addUser(userId: userCredential.user!.uid, familyId: familyId);
   }
 
   Future<void> googleLogIn() async {
@@ -114,9 +115,9 @@ class FirebaseAuthHelper {
         String userId = response.user!.uid;
         String displayName = _user.displayName!;
 
-        await FirestoreHelper().addUser(userId: userId);
+        await _firestore.addUser(userId: userId);
         await setDisplayName(displayName);
-        await FirestoreHelper().setDisplayName(userId: userId, displayName: displayName);
+        await _firestore.setDisplayName(userId: userId, displayName: displayName);
       }
     } on FirebaseAuthException catch (error) {
       rethrow;
@@ -143,9 +144,9 @@ class FirebaseAuthHelper {
         String userId = response.user!.uid;
         String displayName = _user['name'];
 
-        await FirestoreHelper().addUser(userId: userId);
+        await _firestore.addUser(userId: userId);
         await setDisplayName(displayName);
-        await FirestoreHelper().setDisplayName(userId: userId, displayName: displayName);
+        await _firestore.setDisplayName(userId: userId, displayName: displayName);
       }
     } on FirebaseAuthException catch (error) {
       rethrow;
