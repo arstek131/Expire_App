@@ -179,8 +179,9 @@ class _ProductsContainerState extends State<ProductsContainer> {
                                                 Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: product.id);
                                               } else {
                                                 setState(() {
+                                                  //print(data.items[i].title);
                                                   _selectedProduct =
-                                                      data.items[i].id != _selectedProduct?.id ? data.items[i] : null;
+                                                      filteredProducts[i].id != _selectedProduct?.id ? filteredProducts[i] : null;
                                                 });
                                               }
                                             },
@@ -188,8 +189,8 @@ class _ProductsContainerState extends State<ProductsContainer> {
                                               padding:
                                                   EdgeInsets.symmetric(vertical: 0.6, horizontal: _deviceInfo.isPhone ? 10 : 0),
                                               child: _deviceInfo.isPhone
-                                                  ? ProductListTile(product, first, last)
-                                                  : ProductListTile(product, false, false),
+                                                  ? ProductListTile(product, first, last, ObjectKey(product))
+                                                  : ProductListTile(product, false, false, ObjectKey(product)),
                                             ),
                                           );
                                         } else {
@@ -245,7 +246,7 @@ class _ProductsContainerState extends State<ProductsContainer> {
                                               } else {
                                                 setState(() {
                                                   _selectedProduct =
-                                                      data.items[i].id != _selectedProduct?.id ? data.items[i] : null;
+                                                      filteredProducts[i].id != _selectedProduct?.id ? filteredProducts[i] : null;
                                                 });
                                               }
                                             },

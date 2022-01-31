@@ -24,7 +24,7 @@ class ProductListTile extends StatefulWidget {
   bool first = true;
   bool last = true;
 
-  ProductListTile(this.product, this.first, this.last) {
+  ProductListTile(this.product, this.first, this.last, Key key) : super(key: key) {
     DateTime today = DateTime.now();
 
     int dateDifferenceInDays = DateTime(product.expiration.year, product.expiration.month, product.expiration.day)
