@@ -2,13 +2,16 @@
 
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/screens/auth_screen.dart';
+import 'package:expire_app/screens/name_input_screen.dart';
 import 'package:expire_app/screens/shopping_list_screen.dart';
 import 'package:expire_app/screens/statistics_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
-import '../helpers/user_info.dart';
+import '../helpers/user_info.dart' as userinfo;
 /* Screens */
 import '../screens/products_overview_screen.dart';
 /* Widgets */
@@ -81,7 +84,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     super.dispose();
   }
 
-  late final Future? initUserInfoProvider = UserInfo().initUserInfoProvider();
+  late final Future? initUserInfoProvider = userinfo.UserInfo().initUserInfoProvider();
 
   @override
   Widget build(BuildContext context) {

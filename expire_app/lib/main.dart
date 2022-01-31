@@ -7,6 +7,7 @@ import 'package:expire_app/providers/shopping_list_provider.dart';
 import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/screens/product_details.dart';
 import 'package:expire_app/screens/shopping_list_detail_screen.dart';
+import 'package:expire_app/screens/auth_dispatcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -92,18 +93,22 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.iOS: CustomPageTransitionBuilder(),
           }),
         ),
-        home: StreamBuilder(
+        home: AuthDispatcher(),
+        /*StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, userSnapshot) => userSnapshot.hasData
-              ? // token found
-              firebaseAuthHelper.isDisplayNameSet
-                  ? MainAppScreen()
-                  : NameInputScreen()
-              : AuthScreen(),
-        ),
+          builder: (ctx, userSnapshot) {
+            return userSnapshot.hasData
+                ? // token found
+                firebaseAuthHelper.isDisplayNameSet
+                    ? MainAppScreen()
+                    : NameInputScreen()
+                : AuthScreen();
+          },
+        ),*/
         routes: {
           //'/': (ctx) => MainAppScreen(),
           OnBoardingPage.routeName: (ctx) => OnBoardingPage(),
+          AuthDispatcher.routeName: (ctx) => AuthDispatcher(),
           AuthScreen.routeName: (ctx) => AuthScreen(),
           NameInputScreen.routeName: (ctx) => NameInputScreen(),
           MainAppScreen.routeName: (ctx) => MainAppScreen(),

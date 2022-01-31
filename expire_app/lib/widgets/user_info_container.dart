@@ -42,6 +42,9 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
 
     if (FirebaseAuthHelper().isAuth) {
       FirebaseAuthHelper().logOut();
+    } else {
+      FirebaseAuthHelper().logOut();
+      Navigator.of(context).pushReplacementNamed('/');
     }
   }
 

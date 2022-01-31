@@ -10,6 +10,8 @@ import '../app_styles.dart' as styles;
 import '../helpers/firebase_auth_helper.dart';
 /* screens */
 import '../screens/main_app_screen.dart';
+/* helper */
+import '../helpers/device_info.dart';
 
 class NameInputScreen extends StatefulWidget {
   static const routeName = '/name-input-screen';
@@ -20,6 +22,8 @@ class NameInputScreen extends StatefulWidget {
 
 class _NameInputScreenState extends State<NameInputScreen> with TickerProviderStateMixin {
   FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
+
+  DeviceInfo _deviceInfo = DeviceInfo.instance;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, String> _userData = {
@@ -109,10 +113,19 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  "./assets/images/name_input_animated.gif",
-                  fit: BoxFit.contain,
-                ),
+                if (_deviceInfo.isPotrait(context))
+                  Image.asset(
+                    "./assets/images/name_input_animated.gif",
+                    fit: BoxFit.contain,
+                  )
+                else
+                  SizedBox(
+                    height: 300,
+                    child: Image.asset(
+                      "./assets/images/name_input_animated.gif",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 const SizedBox(height: 10),
                 const Text(
                   "All set up!\nHow do we have to call you?",
@@ -131,7 +144,9 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
                   child: Card(
                     clipBehavior: Clip.none,
                     elevation: 10,
-                    margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: _deviceInfo.sizeDispatcher(
+                            context: context, phonePotrait: 20, phoneLandscape: 20, tabletPotrait: 200, tabletLandscape: 200)),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(25),
