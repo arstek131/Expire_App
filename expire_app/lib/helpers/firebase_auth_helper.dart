@@ -66,7 +66,7 @@ class FirebaseAuthHelper {
 
   Future<void>? setDisplayName(String? displayName) async {
     if (isAuth && displayName != null) {
-      await _firestore.setDisplayName(userId: FirebaseAuthHelper().userId!, displayName: displayName);
+      await _firestore.setDisplayName(userId: userId!, displayName: displayName);
     }
 
     return isAuth ? _auth.currentUser!.updateDisplayName(displayName) : null;

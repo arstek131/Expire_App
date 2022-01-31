@@ -81,7 +81,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     super.dispose();
   }
 
-  late final Future? initUserInfoProvider = UserInfo.instance.initUserInfoProvider();
+  late final Future? initUserInfoProvider = UserInfo().initUserInfoProvider();
 
   @override
   Widget build(BuildContext context) {

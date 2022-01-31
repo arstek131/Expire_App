@@ -76,7 +76,7 @@ void main() {
       expect(email, 'email@email.com');
 
       await firebaseAuthHelper.setDisplayName('test');
-      /*expect(firebaseAuthHelper.displayName, 'test');*/
+      expect(firebaseAuthHelper.displayName, 'test');
     });
   });
 }

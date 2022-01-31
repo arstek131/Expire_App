@@ -18,7 +18,7 @@ class FamilyInfoScreen extends StatefulWidget {
 }
 
 class _FamilyInfoScreenState extends State<FamilyInfoScreen> {
-  userinfo.UserInfo _userInfo = userinfo.UserInfo.instance;
+  userinfo.UserInfo _userInfo = userinfo.UserInfo();
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
   var usersId = [];

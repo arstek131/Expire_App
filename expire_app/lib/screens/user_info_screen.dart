@@ -37,7 +37,7 @@ class UserInfoScreen extends StatefulWidget {
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  userInfo.UserInfo _userInfo = userInfo.UserInfo.instance;
+  userInfo.UserInfo _userInfo = userInfo.UserInfo();
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
   FirebaseAuthHelper _auth = FirebaseAuthHelper();
 

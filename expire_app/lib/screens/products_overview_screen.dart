@@ -31,7 +31,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     with AutomaticKeepAliveClientMixin<ProductsOverviewScreen> {
-  String? familyId = userinfo.UserInfo.instance.familyId;
+  String? familyId = userinfo.UserInfo().familyId;
   ProductsViewMode _productsViewMode = ProductsViewMode.List;
 
   // Keep page state alive

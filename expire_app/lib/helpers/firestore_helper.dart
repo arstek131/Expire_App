@@ -20,13 +20,13 @@ class FirestoreHelper {
   factory FirestoreHelper({mockFirestore, mockUserInfo}) {
     _instance.firestore =
         mockFirestore ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : null);
-    _instance.userInfo = mockUserInfo ?? userinfo.UserInfo.instance;
+    _instance.userInfo = mockUserInfo ?? userinfo.UserInfo();
     return _instance;
   }
 
   /* varialbes */
   late dynamic firestore;
-  late final userInfo;
+  late dynamic userInfo;
 
   /* getters */
   Future<bool> familyExists({required String familyId}) async {

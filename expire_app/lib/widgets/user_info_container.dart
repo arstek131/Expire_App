@@ -30,7 +30,7 @@ class UserInfoContainer extends StatefulWidget {
 class _UserInfoContainerState extends State<UserInfoContainer> {
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
   FirebaseAuthHelper _auth = FirebaseAuthHelper();
-  userInfo.UserInfo _userInfo = userInfo.UserInfo.instance;
+  userInfo.UserInfo _userInfo = userInfo.UserInfo();
 
   bool _isLeavingFamily = false;
   bool _isMergingFamily = false;
@@ -596,7 +596,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       return;
     }
 
-    userInfo.UserInfo.instance.displayName = displayName;
+    userInfo.UserInfo().displayName = displayName;
   }
 
   Future<void> _shareFamily(BuildContext context) async {
@@ -856,7 +856,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       return;
     }
 
-    if (chosenFamilyId == userInfo.UserInfo.instance.familyId) {
+    if (chosenFamilyId == userInfo.UserInfo().familyId) {
       await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -1102,7 +1102,9 @@ class ShareFamFunQR extends StatelessWidget {
                 color: styles.ghostWhite,
                 width: 60,
                 height: 60,
-                child: Image(image: AssetImage('assets/logo/expiry_app_logo.png'),),
+                child: Image(
+                  image: AssetImage('assets/logo/expiry_app_logo.png'),
+                ),
               ),
             ],
           ),

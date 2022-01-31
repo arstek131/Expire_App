@@ -91,7 +91,7 @@ class _ProductGridTileState extends State<ProductGridTile> {
                         size: 20,
                       ),
                       Text(
-                        userInfo.UserInfo.instance.displayName ?? 'UNKNOWN',
+                        userInfo.UserInfo().displayName ?? 'UNKNOWN',
                         style: const TextStyle(color: styles.ghostWhite, fontSize: 14),
                       ),
                     ],
@@ -106,12 +106,12 @@ class _ProductGridTileState extends State<ProductGridTile> {
             right: 5,
             child: ExpireClip(widget.expireStatus!, widget.product.expiration),
           ),
-          Positioned.fill(
+          /*Positioned.fill(
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 splashColor: Colors.red.withOpacity(0.6),
-                onTap: () => Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: widget.product.id),
+                //onTap: () => {}, //Navigator.of(context).pushNamed(ProductDetails.routeName, arguments: widget.product.id),
                 onLongPress: () async {
                   await showDialog(
                     context: context,
@@ -138,7 +138,7 @@ class _ProductGridTileState extends State<ProductGridTile> {
                 },
               ),
             ),
-          )
+          )*/
         ],
       ),
     );

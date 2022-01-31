@@ -23,7 +23,7 @@ class DBManager {
     return _instance;
   }
 
-  userInfo.UserInfo _user = userInfo.UserInfo.instance;
+  userInfo.UserInfo _user = userInfo.UserInfo();
 
   bool _init = Platform.environment.containsKey('FLUTTER_TEST') ? true : false;
   late sql.Database _db;

@@ -21,7 +21,7 @@ class ShoppingListProvider extends ChangeNotifier {
     // injectable mock-dependencies
     _auth = mockFirebaseAuthHelper ?? FirebaseAuthHelper();
     _firestore = mockFirestoreHelper ?? FirestoreHelper();
-    _userInfo = mockUserInfo ?? userInfo.UserInfo.instance;
+    _userInfo = mockUserInfo ?? userInfo.UserInfo();
     _db = mockDBManager ?? DBManager();
   }
 

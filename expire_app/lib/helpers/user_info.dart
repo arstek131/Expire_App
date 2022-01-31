@@ -11,14 +11,17 @@ class UserInfo {
 
   static final UserInfo _instance = UserInfo._privateConstructor();
 
-  static UserInfo get instance => _instance;
+  //static UserInfo get instance => _instance;
+  factory UserInfo() {
+    return _instance;
+  }
 
   /* variables */
   String? _userId;
   String? _familyId;
   String? _displayName;
   String? _email;
-  FirebaseAuthHelper _auth = FirebaseAuthHelper();
+  late FirebaseAuthHelper _auth = FirebaseAuthHelper();
 
   /* getters */
   String? get userId {

@@ -249,6 +249,34 @@ class _ProductsContainerState extends State<ProductsContainer> {
                                                 });
                                               }
                                             },
+                                            onLongPress: () async {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (BuildContext ctx) {
+                                                  return AlertDialog(
+                                                    title: const Text("Confirm"),
+                                                    content: const Text("Are you sure you wish to delete this item?"),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Provider.of<ProductsProvider>(context, listen: false)
+                                                              .deleteProduct(product.id!);
+                                                          Navigator.of(ctx).pop();
+                                                          setState(() {
+                                                            _selectedProduct = null;
+                                                          });
+                                                        },
+                                                        child: const Text("DELETE"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () => Navigator.of(ctx).pop(false),
+                                                        child: const Text("CANCEL"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
                                             child: Container(
                                               padding: EdgeInsets.all(5.0),
                                               decoration: BoxDecoration(
