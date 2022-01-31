@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-/* helpers */
-import '../app_styles.dart';
 /* styles */
 import '../app_styles.dart' as styles;
+import '../helpers/device_info.dart';
 import '../helpers/firebase_auth_helper.dart';
 
 class StatisticsContainer extends StatelessWidget {
   final FirebaseAuthHelper _auth = FirebaseAuthHelper();
+
+  DeviceInfo _deviceInfo = DeviceInfo.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +55,47 @@ class StatisticsContainer extends StatelessWidget {
         ],
       );
     }
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 80),
-      child: Consumer<ProductsProvider>(builder: (context, productprovider, child) {
-        return Card(
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              buildChart(0, 'Sugar', context),
-              buildChart(1, 'Fat', context),
-              buildChart(2, 'Saturated fat', context),
-              buildChart(3, 'Salt', context),
-            ],
-          ),
-        );
-      }),
-    );
+    return _deviceInfo.isPhone
+        ? SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 80),
+            child: Consumer<ProductsProvider>(
+              builder: (context, productprovider, child) {
+                return Card(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      buildChart(0, 'Sugar', context),
+                      buildChart(1, 'Fat', context),
+                      buildChart(2, 'Saturated fat', context),
+                      buildChart(3, 'Salt', context),
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
+        : Padding(
+            padding: const EdgeInsets.all(70.0),
+            child: GridView(
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: _deviceInfo.isTabletLandscape(context) ? 3 : 2),
+              children: [
+                buildChart(0, 'Sugar', context),
+                buildChart(1, 'Fat', context),
+                buildChart(2, 'Saturated fat', context),
+                buildChart(3, 'Salt', context),
+              ],
+            ),
+          );
   }
 
   SfCircularChart buildChart(int index, String title, BuildContext context) {
     return SfCircularChart(
-      title: ChartTitle(text: title, textStyle: subtitle),
+      title: ChartTitle(
+        text: title,
+        textStyle: _deviceInfo.isTablet ? styles.title : styles.subtitle,
+        alignment: _deviceInfo.isTablet ? ChartAlignment.near : ChartAlignment.center,
+      ),
       legend: Legend(
           isVisible: true,
           overflowMode: LegendItemOverflowMode.wrap,
@@ -91,8 +112,6 @@ class StatisticsContainer extends StatelessWidget {
   }
 
   List<dynamic> getDataSource(int index, BuildContext context) {
-    List<dynamic> source = ChartManager.getChartData(context, index);
-    //print(source.toString());
-    return source;
+    return ChartManager.getChartData(context, index);
   }
 }

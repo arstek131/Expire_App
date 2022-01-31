@@ -22,7 +22,7 @@ void main() {
   // MOCKS
   MockFirestoreHelper mockFirestoreHelper = MockFirestoreHelper();
   MockFirebaseAuth mockFirebaseAuth =
-      MockFirebaseAuth(mockUser: MockUser(uid: 'uid', displayName: 'displayName', email: 'email@email.com'), signedIn: true);
+      MockFirebaseAuth(mockUser: MockUser(uid: 'uid', displayName: 'displayName_temp', email: 'email@email.com'), signedIn: true);
   MockGoogleSignIn mockGoogleSignIn = MockGoogleSignIn();
 
   /* UNIT UNDER TEST (UPDATABLE SINGLETON) */
@@ -38,45 +38,36 @@ void main() {
    * By calling the reset function, also stubs are deleted and needs therefore to be re-defined.
    */
 
-  group('[Auth, email and password]', () {
-    test('Not logged in', () {
-      // SETUP
-      firebaseAuthHelper = FirebaseAuthHelper(
-        mockAuth: MockFirebaseAuth(mockUser: null, signedIn: false),
-        mockFirestoreHelper: mockFirestoreHelper,
-        mockGoogleAuth: mockGoogleSignIn,
-      );
+  test('Not logged in', () {
+    // SETUP
+    firebaseAuthHelper = FirebaseAuthHelper(
+      mockAuth: MockFirebaseAuth(mockUser: null, signedIn: false),
+      mockFirestoreHelper: mockFirestoreHelper,
+      mockGoogleAuth: mockGoogleSignIn,
+    );
 
-      // RUN
+    // RUN
 
-      // VERIFY
-      expect(firebaseAuthHelper.isAuth, false);
-    });
+    // VERIFY
+    expect(firebaseAuthHelper.isAuth, false);
+    expect(firebaseAuthHelper.isDisplayNameSet, false);
+  });
 
-    test('Get user info', () async {
-      // SETUP
-      firebaseAuthHelper = FirebaseAuthHelper(
-        mockAuth: mockFirebaseAuth,
-        mockFirestoreHelper: mockFirestoreHelper,
-        mockGoogleAuth: mockGoogleSignIn,
-      );
+  test('Sign in with google', () async {
+    // SETUP
+    firebaseAuthHelper = FirebaseAuthHelper(
+      mockAuth: MockFirebaseAuth(
+          mockUser: MockUser(uid: 'uid', displayName: 'displayName_temp', email: 'email@email.com'), signedIn: false),
+      mockFirestoreHelper: mockFirestoreHelper,
+      mockGoogleAuth: mockGoogleSignIn,
+    );
 
-      // RUN
-      bool isAuth = firebaseAuthHelper.isAuth;
-      bool isDisplayNameSet = firebaseAuthHelper.isDisplayNameSet;
-      String? displayName = firebaseAuthHelper.displayName;
-      String? userId = firebaseAuthHelper.userId;
-      String? email = firebaseAuthHelper.email;
+    when(mockFirestoreHelper.addUser(userId: anyNamed('userId'))).thenAnswer((_) async => null);
+    when(mockFirestoreHelper.setDisplayName(userId: anyNamed('userId'), displayName: anyNamed('displayName')))
+        .thenAnswer((_) async => null);
 
-      // VERIFY
-      expect(isAuth, true);
-      expect(isDisplayNameSet, true);
-      expect(displayName, 'displayName');
-      expect(userId, 'uid');
-      expect(email, 'email@email.com');
-
-      await firebaseAuthHelper.setDisplayName('test');
-      expect(firebaseAuthHelper.displayName, 'test');
-    });
+    // RUN
+    firebaseAuthHelper.googleLogIn();
+    // VERIFY
   });
 }

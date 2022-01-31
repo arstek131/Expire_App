@@ -168,6 +168,7 @@ class _SignInState extends State<SignIn> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            key: Key('email_field'),
                             style: const TextStyle(color: Colors.black),
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(

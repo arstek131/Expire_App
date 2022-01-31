@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:expire_app/models/product.dart';
 import 'package:expire_app/models/shopping_list.dart';
 import 'package:expire_app/models/shopping_list_element.dart';
@@ -17,16 +16,19 @@ class FirestoreHelper {
   FirestoreHelper._privateConstructor();
   static final FirestoreHelper _instance = FirestoreHelper._privateConstructor();
   //static FirestoreHelper get instance => _instance;
-  factory FirestoreHelper({mockFirestore, mockUserInfo}) {
+  factory FirestoreHelper({mockFirestore, mockFirebaseStorage, mockUserInfo}) {
     _instance.firestore =
         mockFirestore ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseFirestore.instance : null);
     _instance.userInfo = mockUserInfo ?? userinfo.UserInfo();
+    _instance.firebaseStorage =
+        mockFirebaseStorage ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseStorage.instance : null);
     return _instance;
   }
 
   /* varialbes */
   late dynamic firestore;
   late dynamic userInfo;
+  late dynamic firebaseStorage;
 
   /* getters */
   Future<bool> familyExists({required String familyId}) async {
@@ -184,7 +186,7 @@ class FirestoreHelper {
     );
     final newFamilyId = familyReference.id;
 
-    print("User ${userInfo.userId} moving from family ${userInfo.familyId} to family ${newFamilyId}");
+    //print("User ${userInfo.userId} moving from family ${userInfo.familyId} to family ${newFamilyId}");
 
     /* delete user from family usersList */
     await firestore.collection('families').doc(userInfo.familyId).update({
@@ -258,7 +260,7 @@ class FirestoreHelper {
 
     // storing image on firestore if any
     if (image != null && !(image is String)) {
-      final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(uuid.v1());
+      final ref = firebaseStorage.ref().child(userInfo.userId!).child(uuid.v1());
       await ref.putFile(image);
       imageUrl = await ref.getDownloadURL();
     } else {
@@ -302,11 +304,17 @@ class FirestoreHelper {
 
     final data = {
       'title': list.title,
-      'products': list.products,
+      'products': [],
       'completed': list.completed,
     };
 
     listsRef.doc(list.id).set(data);
+
+    if (list.products.isNotEmpty) {
+      for (var product in list.products) {
+        await addElementToShoppingList(listId: list.id, shoppingListElement: product);
+      }
+    }
   }
 
   Future<void> deleteProduct(String productId) async {
@@ -317,9 +325,9 @@ class FirestoreHelper {
 
     // delete image
     if (imageUrl != null && imageUrl.contains("firebasestorage")) {
-      String filename = FirebaseStorage.instance.refFromURL(imageUrl).name;
+      String filename = firebaseStorage.refFromURL(imageUrl).name;
 
-      final ref = FirebaseStorage.instance.ref().child(userInfo.userId!).child(filename);
+      final ref = firebaseStorage.ref().child(userInfo.userId!).child(filename);
       await ref.delete();
     }
   }
@@ -332,7 +340,13 @@ class FirestoreHelper {
   Future<void> deleteShoppingListElement(String shoppingListid, String elementId) async {
     final ref =
         await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(shoppingListid).get();
-    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    // non existing list
+    if (ref.data() == null) {
+      return;
+    }
+
+    List<dynamic> jsonProducts = ref.data()['products'] as List<dynamic>;
 
     jsonProducts.removeWhere((element) => element['id'] == elementId);
 
@@ -371,7 +385,13 @@ class FirestoreHelper {
 
   Future<void> addElementToShoppingList({required String listId, required ShoppingListElement shoppingListElement}) async {
     final ref = await firestore.collection('families').doc(userInfo.familyId).collection("shopping_lists").doc(listId).get();
-    List<dynamic> jsonProducts = ref.data()!['products'] as List<dynamic>;
+
+    // no list exists
+    if (ref.data() == null) {
+      return;
+    }
+
+    List<dynamic> jsonProducts = ref.data()['products'] as List<dynamic>;
 
     if (jsonProducts.any((element) => element['title'] == shoppingListElement.title || element['id'] == shoppingListElement.id)) {
       jsonProducts[jsonProducts
@@ -386,8 +406,8 @@ class FirestoreHelper {
     });
   }
 
-  Nutriments? parseNutriments(Map<String, dynamic> JSONnutriments) {
-    if (JSONnutriments.isEmpty) {
+  Nutriments? parseNutriments(Map<String, dynamic>? JSONnutriments) {
+    if (JSONnutriments == null || JSONnutriments.isEmpty) {
       return null;
     }
 

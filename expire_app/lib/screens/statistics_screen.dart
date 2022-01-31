@@ -1,6 +1,7 @@
 /* dart */
 import 'package:expire_app/widgets/statistics_container.dart';
 import 'package:flutter/material.dart';
+import '../helpers/device_info.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -17,6 +18,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> with AutomaticKeepA
   @override
   bool get wantKeepAlive => true;
 
+  DeviceInfo _deviceInfo = DeviceInfo.instance;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,10 +31,22 @@ class _StatisticsScreenState extends State<StatisticsScreen> with AutomaticKeepA
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).orientation == Orientation.portrait
-                      ? MediaQuery.of(context).size.height * 0.055
-                      : 10.0),
+              padding: EdgeInsets.only(
+                top: _deviceInfo.sizeDispatcher(
+                  context: context,
+                  phonePotrait: MediaQuery.of(context).size.height * 0.055,
+                  phoneLandscape: 10,
+                  tabletPotrait: 10,
+                  tabletLandscape: MediaQuery.of(context).size.height * 0.08,
+                ),
+                bottom: _deviceInfo.sizeDispatcher(
+                  context: context,
+                  phonePotrait: 0,
+                  phoneLandscape: 0,
+                  tabletPotrait: 10,
+                  tabletLandscape: 30,
+                ),
+              ),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -66,7 +81,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with AutomaticKeepA
                   children: [
                     Text(
                       "Statistics",
-                      style: styles.title,
+                      style: _deviceInfo.isPhone ? styles.title : styles.title.copyWith(fontSize: 43),
                     ),
                   ],
                 ),
