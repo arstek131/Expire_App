@@ -44,6 +44,12 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
     )
   ];
 
+  void _resetState() {
+    setState(() {
+      _chosenShoppingList = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Flexible(
@@ -107,6 +113,7 @@ class _ShoppingListsContainerState extends State<ShoppingListsContainer> {
                                   shoppingList: data.shoppingLists[index],
                                   first: (index == 0),
                                   last: (index == data.shoppingLists.length - 1),
+                                  resetState: _resetState,
                                 ),
                               )
                             : SizedBox(

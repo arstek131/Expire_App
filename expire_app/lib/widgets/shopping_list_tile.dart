@@ -15,12 +15,14 @@ class ShoppingListTile extends StatefulWidget {
     required this.shoppingList,
     this.first = false,
     this.last = false,
+    required this.resetState,
   }) : numberOfElements = shoppingList.products.length;
 
   ShoppingList shoppingList;
   final int numberOfElements;
   bool first;
   bool last;
+  Function resetState;
 
   @override
   _ShoppingListTileState createState() => _ShoppingListTileState();
@@ -126,6 +128,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
                       ),
                       onPressed: () {
                         Provider.of<ShoppingListProvider>(context, listen: false).deleteShoppingList(widget.shoppingList.id);
+                        widget.resetState();
                         Navigator.of(ctx).pop(true);
                       },
                       label: Text(
