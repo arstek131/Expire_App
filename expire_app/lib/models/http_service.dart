@@ -17,7 +17,7 @@ class HttpService{
 
 
   static final queryParameters2 = {
-    'apiKey': 'd1829587c9b44fac84f3086e8e15e74d'
+    'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba'
   };
 
 
@@ -25,7 +25,7 @@ class HttpService{
  static Future<List<Recipe>> getRecipes(String ingredients) async{
 
    Map<String, String> queryParameters = {
-     'apiKey': 'd1829587c9b44fac84f3086e8e15e74d',
+     'apiKey': 'd53be8e7bdf642a6a61c4c1773958dba',
      'ingredients': ingredients,
      'number': '10',
    };
