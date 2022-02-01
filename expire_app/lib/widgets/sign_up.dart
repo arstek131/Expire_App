@@ -49,6 +49,7 @@ class _SignUpState extends State<SignUp> {
   @override
   initState() {
     _auth = Provider.of<DependenciesProvider>(context, listen: false).auth;
+
     super.initState();
   }
 

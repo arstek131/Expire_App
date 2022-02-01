@@ -1,8 +1,11 @@
 /* dart */
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:expire_app/helpers/user_info.dart';
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:expire_app/widgets/display_name_choice_moda.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,7 +18,6 @@ import '../helpers/device_info.dart' as deviceInfo;
 /* helpers */
 import '../helpers/firebase_auth_helper.dart';
 import '../helpers/firestore_helper.dart';
-import '../helpers/user_info.dart' as userInfo;
 import '../providers/products_provider.dart';
 import '../providers/shopping_list_provider.dart';
 import '../widgets/family_id_choice_modal.dart';
@@ -28,9 +30,20 @@ class UserInfoContainer extends StatefulWidget {
 }
 
 class _UserInfoContainerState extends State<UserInfoContainer> {
+  late final firebaseAuthHelper;
+  late final messaging;
+  late final userInfo;
+  late final auth;
+
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
-  FirebaseAuthHelper _auth = FirebaseAuthHelper();
-  userInfo.UserInfo _userInfo = userInfo.UserInfo();
+
+  @override
+  initState() {
+    super.initState();
+    auth = firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
+    userInfo = Provider.of<DependenciesProvider>(context, listen: false).userInfo;
+    messaging = Provider.of<DependenciesProvider>(context, listen: false).messaging;
+  }
 
   bool _isLeavingFamily = false;
   bool _isMergingFamily = false;
@@ -40,10 +53,11 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
     await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
 
-    if (FirebaseAuthHelper().isAuth) {
-      FirebaseAuthHelper().logOut();
+    if (auth.isAuth) {
+      messaging.unsubscribeFromTopic(userInfo.familyId!);
+      auth.logOut();
     } else {
-      FirebaseAuthHelper().logOut();
+      auth.logOut();
       Navigator.of(context).pushReplacementNamed('/');
     }
   }
@@ -599,11 +613,11 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       return;
     }
 
-    userInfo.UserInfo().displayName = displayName;
+    userInfo.displayName = displayName;
   }
 
   Future<void> _shareFamily(BuildContext context) async {
-    if (!_auth.isAuth) {
+    if (!auth.isAuth) {
       await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -646,7 +660,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
           color: styles.primaryColor,
           child: Center(
             child: ShareFamFunQR(
-              familyid: _userInfo.familyId!,
+              familyid: userInfo.familyId!,
             ),
           ),
         );
@@ -656,7 +670,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
 
   Future<void> _leaveFamily(BuildContext context) async {
     /* not registered */
-    if (!_auth.isAuth) {
+    if (!auth.isAuth) {
       await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -683,7 +697,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     }
 
     /* no other members */
-    final usersId = await FirestoreHelper().getUsersFromFamilyId(familyId: _userInfo.familyId!);
+    final usersId = await FirestoreHelper().getUsersFromFamilyId(familyId: userInfo.familyId!);
     if (usersId.length == 1) {
       await showDialog(
         context: context,
@@ -813,7 +827,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
 
   Future<void> _joinFamily(BuildContext context) async {
     /* not registered */
-    if (!_auth.isAuth) {
+    if (!auth.isAuth) {
       await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -859,7 +873,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
       return;
     }
 
-    if (chosenFamilyId == userInfo.UserInfo().familyId) {
+    if (chosenFamilyId == userInfo.familyId) {
       await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -888,7 +902,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     }
 
     /* no other members */
-    bool singleMember = (await FirestoreHelper().getUsersFromFamilyId(familyId: _userInfo.familyId!)).length == 1;
+    bool singleMember = (await FirestoreHelper().getUsersFromFamilyId(familyId: userInfo.familyId!)).length == 1;
     if (!singleMember) {
       bool choice = await showDialog(
             context: context,

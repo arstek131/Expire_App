@@ -10,10 +10,11 @@ import 'package:expire_app/screens/statistics_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../helpers/user_info.dart' as uif;
 
 /* styles */
 import '../app_styles.dart' as styles;
-import '../helpers/user_info.dart' as userinfo;
 /* Screens */
 import '../screens/products_overview_screen.dart';
 /* Widgets */
@@ -29,6 +30,9 @@ class MainAppScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<MainAppScreen> {
   late final firebaseAuthHelper;
+  late final messaging;
+  late final userInfo;
+
   /* Variables */
   var _pageIndex = 2;
   final pageController = PageController(initialPage: 2);
@@ -53,7 +57,19 @@ class _ProductsScreenState extends State<MainAppScreen> {
 
   @override
   void initState() {
+    messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
     firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
+    userInfo = Provider.of<DependenciesProvider>(context, listen: false).userInfo;
+    messaging = Provider.of<DependenciesProvider>(context, listen: false).messaging;
 
     _pages = [
       {
@@ -87,7 +103,7 @@ class _ProductsScreenState extends State<MainAppScreen> {
     super.dispose();
   }
 
-  late final Future? initUserInfoProvider = userinfo.UserInfo().initUserInfoProvider();
+  late final Future? initUserInfoProvider = uif.UserInfo().initUserInfoProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -100,15 +116,18 @@ class _ProductsScreenState extends State<MainAppScreen> {
           top: true,
           child: Scaffold(
             body: FutureBuilder(
-              future: initUserInfoProvider,
-              builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
-                  ? const Center(
+                future: initUserInfoProvider,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         backgroundColor: styles.ghostWhite,
                       ),
-                    )
-                  : Stack(
+                    );
+                  } else {
+                    messaging.subscribeToTopic(userInfo.familyId!);
+                    return Stack(
                       children: [
                         PageView(
                           //physics: BouncingScrollPhysics(),
@@ -133,8 +152,9 @@ class _ProductsScreenState extends State<MainAppScreen> {
                           ),
                         ),
                       ],
-                    ),
-            ),
+                    );
+                  }
+                }),
           ),
         ),
       ),
