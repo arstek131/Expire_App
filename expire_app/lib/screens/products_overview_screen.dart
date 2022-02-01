@@ -2,6 +2,7 @@
 import 'package:expire_app/helpers/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 /* providers */
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
 
   Ordering _ordering = Ordering.ExpiringSoon;
   ViewMode _viewMode = ViewMode.ShowExpired;
+
+  @override
+  void initState() {
+    final fbm = FirebaseMessaging.instance;
+    fbm.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    super.initState();
+  }
 
   void _toggleProductsViewMode() {
     setState(() {
