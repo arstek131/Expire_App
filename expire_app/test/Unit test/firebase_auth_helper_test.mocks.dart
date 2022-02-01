@@ -6,12 +6,11 @@ import 'dart:async' as _i3;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i6;
 import 'package:expire_app/helpers/firestore_helper.dart' as _i2;
-import 'package:expire_app/helpers/user_info.dart' as _i9;
+import 'package:expire_app/helpers/user_info.dart' as _i8;
 import 'package:expire_app/models/product.dart' as _i4;
 import 'package:expire_app/models/shopping_list.dart' as _i5;
 import 'package:expire_app/models/shopping_list_element.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:openfoodfacts/model/Nutriments.dart' as _i8;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -182,16 +181,12 @@ class MockFirestoreHelper extends _i1.Mock implements _i2.FirestoreHelper {
               {#listId: listId, #shoppingListElement: shoppingListElement}),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i3.Future<void>);
-  @override
-  _i8.Nutriments? parseNutriments(Map<String, dynamic>? JSONnutriments) =>
-      (super.noSuchMethod(Invocation.method(#parseNutriments, [JSONnutriments]))
-          as _i8.Nutriments?);
 }
 
 /// A class which mocks [UserInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserInfo extends _i1.Mock implements _i9.UserInfo {
+class MockUserInfo extends _i1.Mock implements _i8.UserInfo {
   MockUserInfo() {
     _i1.throwOnMissingStub(this);
   }

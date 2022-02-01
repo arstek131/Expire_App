@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 
 /* enums */
 import '../enums/sign_in_method.dart';
@@ -18,15 +21,17 @@ class FirebaseAuthHelper {
   //static FirebaseAuthHelper get instance => _instance;
 
   factory FirebaseAuthHelper({mockAuth, mockGoogleAuth, mockFirestoreHelper}) {
-    _instance._auth = mockAuth ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : null);
+    _instance._auth =
+        mockAuth ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : MockFirebaseAuth());
     _instance._firestore = mockFirestoreHelper ?? FirestoreHelper();
-    _instance.googleSignIn = mockGoogleAuth ?? GoogleSignIn();
+    _instance.googleSignIn =
+        mockGoogleAuth ?? (!Platform.environment.containsKey('FLUTTER_TEST') ? GoogleSignIn() : MockGoogleSignIn());
     return _instance;
   }
 
   /* variables */
   late dynamic _auth; //!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuth.instance : null;
-  late FirestoreHelper _firestore;
+  late dynamic _firestore;
   SignInMethod _signInMethod = SignInMethod.None; // default
 
   // OAuth

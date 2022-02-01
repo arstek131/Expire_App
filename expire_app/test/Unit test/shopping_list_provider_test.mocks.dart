@@ -3,14 +3,14 @@
 // Do not manually edit this file.
 
 import 'dart:async' as _i7;
-import 'dart:typed_data' as _i16;
+import 'dart:typed_data' as _i15;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i11;
 import 'package:expire_app/enums/sign_in_method.dart' as _i6;
-import 'package:expire_app/helpers/db_manager.dart' as _i15;
+import 'package:expire_app/helpers/db_manager.dart' as _i14;
 import 'package:expire_app/helpers/firebase_auth_helper.dart' as _i5;
 import 'package:expire_app/helpers/firestore_helper.dart' as _i8;
-import 'package:expire_app/helpers/user_info.dart' as _i14;
+import 'package:expire_app/helpers/user_info.dart' as _i13;
 import 'package:expire_app/models/product.dart' as _i9;
 import 'package:expire_app/models/shopping_list.dart' as _i10;
 import 'package:expire_app/models/shopping_list_element.dart' as _i12;
@@ -18,7 +18,6 @@ import 'package:firebase_auth/firebase_auth.dart' as _i4;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart' as _i3;
 import 'package:google_sign_in/google_sign_in.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:openfoodfacts/model/Nutriments.dart' as _i13;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -271,16 +270,12 @@ class MockFirestoreHelper extends _i1.Mock implements _i8.FirestoreHelper {
               {#listId: listId, #shoppingListElement: shoppingListElement}),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
-  @override
-  _i13.Nutriments? parseNutriments(Map<String, dynamic>? JSONnutriments) =>
-      (super.noSuchMethod(Invocation.method(#parseNutriments, [JSONnutriments]))
-          as _i13.Nutriments?);
 }
 
 /// A class which mocks [UserInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserInfo extends _i1.Mock implements _i14.UserInfo {
+class MockUserInfo extends _i1.Mock implements _i13.UserInfo {
   MockUserInfo() {
     _i1.throwOnMissingStub(this);
   }
@@ -311,7 +306,7 @@ class MockUserInfo extends _i1.Mock implements _i14.UserInfo {
 /// A class which mocks [DBManager].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDBManager extends _i1.Mock implements _i15.DBManager {
+class MockDBManager extends _i1.Mock implements _i14.DBManager {
   MockDBManager() {
     _i1.throwOnMissingStub(this);
   }
@@ -330,7 +325,7 @@ class MockDBManager extends _i1.Mock implements _i15.DBManager {
           as _i7.Future<List<_i9.Product>>);
   @override
   _i7.Future<void> addProduct(
-          {_i9.Product? product, _i16.Uint8List? imageRaw}) =>
+          {_i9.Product? product, _i15.Uint8List? imageRaw}) =>
       (super.noSuchMethod(
           Invocation.method(
               #addProduct, [], {#product: product, #imageRaw: imageRaw}),

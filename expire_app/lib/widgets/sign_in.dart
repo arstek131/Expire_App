@@ -20,12 +20,14 @@ class SignIn extends StatefulWidget {
     Key? key,
     required GlobalKey<FormState> formKey,
     required PageController pageController,
+    this.mockFirebaseAuthHelper,
   })  : _formKey = formKey,
         _pageController = pageController,
         super(key: key);
 
   final GlobalKey<FormState> _formKey;
   final PageController _pageController;
+  final dynamic mockFirebaseAuthHelper;
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -39,7 +41,16 @@ class _SignInState extends State<SignIn> {
     'password': '',
   };
 
+  dynamic _auth;
+
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
+
+  @override
+  void initState() {
+    _auth = widget.mockFirebaseAuthHelper ?? FirebaseAuthHelper();
+
+    super.initState();
+  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -62,7 +73,7 @@ class _SignInState extends State<SignIn> {
     });
     try {
       // Sign user up
-      await FirebaseAuthHelper().signInWithEmail(
+      await _auth.signInWithEmail(
         email: _authData['email']!,
         password: _authData['password']!,
       );
@@ -71,6 +82,7 @@ class _SignInState extends State<SignIn> {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             content: Text(
               error.message!,
               textAlign: TextAlign.center,
@@ -202,6 +214,7 @@ class _SignInState extends State<SignIn> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            key: Key('password_field'),
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.password, color: Colors.indigoAccent),
                               border: OutlineInputBorder(
@@ -213,11 +226,9 @@ class _SignInState extends State<SignIn> {
                             ),
                             onSaved: (value) {
                               _authData['password'] = value!;
-                              print(_authData);
                             },
                             onFieldSubmitted: (value) {
                               _authData['password'] = value;
-                              print(_authData);
                             },
                             obscureText: true,
                             validator: (value) {
@@ -233,6 +244,7 @@ class _SignInState extends State<SignIn> {
                           width: double.infinity,
                           height: 60,
                           child: ElevatedButton(
+                            key: Key('submit_button'),
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(Colors.indigo.shade500),
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -365,7 +377,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  FirebaseAuthHelper().googleLogIn();
+                                  _auth.googleLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -399,7 +411,7 @@ class _SignInState extends State<SignIn> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  FirebaseAuthHelper().facebookLogIn();
+                                  _auth.facebookLogIn();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
