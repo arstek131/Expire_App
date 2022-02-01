@@ -1,7 +1,10 @@
 /* dart */
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /* other */
@@ -21,7 +24,7 @@ class NameInputScreen extends StatefulWidget {
 }
 
 class _NameInputScreenState extends State<NameInputScreen> with TickerProviderStateMixin {
-  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
+  late final firebaseAuthHelper;
 
   DeviceInfo _deviceInfo = DeviceInfo.instance;
 
@@ -44,6 +47,8 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
   void initState() {
     super.initState();
 
+    firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -61,16 +66,18 @@ class _NameInputScreenState extends State<NameInputScreen> with TickerProviderSt
       curve: Curves.fastLinearToSlowEaseIn,
     );
 
-    Future.delayed(const Duration(seconds: 1)).then(
-      (_) => setState(
-        () {
-          _controller!.forward();
-          Future.delayed(Duration(seconds: 1), () {
-            _controller2!.forward();
-          });
-        },
-      ),
-    );
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      Future.delayed(const Duration(seconds: 1)).then(
+        (_) => setState(
+          () {
+            _controller!.forward();
+            Future.delayed(Duration(seconds: 1), () {
+              _controller2!.forward();
+            });
+          },
+        ),
+      );
+    }
   }
 
   @override

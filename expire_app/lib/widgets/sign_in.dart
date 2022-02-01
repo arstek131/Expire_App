@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:expire_app/screens/main_app_screen.dart';
 import 'package:expire_app/screens/name_input_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /* styles */
@@ -20,14 +22,14 @@ class SignIn extends StatefulWidget {
     Key? key,
     required GlobalKey<FormState> formKey,
     required PageController pageController,
-    this.mockFirebaseAuthHelper,
+    this.mockSharedPreferences,
   })  : _formKey = formKey,
         _pageController = pageController,
         super(key: key);
 
   final GlobalKey<FormState> _formKey;
   final PageController _pageController;
-  final dynamic mockFirebaseAuthHelper;
+  final dynamic mockSharedPreferences;
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -41,14 +43,13 @@ class _SignInState extends State<SignIn> {
     'password': '',
   };
 
-  dynamic _auth;
-
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
+  late final _auth;
+  dynamic _prefs;
 
   @override
   void initState() {
-    _auth = widget.mockFirebaseAuthHelper ?? FirebaseAuthHelper();
-
+    _auth = Provider.of<DependenciesProvider>(context, listen: false).auth;
     super.initState();
   }
 
@@ -281,10 +282,11 @@ class _SignInState extends State<SignIn> {
                           height: 20,
                         ),
                         GestureDetector(
+                          key: Key('continue_without_registration_button'),
                           onTap: () async {
                             // check on shared preferences if name is set
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
-                            String? displayName = prefs.getString('localDisplayName');
+                            _prefs = widget.mockSharedPreferences ?? await SharedPreferences.getInstance();
+                            String? displayName = _prefs.getString('localDisplayName');
 
                             String targetRoute = (displayName == null) ? NameInputScreen.routeName : MainAppScreen.routeName;
                             Navigator.of(context).pushReplacementNamed(targetRoute);
@@ -368,6 +370,7 @@ class _SignInState extends State<SignIn> {
                               width: double.infinity,
                               height: 55,
                               child: ElevatedButton(
+                                key: Key('google_sing_in_button'),
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFdb3236)),
                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -402,6 +405,7 @@ class _SignInState extends State<SignIn> {
                               width: double.infinity,
                               height: 55,
                               child: ElevatedButton(
+                                key: Key('facebook_sing_in_button'),
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF3b5998)),
                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(

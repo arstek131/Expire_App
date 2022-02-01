@@ -2,12 +2,14 @@
 
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:expire_app/screens/auth_screen.dart';
 import 'package:expire_app/screens/name_input_screen.dart';
 import 'package:expire_app/screens/shopping_list_screen.dart';
 import 'package:expire_app/screens/statistics_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -26,8 +28,7 @@ class MainAppScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<MainAppScreen> {
-  FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
-
+  late final firebaseAuthHelper;
   /* Variables */
   var _pageIndex = 2;
   final pageController = PageController(initialPage: 2);
@@ -52,6 +53,8 @@ class _ProductsScreenState extends State<MainAppScreen> {
 
   @override
   void initState() {
+    firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
+
     _pages = [
       {
         'page': RecipeScreen(),

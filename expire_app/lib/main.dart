@@ -1,6 +1,7 @@
 /* dart libraries */
 
 import 'package:expire_app/helpers/device_info.dart';
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:expire_app/providers/shopping_list_provider.dart';
@@ -78,6 +79,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => FiltersProvider(),
         ),
+        Provider(
+          create: (_) => DependenciesProvider(),
+        ),
         ChangeNotifierProxyProvider<ProductsProvider, RecipeProvider>(
           create: (BuildContext context) => RecipeProvider(null, null),
           update: (context, products, previousRecipes) => RecipeProvider(products, previousRecipes!.rec),
@@ -101,7 +105,8 @@ class _MyAppState extends State<MyApp> {
                 ? // token found
                 firebaseAuthHelper.isDisplayNameSet
                     ? MainAppScreen()
-                    : NameInputScreen()
+                    : NameInputScreen()ce00co47
+                    
                 : AuthScreen();
           },
         ),*/

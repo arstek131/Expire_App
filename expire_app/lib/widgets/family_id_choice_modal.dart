@@ -1,11 +1,13 @@
 /* dart */
-import 'dart:io' as pltf show Platform;
+import 'dart:io' as pltf;
 import 'dart:ui';
 
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_scandit/flutter_scandit.dart';
+import 'package:provider/provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -29,6 +31,19 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
   bool _isValid = false;
 
   var _controller = TextEditingController();
+  late final firestoreHelper;
+
+  @override
+  void initState() {
+    firestoreHelper = Provider.of<DependenciesProvider>(context, listen: false).firestore;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> _submit() async {
     FocusManager.instance.primaryFocus?.unfocus();
@@ -36,7 +51,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
       _isLoading = true;
     });
     try {
-      bool familyExists = await FirestoreHelper().familyExists(familyId: referenceId!);
+      bool familyExists = await firestoreHelper.familyExists(familyId: referenceId!);
       setState(() {
         _isValid = familyExists;
       });
@@ -54,7 +69,11 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
     });
 
     if (_isValid) {
-      Future.delayed(Duration(seconds: 2)).then((_) => Navigator.of(context).pop(referenceId));
+      if (!pltf.Platform.environment.containsKey('FLUTTER_TEST')) {
+        Future.delayed(Duration(seconds: 2)).then((_) => Navigator.of(context).pop(referenceId));
+      } else {
+        Navigator.of(context).pop(referenceId);
+      }
     }
   }
 
@@ -175,6 +194,7 @@ class _FamilyIdChoiceModalState extends State<FamilyIdChoiceModal> {
                           Stack(
                             children: <Widget>[
                               TextFormField(
+                                key: Key("family_id_code_field"),
                                 controller: _controller,
                                 autofocus: true,
                                 decoration: InputDecoration(

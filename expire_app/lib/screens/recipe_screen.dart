@@ -1,14 +1,27 @@
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/models/recipe.dart';
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:expire_app/providers/recipe_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../app_styles.dart' as styles;
 import 'recipe_details_screen.dart';
 
-class RecipeScreen extends StatelessWidget {
-  FirebaseAuthHelper _auth = FirebaseAuthHelper();
+class RecipeScreen extends StatefulWidget {
+  @override
+  State<RecipeScreen> createState() => _RecipeScreenState();
+}
+
+class _RecipeScreenState extends State<RecipeScreen> {
+  late final _auth;
+
+  @override
+  void initState() {
+    _auth = Provider.of<DependenciesProvider>(context, listen: false).auth;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

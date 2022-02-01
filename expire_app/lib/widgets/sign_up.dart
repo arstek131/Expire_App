@@ -1,8 +1,10 @@
 /* dart */
+import 'package:expire_app/providers/dependencies_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 /* styles */
 import '../app_styles.dart' as styles;
@@ -27,35 +29,6 @@ class SignUp extends StatefulWidget {
   final GlobalKey<FormState> _formKey;
   final PageController _pageController;
 
-  /*static void showFamilyRedeemModal(
-    BuildContext context,
-    Map<String, String?> authData,
-    VoidCallback ifOk,
-    VoidCallback ifNotOk,
-  ) async {
-    //var familyId = await Navigator.of(context).pushNamed(FamilyIdChoiceScreen.routeName);
-    String? familyId = await showModalBottomSheet<String?>(
-      isScrollControlled: true,
-      enableDrag: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      builder: (BuildContext ctx) {
-        return FamilyIdChoiceModal();
-      },
-    );
-    if (familyId != null) {
-      authData['familyId'] = familyId as String?;
-      ifOk();
-    } else {
-      ifNotOk();
-    }
-  }*/
-
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -70,6 +43,14 @@ class _SignUpState extends State<SignUp> {
     'password': '',
     'familyId': null,
   };
+
+  late final _auth;
+
+  @override
+  initState() {
+    _auth = Provider.of<DependenciesProvider>(context, listen: false).auth;
+    super.initState();
+  }
 
   deviceInfo.DeviceInfo _deviceInfo = deviceInfo.DeviceInfo.instance;
 
@@ -94,7 +75,7 @@ class _SignUpState extends State<SignUp> {
     });
 
     try {
-      await FirebaseAuthHelper().signUpWithEmail(
+      await _auth.signUpWithEmail(
         email: _authData['email']!,
         password: _authData['password']!,
         familyId: _authData['familyId'],
@@ -215,6 +196,7 @@ class _SignUpState extends State<SignUp> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            key: Key("email_field"),
                             keyboardType: TextInputType.emailAddress,
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
@@ -249,6 +231,7 @@ class _SignUpState extends State<SignUp> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            key: Key("password_field"),
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.password, color: Colors.indigoAccent),
@@ -278,6 +261,7 @@ class _SignUpState extends State<SignUp> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: TextFormField(
+                            key: Key("confirm_password_field"),
                             style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.check, color: Colors.indigoAccent),
@@ -301,6 +285,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         GestureDetector(
+                          key: Key("family_id_button"),
                           onTap: () async {
                             String? familyId = await showModalBottomSheet<String?>(
                               isScrollControlled: true,
@@ -327,15 +312,6 @@ class _SignUpState extends State<SignUp> {
                               });
                             }
                           },
-                          /*onTap: () => SignUp.showFamilyRedeemModal(context, _authData, () {
-                            setState(() {
-                              _isFamilyIdSet = true;
-                            });
-                          }, () {
-                            setState(() {
-                              _isFamilyIdSet = false;
-                            });
-                          }),*/
                           child: RichText(
                             text: TextSpan(
                               children: [
@@ -365,6 +341,7 @@ class _SignUpState extends State<SignUp> {
                           width: double.infinity,
                           height: 55,
                           child: ElevatedButton(
+                            key: Key("submit_button"),
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
