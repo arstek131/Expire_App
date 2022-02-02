@@ -269,7 +269,8 @@ class Ingredients extends StatelessWidget {
               itemCount: recipeModel.extendedIngredients.length,
               //recipeModel.extendedIngredients!.length,
               itemBuilder: (BuildContext context, int index) {
-                return Padding(
+                final tmp = recipeModel.extendedIngredients[index].nameClean;
+                return tmp == null ? Container() : Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 2.0,
                   ),
@@ -292,6 +293,7 @@ class Ingredients extends StatelessWidget {
 
 extension capitalizedString on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+      return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+
   }
 }
