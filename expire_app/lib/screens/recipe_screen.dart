@@ -219,6 +219,7 @@ class RecipeCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => RecipeDetailsScreen(
               idOfRecipe: r.id.toString(),
+              img: r.image,
             ),
           ),
         ),

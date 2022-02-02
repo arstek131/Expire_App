@@ -10,8 +10,9 @@ import '../app_styles.dart';
 class RecipeDetailsScreen extends StatelessWidget {
   final String idOfRecipe;
   final RecipeDetails? recipeDetails;
+  final String? img;
 
-  const RecipeDetailsScreen({Key? key, this.recipeDetails, required this.idOfRecipe}) : super(key: key);
+  const RecipeDetailsScreen({Key? key, this.recipeDetails, required this.idOfRecipe, this.img}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -160,13 +161,13 @@ class RecipeDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Hero(
-                          tag: recipesDetails.image, //recipesDetails[0].image!,
+                          tag: recipesDetails.image != null ? recipesDetails.image : img!, //recipesDetails[0].image!,
                           child: ClipRRect(
                             child: Image(
                               width: double.infinity,
                               height: (size.height / 2) + 50,
                               fit: BoxFit.cover,
-                              image: NetworkImage(recipesDetails.image), //NetworkImage(recipesDetails[0].image!),
+                              image: NetworkImage(recipesDetails.image != null ? recipesDetails.image : img!), //NetworkImage(recipesDetails[0].image!),
                             ),
                           ),
                         ),
