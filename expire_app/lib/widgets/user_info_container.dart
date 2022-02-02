@@ -2,6 +2,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:expire_app/helpers/user_info.dart';
 import 'package:expire_app/providers/dependencies_provider.dart';
+import 'package:expire_app/providers/filters_provider.dart';
 import 'package:expire_app/screens/family_info_screen.dart';
 import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:expire_app/widgets/display_name_choice_moda.dart';
@@ -52,6 +53,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     //Navigator.of(context).pushReplacementNamed('/');
     await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
     await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
+    Provider.of<FiltersProvider>(context, listen: false).clearFilter();
 
     if (auth.isAuth) {
       messaging.unsubscribeFromTopic(userInfo.familyId!);
