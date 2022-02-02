@@ -62,7 +62,7 @@ class StatisticsContainer extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    "No statistics available. Add a new produc in the home screen!",
+                    "No statistics available.\nAdd a new produc in the home screen!",
                     textAlign: TextAlign.center,
                     style: styles.subheading,
                   ),
@@ -112,11 +112,12 @@ class StatisticsContainer extends StatelessWidget {
           textStyle: styles.robotoMedium16.copyWith(color: Colors.white)),
       series: <CircularSeries>[
         DoughnutSeries<dynamic, String>(
-            dataSource: getDataSource(index, context),
-            xValueMapper: (dynamic data, _) => data.type,
-            yValueMapper: (dynamic data, _) => data.value,
-            dataLabelSettings: DataLabelSettings(isVisible: false),
-            pointColorMapper: (dynamic data, _) => data.color),
+          dataSource: getDataSource(index, context),
+          xValueMapper: (dynamic data, _) => data.type,
+          yValueMapper: (dynamic data, _) => data.value,
+          dataLabelSettings: DataLabelSettings(isVisible: false),
+          pointColorMapper: (dynamic data, _) => data.color,
+        ),
       ],
     );
   }

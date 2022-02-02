@@ -80,11 +80,11 @@ class _ProductListTileState extends State<ProductListTile> {
               );
             }
           },
-          //direction: DismissDirection.endToStart,
+          direction: DismissDirection.endToStart,
           dismissThresholds: const {
             DismissDirection.endToStart: 0.4,
           },
-          secondaryBackground: Container(
+          background: Container(
             color: Colors.red,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: AlignmentDirectional.centerEnd,
@@ -94,7 +94,7 @@ class _ProductListTileState extends State<ProductListTile> {
               size: 40,
             ),
           ),
-          background: Container(
+          /*background: Container(
             color: Colors.green,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: AlignmentDirectional.centerStart,
@@ -103,7 +103,7 @@ class _ProductListTileState extends State<ProductListTile> {
               color: Colors.white,
               size: 40,
             ),
-          ),
+          ),*/
           confirmDismiss: (DismissDirection direction) async {
             Vibrate.feedback(FeedbackType.selection);
             if (direction == DismissDirection.endToStart) {

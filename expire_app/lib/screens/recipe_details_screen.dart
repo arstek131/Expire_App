@@ -184,10 +184,13 @@ class RecipeDetailsScreen extends StatelessWidget {
                         ),
                         child: InkWell(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(
-                            FlutterIcons.back_ant,
-                            color: Colors.white,
-                            size: 34,
+                          child: Container(
+                            margin: EdgeInsets.only(right: 5),
+                            child: Icon(
+                              Icons.arrow_back_ios_new,
+                              color: Colors.white,
+                              size: 34,
+                            ),
                           ),
                         ),
                       ),

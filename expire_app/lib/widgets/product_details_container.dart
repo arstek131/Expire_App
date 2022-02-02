@@ -169,7 +169,7 @@ class _ProductDetailsContainerState extends State<ProductDetailsContainer> {
                                 color: _page == Pages.ShoppingList ? Colors.lightBlue.shade300 : Colors.grey.shade300,
                               ),
                             ),
-                            IconButton(
+                            /*IconButton(
                               onPressed: () => setState(() {
                                 _page = Pages.Score;
                               }),
@@ -178,7 +178,7 @@ class _ProductDetailsContainerState extends State<ProductDetailsContainer> {
                                 size: 30,
                                 color: _page == Pages.Score ? styles.tertiaryColor : Colors.grey.shade300,
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                         Divider(
@@ -196,12 +196,12 @@ class _ProductDetailsContainerState extends State<ProductDetailsContainer> {
                         if (_page == Pages.ShoppingList)
                           // add to some shopping list
                           ShoppingListSection(title: widget._product.title),
-                        if (_page == Pages.Score)
+                        /*if (_page == Pages.Score)
                           // add to some shopping list
                           Container(
                             height: 200,
                             color: Colors.black,
-                          ),
+                          ),*/
                       ],
                     ),
                   ),

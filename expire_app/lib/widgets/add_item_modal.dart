@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:expire_app/helpers/device_info.dart' as dif;
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/widgets/custom_dialog.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_scandit/flutter_scandit.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:googleapis/firebasedynamiclinks/v1.dart';
 // google apis
 import 'package:googleapis/vision/v1.dart' as vision;
 import 'package:googleapis_auth/auth_io.dart';
@@ -137,6 +139,8 @@ class _AddItemModalState extends State<AddItemModal> {
   String? _isVegan;
   String? _brandName;
   String? _quantity;
+
+  dif.DeviceInfo _deviceInfo = dif.DeviceInfo.instance;
 
   @override
   initState() {
@@ -735,6 +739,7 @@ class _AddItemModalState extends State<AddItemModal> {
           children: [
             Container(
               color: styles.secondaryColor.withOpacity(0.95),
+              padding: EdgeInsets.symmetric(horizontal: _deviceInfo.sizeDispatcher(context: context, phonePotrait: 0, phoneLandscape: 0, tabletPotrait: 50, tabletLandscape: 120,),),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -769,7 +774,7 @@ class _AddItemModalState extends State<AddItemModal> {
                               alignment: Alignment.center,
                               child: SizedBox(
                                 height: 65,
-                                width: 300,
+                                width: _deviceInfo.isPhone ? 300 : 500,
                                 child: Container(
                                     margin: EdgeInsets.only(top: 10),
                                     decoration: ShapeDecoration(
@@ -818,6 +823,8 @@ class _AddItemModalState extends State<AddItemModal> {
                              const SizedBox(
                               height: 10,
                             ),
+                            if(_deviceInfo.isPhone)
+                            Column(children: [
                             GestureDetector(
                               onTap: () async {
                                 ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
@@ -1037,6 +1044,277 @@ class _AddItemModalState extends State<AddItemModal> {
                                 ),
                               ],
                             ),
+                            ],),
+                            if(_deviceInfo.isTablet)
+                            Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                   width: _deviceInfo.isTabletLandscape(context) ? 400 : 300,
+                                    height: 300,
+                                    child: GestureDetector(
+                                    onTap: () async {
+                                      ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
+                                        isScrollControlled: true,
+                                        enableDrag: true,
+                                        context: context,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20),
+                                          ),
+                                        ),
+                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                        builder: (BuildContext ctx) {
+                                          return Row(
+                                            children: [
+                                              
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+                                                child: Container(
+                                                  color: Colors.blue.shade300,
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
+                                                        SizedBox(height: 2),
+                                                        Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ),
+                                              
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                                                  child: Container(
+                                                    color: Colors.pink.shade600,
+                                                    child: Container(
+                                                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
+                                                          SizedBox(height: 2),
+                                                          Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      if (imageSource == null) {
+                                        return;
+                                      }
+
+                                      _takePicture(imageSource);
+                                    },
+                                    child: Container(
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        color: styles.ghostWhite.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(15.0),
+                                        border: Border.all(
+                                          width: 1.5,
+                                          color: styles.ghostWhite,
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(13.0),
+                                        child: Center(
+                                          child: productInsertionMethod == ProductInsertionMethod.None
+                                              ? const Text(
+                                                  "Click to add image",
+                                                  textAlign: TextAlign.center,
+                                                )
+                                              : productInsertionMethod == ProductInsertionMethod.Scanner
+                                                  ? _imageUrl == null
+                                                      ? Image.asset(
+                                                          "assets/images/missing_image_placeholder.png",
+                                                          fit: BoxFit.contain,
+                                                        )
+                                                      : Stack(
+                                                        fit: StackFit.expand,
+                                                        children: [
+                                                          Container(
+                                                            child: Image.network(
+                                                                _imageUrl!,
+                                                                fit: BoxFit.cover,
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                colorBlendMode: BlendMode.colorBurn,
+                                                              ),
+                                                          ),
+                                                          Positioned.fill(
+                                                            child: BackdropFilter(
+                                                              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                              child: Container(color: Colors.black.withOpacity(0.0),),
+                                                            )
+                                                          ),
+                                                          Image.network(
+                                                              _imageUrl!,
+                                                              fit: BoxFit.contain,
+                                                            ),
+                                                        ],
+                                                      )
+                                                  : _pickedImage == null
+                                                      ? Image.asset(
+                                                          "assets/images/missing_image_placeholder.png",
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Stack(
+                                                        fit: StackFit.expand,
+                                                        children: [
+                                                          Container(
+                                                            child: Image.file(
+                                                                _pickedImage!,
+                                                                fit: BoxFit.cover,
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                colorBlendMode: BlendMode.colorBurn,
+                                                              ),
+                                                          ),
+                                                          Positioned.fill(
+                                                            child: BackdropFilter(
+                                                              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                              child: Container(color: Colors.black.withOpacity(0.0),),
+                                                            )
+                                                          ),
+                                                          Image.file(
+                                                            _pickedImage!,
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ],
+                                                      )
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ),
+                                  SizedBox(width: 20),
+                                  SizedBox(
+                                    width: _deviceInfo.isTabletLandscape(context) ? 400 : 300,
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          controller: _productNameController,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              color: styles.ghostWhite, 
+                                              fontFamily: styles.currentFontFamily, 
+                                              fontWeight: FontWeight.bold,
+                                              ),
+                                          decoration: InputDecoration( 
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(15.0),
+                                              borderSide: BorderSide(
+                                                color: styles.ghostWhite,
+                                              ),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(15.0),
+                                              borderSide: BorderSide(
+                                                color: Colors.grey.shade400,
+                                                width: 2.0,
+                                              ), 
+                                            ),
+                                            hintText: 'Product name',
+                                            hintStyle: styles.subheading
+                                          ),
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please enter some text';
+                                            }
+
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _productData['title'] = value!;
+                                          },
+                                          onFieldSubmitted: (value) {
+                                            _productData['title'] = value;
+                                          },
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextButton.icon(
+                                                icon: FaIcon(
+                                                  FontAwesomeIcons.calendarAlt,
+                                                  size: 23,
+                                                  color: styles.ghostWhite.withOpacity(0.9)
+                                                ),
+                                                label: Text(DateFormat('dd MMMM yyyy').format(_pickedDate),
+                                                    style: styles.subheading,
+                                                    ),
+                                                style: ButtonStyle(
+                                                  padding: MaterialStateProperty.all<EdgeInsets>(
+                                                    EdgeInsets.symmetric(vertical: 15),
+                                                  ),
+                                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),
+                                                      side: BorderSide(color: styles.ghostWhite),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () => _selectDate(context),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.only(top: 20),
+                                          width: double.infinity,
+                                          height: 55,
+                                          child: ElevatedButton(
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.all<Color>(
+                                                styles.deepOrange,
+                                              ),
+                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(14.0),
+                                                ),
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              // Validate returns true if the form is valid, or false otherwise.
+                                              if (_formKey.currentState!.validate()) {
+                                                await _submit();
+                                                Navigator.of(widget.modalContext).pop();
+                                              }
+                                            },
+                                            child: _isLoading
+                                                ? CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    backgroundColor: styles.ghostWhite,
+                                                  )
+                                                : const Text(
+                                                    'Submit',
+                                                    style: styles.subheading,
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            if(_deviceInfo.isPhone)
                             Container(
                               margin: const EdgeInsets.only(top: 20),
                               width: double.infinity,
@@ -1332,11 +1610,92 @@ class _AddItemModalState extends State<AddItemModal> {
                             SizedBox(height: 20), 
                             Divider(color: styles.ghostWhite.withOpacity(0.8)),
                             SizedBox(height: 10), 
-                            Row(
+                            if(_deviceInfo.isTablet)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      "Alergies or intolerances",
+                                      style: styles.heading,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.camera, 
+                                        size: 16, 
+                                        color: styles.ghostWhite,
+                                      ),
+                                      onPressed: () async {
+                                   
+                                        _extractTextFromImage(_alergiesTextController);
+                                      }
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              width: _deviceInfo.isTabletLandscape(context) ? 400 : 300,
+                              child: TextFormField(
+                                controller: _alergiesTextController,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 3,
+                                style: styles.subheading,
+                                decoration: InputDecoration( 
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                      color: styles.ghostWhite,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                      width: 2.0,
+                                    ), 
+                                  ),
+                                  hintText: 'e.g. eggs, milk, shrimps...',
+                                  hintStyle: styles.subheading
+                                ),
+                                validator: (value) {
+                                  /*if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }*/
+
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _allergens = value == null ? null : value.split(",");
+                                },
+                                onFieldSubmitted: (value) {
+                                  _allergens = value.split(",");
+                                },
+                              ),
+                            ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                              width: 10,
+                            ),
+                                  
+                                  const SizedBox(
+                              width: 10,
+                            ),
+                                  Column(
+                                    children: [
+                                      Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  "Alergies or intolerances",
+                                  "Packaging",
                                   style: styles.heading,
                                   textAlign: TextAlign.center,
                                 ),
@@ -1347,72 +1706,84 @@ class _AddItemModalState extends State<AddItemModal> {
                                     color: styles.ghostWhite,
                                   ),
                                   onPressed: () async {
-                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                      isScrollControlled: true,
-                                      enableDrag: true,
-                                      context: context,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20),
-                                        ),
-                                      ),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      builder: (BuildContext ctx) {
-                                        return Row(
-                                          children: [
-                                              Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                              child: Container(
-                                                color: Colors.blue.shade300,
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                  child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                      SizedBox(height: 2),
-                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                        ),
-                                            Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
-                                                child: Container(
-                                                  color: Colors.pink.shade600,
-                                                  child: Container(
-                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
-                                                        SizedBox(height: 2),
-                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (imageSource == null) {
-                                      return;
-                                    }
-                                    _extractTextFromImage(_alergiesTextController);
+                                    
+                                    _extractTextFromImage(_packagingTextController);
                                   }
                                 ),
                               ],
                             ),
                             const SizedBox(
+                              height: 10,
+                            ),
+                            
+                            SizedBox(
+                              width: _deviceInfo.isTabletLandscape(context) ? 400 : 300,
+                              child: TextFormField(
+                                controller: _packagingTextController,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 2,
+                                style: styles.subheading,
+                                decoration: InputDecoration( 
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                      color: styles.ghostWhite,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                      width: 2.0,
+                                    ), 
+                                  ),
+                                  hintText: 'e.g. glass, cardboard...',
+                                  hintStyle: styles.subheading
+                                ),
+                                validator: (value) {
+                                  /*if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }*/
+
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _packaging = value ?? null;
+                                },
+                                onFieldSubmitted: (value) {
+                                  _packaging = value;
+                                },
+                              ),
+                            ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            if(_deviceInfo.isPhone)
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      "Alergies or intolerances",
+                                      style: styles.heading,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.camera, 
+                                        size: 16, 
+                                        color: styles.ghostWhite,
+                                      ),
+                                      onPressed: () async {
+                                        
+                                        _extractTextFromImage(_alergiesTextController);
+                                      }
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
                               height: 10,
                             ),
                             TextFormField(
@@ -1469,66 +1840,7 @@ class _AddItemModalState extends State<AddItemModal> {
                                     color: styles.ghostWhite,
                                   ),
                                   onPressed: () async {
-                                    ImageSource? imageSource = await showModalBottomSheet<ImageSource>(
-                                      isScrollControlled: true,
-                                      enableDrag: true,
-                                      context: context,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20),
-                                        ),
-                                      ),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      builder: (BuildContext ctx) {
-                                        return Row(
-                                          children: [
-                                              Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
-                                              child: Container(
-                                                color: Colors.blue.shade300,
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                  child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      FaIcon(FontAwesomeIcons.images, size: 32, color: styles.ghostWhite,),
-                                                      SizedBox(height: 2),
-                                                      Text("Pick an image", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                        ),
-                                            Expanded(
-                                                child: GestureDetector(
-                                              onTap: () => Navigator.of(context).pop(ImageSource.camera),
-                                                child: Container(
-                                                  color: Colors.pink.shade600,
-                                                  child: Container(
-                                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Icon(Icons.camera, size: 35, color: styles.ghostWhite,)
-                                                        SizedBox(height: 2),
-                                                        Text("Take a picture", style: TextStyle(fontFamily: styles.currentFontFamily, color: styles.ghostWhite, fontSize: 16,),)
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (imageSource == null) {
-                                      return;
-                                    }
+                                    
                                     _extractTextFromImage(_packagingTextController);
                                   }
                                 ),
@@ -1573,9 +1885,14 @@ class _AddItemModalState extends State<AddItemModal> {
                                 _packaging = value;
                               },
                             ),
+                              ],
+                            ),
+                            
+                            
                             const SizedBox(
                               height: 30,
                             ),
+                            
                           ],
                         ),
                       ),
@@ -1584,38 +1901,6 @@ class _AddItemModalState extends State<AddItemModal> {
                 ],
               ),
             ),
-            /*Positioned(
-              top: 20,
-              right: 20,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text(
-                    "Scan barcode  ",
-                    style: styles.subheading,
-                  ),
-                  Container(
-                    height: 50,
-                    width: 100,
-                    decoration: ShapeDecoration(
-                      color: Colors.black87,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ), //CircleBorder(),
-                    ),
-                    child: IconButton(
-                      //padding: EdgeInsets.symmetric(horizontal: 20),
-                      icon: const FaIcon(
-                        FontAwesomeIcons.barcode,
-                        size: 27,
-                      ),
-                      color: Colors.white,
-                      onPressed: _scanBarcode,
-                    ),
-                  ),
-                ],
-              ),
-            ),*/
             if (_isFetchingProduct)
               Container(
                 height: double.infinity,

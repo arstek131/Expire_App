@@ -92,7 +92,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> with AutomaticK
                   children: [
                     Text(
                       "Shopping lists",
-                      style: styles.title,
+                      style: _deviceInfo.isPhone ? styles.title : styles.title.copyWith(fontSize: 40),
                     ),
                     GestureDetector(
                       onTap: () async {

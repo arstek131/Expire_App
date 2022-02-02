@@ -1,4 +1,5 @@
 import 'package:expire_app/app_styles.dart';
+import 'package:expire_app/helpers/device_info.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/providers/dependencies_provider.dart';
@@ -17,6 +18,8 @@ class RecipeScreen extends StatefulWidget {
 class _RecipeScreenState extends State<RecipeScreen> {
   late final _auth;
 
+  DeviceInfo deviceInfo = DeviceInfo.instance;
+
   @override
   void initState() {
     _auth = Provider.of<DependenciesProvider>(context, listen: false).auth;
@@ -33,9 +36,21 @@ class _RecipeScreenState extends State<RecipeScreen> {
           children: [
             Container(
               padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).orientation == Orientation.portrait
-                      ? MediaQuery.of(context).size.height * 0.055
-                      : 0.0),
+                top: deviceInfo.sizeDispatcher(
+                  context: context,
+                  phonePotrait: MediaQuery.of(context).size.height * 0.055,
+                  phoneLandscape: 0,
+                  tabletPotrait: 90,
+                  tabletLandscape: 90,
+                ),
+                bottom: deviceInfo.sizeDispatcher(
+                  context: context,
+                  phonePotrait: 0,
+                  phoneLandscape: 0,
+                  tabletPotrait: 30,
+                  tabletLandscape: 30,
+                ),
+              ),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -70,7 +85,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   children: [
                     Text(
                       "Recipes",
-                      style: styles.title,
+                      style: deviceInfo.isPhone ? styles.title : styles.title.copyWith(fontSize: 40),
                     ),
                   ],
                 ),
@@ -78,7 +93,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
             ),
             if (_auth.isAuth)
               Container(
-                color: secondaryColor,
+                //color: secondaryColor,
                 child: FutureBuilder<List<Recipe>>(
                   future: recipeManager.getRecipes(context),
                   builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
@@ -86,27 +101,51 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       List<Recipe> recipes = snapshot.data!;
                       if (recipes.length > 0) {
                         return Padding(
-                          padding: EdgeInsets.fromLTRB(20, 20, 20, 110),
-                          child: ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
-                            separatorBuilder: (context, index) {
-                              return SizedBox(height: 8);
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              return RecipeCard(
-                                r: snapshot.data![index],
-                              );
-                            },
-                          ),
+                          padding: EdgeInsets.fromLTRB(10, 20, 10, 110),
+                          child: deviceInfo.isPhonePotrait(context)
+                              ? ListView.separated(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(height: 8);
+                                  },
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return RecipeCard(
+                                      r: snapshot.data![index],
+                                    );
+                                  },
+                                )
+                              : Expanded(
+                                  child: GridView.builder(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: deviceInfo.isTabletLandscape(context) ? 5 : 3,
+                                    ),
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return RecipeCard(
+                                        r: snapshot.data![index],
+                                      );
+                                    },
+                                  ),
+                                ),
                         );
                       } else
-                        return Center(
-                          child: Text('No recipes available'),
+                        return Container(
+                          margin: EdgeInsets.only(top: 50),
+                          child: Text(
+                            'No recipes available',
+                            style: styles.subheading,
+                          ),
                         );
                     } else if (snapshot.hasError) {
-                      return Text('No recipes available');
+                      return Container(
+                        margin: EdgeInsets.only(top: 50),
+                        child: Text(
+                          'No recipes available',
+                          style: styles.subheading,
+                        ),
+                      );
                     }
                     return Container(
                         alignment: Alignment.center, margin: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
@@ -165,8 +204,11 @@ class RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: deepIndigo, borderRadius: BorderRadius.circular(15)),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.zero,
+      color: deepIndigo.withOpacity(0.745),
+      elevation: 10,
       child: ListTile(
         onTap: () => Navigator.push(
           context,
@@ -176,10 +218,15 @@ class RecipeCard extends StatelessWidget {
             ),
           ),
         ),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(100),
-          child: Image.network(
-            r.image!,
+        leading: SizedBox(
+          height: 100,
+          width: 100,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.network(
+              r.image!,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         title: Container(
@@ -190,7 +237,7 @@ class RecipeCard extends StatelessWidget {
           alignment: Alignment.centerRight,
           width: 20,
           child: Icon(
-            Icons.chevron_right_rounded,
+            Icons.arrow_forward_ios,
             color: Colors.white,
           ),
         ),
