@@ -1,7 +1,30 @@
 \section{Component view}
+The purpose of this section is to show the component diagram which is intended to represent the internal structure of the modeled software system in terms of its main components and the relationships among them.
+
+\def\fillandplacepagenumber{%
+ \par\pagestyle{empty}%
+\vbox to 0pt{\vss}\vfill
+\vbox to 0pt{\baselineskip0pt
+   \hbox to\linewidth{\hss}%
+   \setlength{\footskip}{70pt}
+   \baselineskip\footskip
+   \hbox to\linewidth{%
+     \hfil\thepage\hfil}\vss}}
+
+\begin{landscape}
+\begin{figure}[h]
+\vspace*{-2cm}
+\noindent
+\centering
+\centerline{\includegraphics[scale = 0.37]{./Images/component.png}}
+\vspace*{-1cm}
+    \caption{Component diagram}
+    \vspace*{-12cm}
+\end{figure}
+\fillandplacepagenumber
+\end{landscape}
 
 
-
-\input{./Chapters/Chapter3/3.2.1ApplicationServer.tex}
-\input{./Chapters/Chapter3/3.2.2MobileApplication.tex}
+\input{./Chapters/Chapter3/3.2.1MobileApplication.tex}
+\input{./Chapters/Chapter3/3.2.2ApplicationServer.tex}
 \input{./Chapters/Chapter3/3.2.3DatabaseAndStorage.tex}

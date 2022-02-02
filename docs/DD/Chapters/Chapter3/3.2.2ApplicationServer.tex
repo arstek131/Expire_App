@@ -1,0 +1,49 @@
+\subsection{Application server}
+The implementation of the mobile application must be autonomous from the structure of the application server. The UI must respect the design guidelines provided by Google's Material Design.
+As stated before, application is developed using Flutter, which is a framework base on the Dart programming language.
+
+To separate application states and UI, an external package called \textbf{Provider} is used.
+It does mainly two jobs:
+\begin{itemize}
+    \item Separates state from UI
+    \item Manages rebuilding UI based on state changes
+\end{itemize}
+Which makes loads of things simpler, from reasoning about state, to testing to refactoring. It makes codebase scalable.
+It can be considered a low boiler-plate way to separate business logic from  widgets in apps.
+In addition to using Providers, other external packages have been used(non-exhaustive list):
+\begin{itemize}
+    \item \textbf{sqflite: }SQLite plugin for Flutter
+    
+    \item \textbf{http: }contains a set of high-level functions and classes that make it easy to consume HTTP resources
+    
+    \item \textbf{flutter scandit: }barcode and qrcode scanner
+    
+    \item \textbf{shared preferences: }Wraps platform-specific persistent storage for simple data 
+    
+    \item \textbf{syncfusion flutter charts: }data visualization library charts
+    
+    \item \textbf{firebase: }
+    \begin{itemize}
+        \item \textbf{cloud firestore: }cloud-hosted, NoSQL database accessible directly via native SDKs
+        \item \textbf{firebase storage: }is a service used to store and download files generated directly by clients
+        \item \textbf{firebase auth: }firebase authentication API
+    \end{itemize}
+    
+    \item \textbf{google sign in: }API to manage Google login and registration
+    \item \textbf{flutter facebook auth: }API to manage Facebook login and registration
+    \item \textbf{openfoodfacts: }package for the Open Food Facts API
+    
+    \item \textbf{testing: }
+    \begin{itemize}
+        \item \textbf{mockito: }testing framework
+        \item \textbf{firebase auth mocks: }unit tests involving Firebase Authentication
+        \item \textbf{build runner: }provides general-purpose commands for generating files, and for optionally testing the generated files or serving both source and generated files
+        \item \textbf{fake cloud firestore: }Fakes to write unit tests for Cloud Firestore
+        \item \textbf{google sign in mocks: }mocks for google sign in package, used for testing purposes
+    \end{itemize}
+    
+\end{itemize}
+
+Furthermore to get data about \texit{products} and \textit{recipes}, also external services are used.
+\textbf{OpenFoodFacts }is used for retrieving information about a product given a barcode.
+\textbf{Spoonacular API} is used for retrieving recipes and detail about a recipe.

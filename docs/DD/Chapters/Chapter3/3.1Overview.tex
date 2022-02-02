@@ -1,1 +1,13 @@
 \section{Overview}
+This chapter presents a general description of the system components, both at a physical and at a logical level. In the following sections are presented the chosen paradigm of the system and its components, followed by the description of how the system will be deployed. Moreover, components’ sequence and interface diagrams are listed to describe the way components interact to accomplish specific tasks of the application.
+
+\textit{Expire App }is built using Flutter.
+Flutter is an open source framework developed by Google, for building natively and multiplatform applications from a single codebase.
+Flutter is powered by Dart, a programming language optimized for fast apps on every platform.
+The software to be developed is a distributed application with a client-server multi-tiered architecture.
+The general architecture of the system can be subdivided into the three logic layers:
+\begin{itemize}
+    \item \textit{Presentation Layer: }It provides an interface to users accessing  the mobile application  allowing them to exploit Expire App’s services in the most efficient and intuitive way.
+    \item \textit{Application Layer: } it contains business and data access logic. It handles the functions to be provided for the users. It also manages communication between the end user interface and the database.
+    \item \textit{Data Layer: }it manages the persistent storage and retrieval of data accessing to the database.
+\end{itemize}

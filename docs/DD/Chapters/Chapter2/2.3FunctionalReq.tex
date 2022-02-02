@@ -1,39 +1,77 @@
 \section{Functional requirements}
-This section shows the physical distribution of the system, that is, the environment in which the system runs. Specifically, \textit{Figure 2.4} shows the structure of the hardware components that execute the software.
+In this section are outlined the various the functional requirements of the application dived by goals. If two goals share a requirement, it is cited twice and referenced with the same number. Furthermore, domain assumptions are referenced if pertinent to the context.
 
-Firewalls are inserted to ensure security between the different zones and load balancers are designed to distribute the workload.\\
-
-As previously mentioned, the system is divided into 4 Tier, the components of which are described below:
 \begin{itemize}
-    \item \textbf{Client Tier}: it consists of the client programs used to exploit system services and the devices on which these programs are installed.
+    \item \textbf{[G1] User can login and register to the application}
     \begin{itemize}
-        \item \textbf{Smartphone}: users access the DREAM system and use the related services through a mobile application from a smartphone.
-        \item \textbf{Personal Computer}: users access the DREAM system and use the related services through the Web browser from a personal computer.
+        \item {[D1] To authenticate the user needs an internet connection} 
+        \item {[R1] User can login and register using email and password}
+        \item {[R2] User can login using Google authentication service}
+        \item {[R3] User can login using Facebook authentication service}
+        \item {[R4] User can login using Apple authentication service}
+        \item {[R5] User can access the application without registering}
     \end{itemize}
-    \item \textbf{Web Tier}: it consists of components that handle the interaction between client tier and the business tier.  It contains the Web Server.
+    \item \textbf{[G2] User can register food products}
     \begin{itemize}
-        \item \textbf{Web Server}: it provides content to the Web using the HTTP(S) protocol. It mainly works to serve the requested web pages continuously and without interruption. As long as the Web Server is up and running, the corresponding web pages and sites will be available to users on the network.
+        \item {[D2] User must have access to a camera}
+        \item {[R6] User can retrieve products infos by scanning barcode}
+        \item {[R7] User can set expiration of a product}
+        \item {[R8] User can take and upload a picture of a product}
+        \item {[R9] User can manually insert nutritional values of a product}
+        \item {[R10] User can retrieve a text from a label by taking a picture}
+        \item {[R11] User can manually register a product}
     \end{itemize}
-    \item \textbf{Business Tier}: it processes all dynamic content and the interactions between the Client/Web Tier and the Data tier. It contains the Application Server.
+    \item \textbf{[G3] User can visualize inserted products}
     \begin{itemize}
-        \item \textbf{Application Server}: it hosts and exposes business logic and processes. It provides the infrastructure and logical capabilities to support, develop and run applications in a distributed context. The Application Server communicates directly with the Mobile Application through HTTPS protocol, in order to create a lightweight API to request only the necessary data. The Application Server will receive this call, make the call to the external service, filter it, and return only what the application has requested.  This will reduce the amount of data transiting over mobile Internet and thus increase application performance.
+        \item {[R12] User can sort products by their expiration date}
+        \item {[R13] User can filter products by categories}
+        \item {[R14] User can filter products by search keywords}
+        \item {[R15] User can view detailed information about a product}
+        \item {[R16] User can delete registered products}
+        \item {[R17] User can add a product to a shopping list}
+        \item {[R18] User can hide expired products}
     \end{itemize}
-    \item \textbf{Data Tier}: it runs the DBMS and holds all of the sensitive application data. It contains database servers.
+     \item \textbf{[G4] User can create and visualize shopping lists}
     \begin{itemize}
-        \item \textbf{Database Server}: it allows access to one or more Database Systems and is an essential support for Web Servers in managing the delivery and storage of data. It communicates with the Application Server via the standard TCP/IP protocol and provides access to the physical database which is in charge of storing all persistent data of users who use DREAM.
+        \item {[R19] User can create shopping lists with custom label}
+        \item {[R20] For each shopping list the user can consult the contained products}
+        \item {[R21] User can mark a shopping list as completed}
+        \item {[R22] User can delete a shopping list}
+        \item {[R23] User can check a product inside a shopping list}
+        \item {[R24] User can increment/decrement the quantity of a product inside a shopping list}
+        \item {[R25] User can delete a product from a shopping list}
+        \item {[R26] User can add a product to a shopping list using a custom label and quantity}
+        \item {[R27] User can add a product to a shopping list from an already inserted product (see \textbf{G2})}
     \end{itemize}
-\end{itemize}\\
-
-
-\textbf{Firewalls} are also included in the system architecture to delimit safe areas within the system. 
-Specifically, there are firewalls between the Internet accessed by the customer to use the application and the Web Server and between the latter and the Application Server in order to create a demilitarized zone (DMZ). The purpose of the DMZ is to add an additional level of security to an internal network, where a node belonging to an external network can only access the services made available, without putting at risk and compromising the security of the entire network.
-In order to ensure secure access to the database and to delimit the internal network (IN), a firewall is placed between the Application Server and the Database Server.\\
-
-
-In order to distribute the load of the requests to the DREAM website among several servers, \textbf{load balancers} are introduced for the Web Server. In this way, the reliability and scalability of the entire architecture increases because requests will be shared equally among the different servers. If one of the servers is unable to respond to the request, the user can still use the service based on one of the active servers.
-Similarly, the Web Server may need to query the database to generate responses. Web Servers send database queries to the load balancer which balances the inbound database workload on the database servers.
-
-
+    \item \textbf{[G5] User can view statistics}
+    \begin{itemize}
+        \item {[C1] User must be authenticated}
+        \item {[R28] User can view statics about nutritional values of inserted products}
+    \end{itemize}
+    \item \textbf{[G6] User can view and modify personal data}
+    \begin{itemize}
+        \item {[R29] User can insert/update the display name}
+        \item {[R30] User can delete his/her account}
+        \item {[R31] User can upload a personal avatar}
+    \end{itemize}
+    \item \textbf{[G7] User can belong to a family}
+    \begin{itemize}
+        \item {[C2] User belongs to a family}
+        \item {[D3] All the family members live together and trust each other}
+        \item {[R32] User can join a family using a unique family ID}
+        \item {[R33] User can share his/her family}
+        \item {[R34] User can leave his/her family}
+        \item {[R35] User can consult members belonging to his/her family}
+        \item {[R36] User can visualize and edit all the products his/her family}
+    \end{itemize}
+    \item \textbf{[G8] User can visualize food recipes}
+    \begin{itemize}
+        \item {[C3] User must be authenticated}
+        \item {[R37] User can visualize recipes based on inserted products (see \textbf{G2})}
+        \item {[R38] User can view the detail of a recipe}
+        \item {[R39] User can mark a recipe as favourite}
+    \end{itemize}
+\end{itemize}
 
 \def\fillandplacepagenumber{%
  \par\pagestyle{empty}%

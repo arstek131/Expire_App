@@ -1,1 +1,30 @@
 \section{Selected architectural styles and patterns}
+This section clarifies the architectural style and architectural pattern adopted
+in the design of the Expire App system. The main difference between the two
+is that an architectural style is the application design at the highest level
+of abstraction, it is a name given to a recurrent architectural design; while
+an architectural pattern is a way to implement an architectural style, it is a
+way to solve a recurring architectural problem related to it.
+
+As stated before to design the  application a three tier architecture has been
+used. It is a client-server architecture in which the functional process logic,
+data access, computer data storage and user interface are developed and
+maintained as independent modules on three levels:
+
+\begin{itemize}
+    \item \textbf{Presentation tier};
+    \item \textbf{Logic tier};
+    \item \textbf{Data tier};
+\end{itemize}
+
+In this type of architecture there is the thin client, that is the device
+that requests the resource, equipped with a user interface in charge of the
+presentation-level functions. Then, there is the application server, also called middleware, in charge of providing the resource and communicating with the server database, which stores the data used by the application.
+The main advantage of the three-tier architecture is the logical and physical separation of functionality. This allows each tier to run on a separate
+operating system and server platform that best suit its functional requirements.
+Compared to one or two tier architecture, this allows for \textbf{faster development} as each tier can be developed simultaneously by several teams.
+Furthermore, this separation of levels allows programmers to use the latest
+and best languages and tools for each level.
+Moreover, any tier can be scaled independently of the others as needed
+and if one tier is interrupted, it will be less likely to impact the availability or performance of the other tiers, so this architecture also has a positive impact on \textbf{scalability} and \textbf{reliability} as well.
+Since the presentation layer and the data layer cannot communicate directly, a well-designed application layer can function as a kind of internal firewall, preventing some malicious attacks and ensuring \textbf{greater security}.

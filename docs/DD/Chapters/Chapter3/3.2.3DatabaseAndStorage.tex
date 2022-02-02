@@ -1,1 +1,4 @@
 \subsection{Database and Storage}
+The application mainly makes use of two databases: one internal, managed through the external \textit{sqflite} library, the other external, mentioned before, \textit{Firebase}.
+The first one is used when a user use the application without signing up, Firebase instead hosts the database and storage when user is logged in.
+The data layer comprises a DBMS and a NoSql Database Engine to manage insertions, modifications, deletions of data inside the storage memory. The advantage of the NoSql engine it indexes queries by default: this means that the performance is proportional to the size of the result set and not of data set. Despite the implementation, for which we choose to rely on the service hosted by Firebase, this layer must respect the ACID proprieties while executing transactions.
