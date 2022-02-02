@@ -120,4 +120,20 @@ class DependenciesProvider {
   get firebaseStorage => this._firebaseStorage;
   get sharedPreferences => this._sharedPreferences;
   get messaging => this._messaging;*/
+
+  void cleanProviderState() {
+    _firestoreHelper = null;
+    _firebaseAuthHelper = null;
+    _userInfo = null;
+    _firebaseStorage = null;
+    _sharedPreferences = null;
+    _firebaseMessaging = null;
+
+    _mockFirestoreHelper = null;
+    _mockFirebaseAuthHelper = null;
+    _mockUserInfo = null;
+    _mockFirebaseStorage = null;
+    _mockSharedPreferences = null;
+    _mockFirebaseMessaging = null;
+  }
 }
