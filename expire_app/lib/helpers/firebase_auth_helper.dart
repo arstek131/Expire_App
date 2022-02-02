@@ -48,7 +48,11 @@ class FirebaseAuthHelper {
   }
 
   bool get isDisplayNameSet {
-    return isAuth ? _auth.currentUser!.displayName != null : false;
+    print(_auth.currentUser!.displayName);
+    print(_auth.currentUser!.displayName != null);
+    return isAuth
+        ? _auth.currentUser!.displayName != null && _auth.currentUser!.displayName!.replaceAll(" ", "").isNotEmpty
+        : false;
   }
 
   String? get displayName {

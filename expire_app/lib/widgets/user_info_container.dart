@@ -54,7 +54,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
     await Provider.of<ProductsProvider>(context, listen: false).cleanProviderState();
     await Provider.of<ShoppingListProvider>(context, listen: false).cleanProviderState();
     Provider.of<FiltersProvider>(context, listen: false).clearFilter();
-    Provider.of<DependenciesProvider>(context, listen: false).cleanProviderState();
+    //Provider.of<DependenciesProvider>(context, listen: false).cleanProviderState();
 
     if (auth.isAuth) {
       messaging.unsubscribeFromTopic(userInfo.familyId!);
