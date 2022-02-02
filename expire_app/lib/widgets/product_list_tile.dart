@@ -219,7 +219,7 @@ class _ProductListTileState extends State<ProductListTile> {
                                 fontFamily: styles.currentFontFamily,
                                 color: styles.ghostWhite, //Colors.black,
                               ),
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.fade,
                             ),
                             SizedBox(
                               height: 5,

@@ -55,38 +55,48 @@ class StatisticsContainer extends StatelessWidget {
         ],
       );
     }
-    return _deviceInfo.isPhone
-        ? SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 80),
-            child: Consumer<ProductsProvider>(
-              builder: (context, productprovider, child) {
-                return Card(
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      buildChart(0, 'Sugar', context),
-                      buildChart(1, 'Fat', context),
-                      buildChart(2, 'Saturated fat', context),
-                      buildChart(3, 'Salt', context),
-                    ],
+    return Consumer<ProductsProvider>(
+      builder: (context, productprovider, child) {
+        return productprovider.items.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "No statistics available. Add a new produc in the home screen!",
+                    textAlign: TextAlign.center,
+                    style: styles.subheading,
                   ),
-                );
-              },
-            ),
-          )
-        : Padding(
-            padding: const EdgeInsets.all(70.0),
-            child: GridView(
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: _deviceInfo.isTabletLandscape(context) ? 3 : 2),
-              children: [
-                buildChart(0, 'Sugar', context),
-                buildChart(1, 'Fat', context),
-                buildChart(2, 'Saturated fat', context),
-                buildChart(3, 'Salt', context),
-              ],
-            ),
-          );
+                ),
+              )
+            : _deviceInfo.isPhonePotrait(context)
+                ? SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 80),
+                    child: Card(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          buildChart(0, 'Sugar', context),
+                          buildChart(1, 'Fat', context),
+                          buildChart(2, 'Saturated fat', context),
+                          buildChart(3, 'Salt', context),
+                        ],
+                      ),
+                    ))
+                : Padding(
+                    padding: const EdgeInsets.all(70.0),
+                    child: GridView(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: _deviceInfo.isTabletLandscape(context) ? 3 : 2),
+                      children: [
+                        buildChart(0, 'Sugar', context),
+                        buildChart(1, 'Fat', context),
+                        buildChart(2, 'Saturated fat', context),
+                        buildChart(3, 'Salt', context),
+                      ],
+                    ),
+                  );
+      },
+    );
   }
 
   SfCircularChart buildChart(int index, String title, BuildContext context) {

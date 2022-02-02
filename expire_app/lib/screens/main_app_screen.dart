@@ -57,6 +57,10 @@ class _ProductsScreenState extends State<MainAppScreen> {
 
   @override
   void initState() {
+    firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
+    userInfo = Provider.of<DependenciesProvider>(context, listen: false).userInfo;
+    messaging = Provider.of<DependenciesProvider>(context, listen: false).messaging;
+
     messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -66,11 +70,6 @@ class _ProductsScreenState extends State<MainAppScreen> {
       provisional: false,
       sound: true,
     );
-
-    firebaseAuthHelper = Provider.of<DependenciesProvider>(context, listen: false).auth;
-    userInfo = Provider.of<DependenciesProvider>(context, listen: false).userInfo;
-    messaging = Provider.of<DependenciesProvider>(context, listen: false).messaging;
-
     _pages = [
       {
         'page': RecipeScreen(),

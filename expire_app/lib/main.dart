@@ -33,7 +33,6 @@ import 'screens/main_app_screen.dart';
 import 'screens/name_input_screen.dart';
 import 'screens/onboarding_page.dart';
 
-// TODO: remove
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
@@ -41,10 +40,8 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     importance: Importance.high,
     playSound: true);
 
-// TODO: remove
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-// TODO: remove
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('A bg message just showed up :  ${message.messageId}');
@@ -55,7 +52,6 @@ Future<void> main() async {
 
   await Firebase.initializeApp(); // todo: set for ios
 
-  // TODO: remove
   /* notification channel */
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -97,7 +93,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   FirebaseAuthHelper firebaseAuthHelper = FirebaseAuthHelper();
 
-  // TODO: remove
   @override
   void initState() {
     super.initState();
