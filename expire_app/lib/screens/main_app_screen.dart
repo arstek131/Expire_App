@@ -1,5 +1,7 @@
 /* Dart */
 
+import 'dart:io';
+
 import 'package:expire_app/app_styles.dart';
 import 'package:expire_app/helpers/firebase_auth_helper.dart';
 import 'package:expire_app/providers/dependencies_provider.dart';
@@ -61,15 +63,17 @@ class _ProductsScreenState extends State<MainAppScreen> {
     userInfo = Provider.of<DependenciesProvider>(context, listen: false).userInfo;
     messaging = Provider.of<DependenciesProvider>(context, listen: false).messaging;
 
-    messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    }
     _pages = [
       {
         'page': RecipeScreen(),

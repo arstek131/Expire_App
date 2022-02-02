@@ -44,16 +44,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
 
   @override
   void initState() {
-    final fbm = FirebaseMessaging.instance;
-    fbm.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
     super.initState();
   }
 

@@ -52,14 +52,6 @@ class DependenciesProvider {
       } else {
         mockFirebaseMessaging = mockFirebaseMessaging;
       }
-    } else {
-      /*_firestore = mockFirestoreHelper ?? (/*!Platform.environment.containsKey('FLUTTER_TEST') ? FirestoreHelper() : */ null);
-      _auth = mockFirebaseAuthHelper ?? (/*!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuthHelper() : */ null);
-      _userInfo = mockUserInfo ?? (/*!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuthHelper() : */ null);
-      _firebaseStorage =
-          mockFirebaseStorage ?? (/*!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuthHelper() : */ null);
-      _sharedPreferences =
-          mockSharedPreferences ?? (/*!Platform.environment.containsKey('FLUTTER_TEST') ? FirebaseAuthHelper() : */ null);*/
     }
   }
 

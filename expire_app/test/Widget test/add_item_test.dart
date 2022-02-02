@@ -1,6 +1,8 @@
 /* dart */
 import 'dart:io';
 
+import 'package:expire_app/providers/products_provider.dart';
+import 'package:expire_app/widgets/add_item_modal.dart';
 import 'package:expire_app/widgets/sign_up.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,7 @@ void main() {
   TestObserver mockNavigatorObserver = TestObserver();
 
   /* STATIC STUBS */
-  when(mockUserInfo.userId).thenReturn("userId"); 
+  when(mockUserInfo.userId).thenReturn("userId");
   when(mockUserInfo.displayName).thenReturn("displayName");
   when(mockUserInfo.familyId).thenReturn("familyId");
 
@@ -107,6 +109,9 @@ void main() {
             mockFirestoreHelper: mockFirestoreHelper,
           ),
         ),
+        Provider(
+          create: (_) => ProductsProvider(),
+        )
       ],
       child: MaterialApp(
         routes: {
@@ -120,4 +125,25 @@ void main() {
       ),
     );
   }
+
+  testWidgets('test', (WidgetTester tester) async {
+    // SETUP
+    _SETUP_DEVICE_RES(binding);
+
+    // RUN
+    await tester.pumpWidget(
+      makeWidgetTestable(
+        Builder(
+          builder: (context) {
+            return AddItemModal(
+              modalContext: context,
+            );
+          },
+        ),
+      ),
+    );
+
+    // RESET
+    _RESET_DEVICE_RES(binding, tester);
+  });
 }

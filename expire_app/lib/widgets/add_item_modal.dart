@@ -145,6 +145,8 @@ class _AddItemModalState extends State<AddItemModal> {
   @override
   initState() {
     super.initState();
+
+    
   }
 
   @override

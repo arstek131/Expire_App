@@ -155,38 +155,42 @@ class _RecipeScreenState extends State<RecipeScreen> {
             else
               Stack(
                 children: [
-                  Positioned.fill(
-                      // replace with blurred image
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                        color: Colors.red,
-                      )),
-                  AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
+                  /*Positioned.fill(
+                    // replace with blurred image
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.red,
+                    ),
+                  ),*/
+                  Container(
+                    margin: EdgeInsets.only(top: deviceInfo.deviceHeight / 5),
+                    child: AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
                       ),
+                      alignment: Alignment.center,
+                      title: Text(
+                        "Premium feature",
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Text(
+                        "This is a premium feature! Please register to fully unlock the functionalities of the app",
+                        textAlign: TextAlign.center,
+                      ),
+                      titleTextStyle: TextStyle(
+                        fontFamily: styles.currentFontFamily,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                      contentTextStyle: TextStyle(
+                        fontFamily: styles.currentFontFamily,
+                        fontSize: 16,
+                      ),
+                      backgroundColor: styles.deepAmber,
                     ),
-                    alignment: Alignment.center,
-                    title: Text(
-                      "Premium feature",
-                      textAlign: TextAlign.center,
-                    ),
-                    content: Text(
-                      "This is a premium feature! Please register to fully unlock the functionalities of the app",
-                      textAlign: TextAlign.center,
-                    ),
-                    titleTextStyle: TextStyle(
-                      fontFamily: styles.currentFontFamily,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
-                    contentTextStyle: TextStyle(
-                      fontFamily: styles.currentFontFamily,
-                      fontSize: 16,
-                    ),
-                    backgroundColor: styles.deepAmber,
                   ),
                 ],
               )

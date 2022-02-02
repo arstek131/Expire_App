@@ -1,7 +1,9 @@
 /* dart */
+import 'dart:async';
 import 'dart:io';
 
 import 'package:expire_app/widgets/sign_up.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -81,7 +83,7 @@ class TestObserver extends NavigatorObserver {
   }
 }
 
-@GenerateMocks([FirebaseAuthHelper, FirestoreHelper, SharedPreferences, userinfo.UserInfo])
+@GenerateMocks([FirebaseAuthHelper, FirestoreHelper, FirebaseMessaging, SharedPreferences, userinfo.UserInfo])
 void main() {
   // INITIAL SETUP
 
@@ -91,6 +93,7 @@ void main() {
   MockSharedPreferences mockSharedPreferences = MockSharedPreferences();
   MockFirestoreHelper mockFirestoreHelper = MockFirestoreHelper();
   MockUserInfo mockUserInfo = MockUserInfo();
+  MockFirebaseMessaging mockFirebaseMessaging = MockFirebaseMessaging();
   TestObserver mockNavigatorObserver = TestObserver();
 
   /* STATIC STUBS */
@@ -105,6 +108,7 @@ void main() {
           create: (_) => DependenciesProvider(
             mockFirebaseAuthHelper: mockFirebaseAuthHelper,
             mockFirestoreHelper: mockFirestoreHelper,
+            mockFirebaseMessaging: mockFirebaseMessaging,
           ),
         ),
       ],

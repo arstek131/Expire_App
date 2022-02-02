@@ -332,7 +332,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                           SizedBox(width: 3),
                           CustomBtn(
                             buttonHeight: 160,
-                            buttonWidth: _deviceInfo.deviceWidth / 1.1,
+                            buttonWidth: _deviceInfo.deviceWidth / 1.3,
                             imageWidth: 28,
                             imageHeigth: 28,
                             bgcolor: Colors.pink.shade800,
@@ -350,7 +350,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                           SizedBox(width: 5),
                           CustomBtn(
                             buttonHeight: 120,
-                            buttonWidth: _deviceInfo.deviceWidth / 1.1,
+                            buttonWidth: _deviceInfo.deviceWidth / 1.3,
                             imageWidth: 28,
                             imageHeigth: 28,
                             bgcolor: Colors.deepOrange.shade600,
@@ -467,7 +467,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                         children: [
                           CustomBtn(
                             buttonHeight: _deviceInfo.deviceHeight / 4.5,
-                            buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.4, //150,
                             imageWidth: 75,
                             imageHeigth: 70,
                             bgcolor: Color(0xFF6DB5CB),
@@ -484,7 +484,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                           ),
                           CustomBtn(
                             buttonHeight: 150,
-                            buttonWidth: _deviceInfo.deviceWidth / 2.1, //150,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.4, //150,
                             imageWidth: 75,
                             imageHeigth: 70,
                             bgcolor: Color(0xFFFE7235),
@@ -499,7 +499,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                           ),
                           CustomBtn(
                             buttonHeight: 200,
-                            buttonWidth: _deviceInfo.deviceWidth / 2.1,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.4,
                             imageWidth: 28,
                             imageHeigth: 28,
                             bgcolor: styles.deepGreen,
@@ -516,7 +516,7 @@ class _UserInfoContainerState extends State<UserInfoContainer> {
                           ),
                           CustomBtn(
                             buttonHeight: 140,
-                            buttonWidth: _deviceInfo.deviceWidth / 2.1,
+                            buttonWidth: _deviceInfo.deviceWidth / 2.4,
                             imageWidth: 28,
                             imageHeigth: 28,
                             bgcolor: Colors.deepOrange.shade600,

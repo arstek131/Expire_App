@@ -2,21 +2,25 @@
 // in expire_app/test/Widget%20test/sign_in_up_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i7;
+import 'dart:async' as _i9;
 
-import 'package:cloud_firestore/cloud_firestore.dart' as _i11;
-import 'package:expire_app/enums/sign_in_method.dart' as _i6;
-import 'package:expire_app/helpers/firebase_auth_helper.dart' as _i5;
-import 'package:expire_app/helpers/firestore_helper.dart' as _i8;
-import 'package:expire_app/helpers/user_info.dart' as _i14;
-import 'package:expire_app/models/product.dart' as _i9;
-import 'package:expire_app/models/shopping_list.dart' as _i10;
-import 'package:expire_app/models/shopping_list_element.dart' as _i12;
+import 'package:cloud_firestore/cloud_firestore.dart' as _i13;
+import 'package:expire_app/enums/sign_in_method.dart' as _i8;
+import 'package:expire_app/helpers/firebase_auth_helper.dart' as _i7;
+import 'package:expire_app/helpers/firestore_helper.dart' as _i10;
+import 'package:expire_app/helpers/user_info.dart' as _i17;
+import 'package:expire_app/models/product.dart' as _i11;
+import 'package:expire_app/models/shopping_list.dart' as _i12;
+import 'package:expire_app/models/shopping_list_element.dart' as _i14;
 import 'package:firebase_auth/firebase_auth.dart' as _i4;
+import 'package:firebase_core/firebase_core.dart' as _i5;
+import 'package:firebase_messaging/firebase_messaging.dart' as _i15;
+import 'package:firebase_messaging_platform_interface/firebase_messaging_platform_interface.dart'
+    as _i6;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart' as _i3;
 import 'package:google_sign_in/google_sign_in.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:shared_preferences/shared_preferences.dart' as _i13;
+import 'package:shared_preferences/shared_preferences.dart' as _i16;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -33,11 +37,16 @@ class _FakeFacebookAuth_1 extends _i1.Fake implements _i3.FacebookAuth {}
 
 class _FakeFirebaseAuth_2 extends _i1.Fake implements _i4.FirebaseAuth {}
 
+class _FakeFirebaseApp_3 extends _i1.Fake implements _i5.FirebaseApp {}
+
+class _FakeNotificationSettings_4 extends _i1.Fake
+    implements _i6.NotificationSettings {}
+
 /// A class which mocks [FirebaseAuthHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockFirebaseAuthHelper extends _i1.Mock
-    implements _i5.FirebaseAuthHelper {
+    implements _i7.FirebaseAuthHelper {
   MockFirebaseAuthHelper() {
     _i1.throwOnMissingStub(this);
   }
@@ -70,49 +79,49 @@ class MockFirebaseAuthHelper extends _i1.Mock
       (super.noSuchMethod(Invocation.getter(#isDisplayNameSet),
           returnValue: false) as bool);
   @override
-  _i6.SignInMethod get signInMethod =>
+  _i8.SignInMethod get signInMethod =>
       (super.noSuchMethod(Invocation.getter(#signInMethod),
-          returnValue: _i6.SignInMethod.None) as _i6.SignInMethod);
+          returnValue: _i8.SignInMethod.None) as _i8.SignInMethod);
   @override
-  _i7.Future<void>? setDisplayName(String? displayName) => (super.noSuchMethod(
+  _i9.Future<void>? setDisplayName(String? displayName) => (super.noSuchMethod(
       Invocation.method(#setDisplayName, [displayName]),
-      returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>?);
+      returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>?);
   @override
-  _i7.Future<void> signInWithEmail({String? email, String? password}) =>
+  _i9.Future<void> signInWithEmail({String? email, String? password}) =>
       (super.noSuchMethod(
           Invocation.method(
               #signInWithEmail, [], {#email: email, #password: password}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> signUpWithEmail(
+  _i9.Future<void> signUpWithEmail(
           {String? email, String? password, String? familyId}) =>
       (super.noSuchMethod(
           Invocation.method(#signUpWithEmail, [],
               {#email: email, #password: password, #familyId: familyId}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> googleLogIn() =>
+  _i9.Future<void> googleLogIn() =>
       (super.noSuchMethod(Invocation.method(#googleLogIn, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> facebookLogIn() =>
+  _i9.Future<void> facebookLogIn() =>
       (super.noSuchMethod(Invocation.method(#facebookLogIn, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> logOut() =>
+  _i9.Future<void> logOut() =>
       (super.noSuchMethod(Invocation.method(#logOut, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
 }
 
 /// A class which mocks [FirestoreHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirestoreHelper extends _i1.Mock implements _i8.FirestoreHelper {
+class MockFirestoreHelper extends _i1.Mock implements _i10.FirestoreHelper {
   MockFirestoreHelper() {
     _i1.throwOnMissingStub(this);
   }
@@ -130,74 +139,74 @@ class MockFirestoreHelper extends _i1.Mock implements _i8.FirestoreHelper {
       super.noSuchMethod(Invocation.setter(#firebaseStorage, _firebaseStorage),
           returnValueForMissingStub: null);
   @override
-  _i7.Future<bool> familyExists({String? familyId}) => (super.noSuchMethod(
+  _i9.Future<bool> familyExists({String? familyId}) => (super.noSuchMethod(
       Invocation.method(#familyExists, [], {#familyId: familyId}),
-      returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+      returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<List<String>> getUsersFromFamilyId({String? familyId}) => (super
+  _i9.Future<List<String>> getUsersFromFamilyId({String? familyId}) => (super
       .noSuchMethod(
           Invocation.method(#getUsersFromFamilyId, [], {#familyId: familyId}),
-          returnValue: Future<List<String>>.value(<String>[])) as _i7
+          returnValue: Future<List<String>>.value(<String>[])) as _i9
       .Future<List<String>>);
   @override
-  _i7.Future<String?> getFamilyIdFromUserId({String? userId}) =>
+  _i9.Future<String?> getFamilyIdFromUserId({String? userId}) =>
       (super.noSuchMethod(
           Invocation.method(#getFamilyIdFromUserId, [], {#userId: userId}),
-          returnValue: Future<String?>.value()) as _i7.Future<String?>);
+          returnValue: Future<String?>.value()) as _i9.Future<String?>);
   @override
-  _i7.Future<String?> getDisplayNameFromUserId({String? userId}) =>
+  _i9.Future<String?> getDisplayNameFromUserId({String? userId}) =>
       (super.noSuchMethod(
           Invocation.method(#getDisplayNameFromUserId, [], {#userId: userId}),
-          returnValue: Future<String?>.value()) as _i7.Future<String?>);
+          returnValue: Future<String?>.value()) as _i9.Future<String?>);
   @override
-  _i7.Future<String?> getImageUrlFromProductId({String? productId}) =>
+  _i9.Future<String?> getImageUrlFromProductId({String? productId}) =>
       (super.noSuchMethod(
           Invocation.method(
               #getImageUrlFromProductId, [], {#productId: productId}),
-          returnValue: Future<String?>.value()) as _i7.Future<String?>);
+          returnValue: Future<String?>.value()) as _i9.Future<String?>);
   @override
-  _i7.Future<List<_i9.Product>> getProductsFromFamilyId(String? familyId) =>
+  _i9.Future<List<_i11.Product>> getProductsFromFamilyId(String? familyId) =>
       (super.noSuchMethod(
               Invocation.method(#getProductsFromFamilyId, [familyId]),
-              returnValue: Future<List<_i9.Product>>.value(<_i9.Product>[]))
-          as _i7.Future<List<_i9.Product>>);
+              returnValue: Future<List<_i11.Product>>.value(<_i11.Product>[]))
+          as _i9.Future<List<_i11.Product>>);
   @override
-  _i7.Future<List<_i10.ShoppingList>> getShoppingListsFromFamilyId(
+  _i9.Future<List<_i12.ShoppingList>> getShoppingListsFromFamilyId(
           String? familyId) =>
       (super.noSuchMethod(
               Invocation.method(#getShoppingListsFromFamilyId, [familyId]),
               returnValue:
-                  Future<List<_i10.ShoppingList>>.value(<_i10.ShoppingList>[]))
-          as _i7.Future<List<_i10.ShoppingList>>);
+                  Future<List<_i12.ShoppingList>>.value(<_i12.ShoppingList>[]))
+          as _i9.Future<List<_i12.ShoppingList>>);
   @override
-  _i7.Stream<_i11.QuerySnapshot<Object?>> getFamilyProductsStream(
+  _i9.Stream<_i13.QuerySnapshot<Object?>> getFamilyProductsStream(
           {String? familyId}) =>
       (super.noSuchMethod(
               Invocation.method(
                   #getFamilyProductsStream, [], {#familyId: familyId}),
-              returnValue: Stream<_i11.QuerySnapshot<Object?>>.empty())
-          as _i7.Stream<_i11.QuerySnapshot<Object?>>);
+              returnValue: Stream<_i13.QuerySnapshot<Object?>>.empty())
+          as _i9.Stream<_i13.QuerySnapshot<Object?>>);
   @override
-  _i7.Future<void> setDisplayName({String? userId, String? displayName}) =>
+  _i9.Future<void> setDisplayName({String? userId, String? displayName}) =>
       (super.noSuchMethod(
           Invocation.method(#setDisplayName, [],
               {#userId: userId, #displayName: displayName}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> addUser({String? userId, String? familyId}) =>
+  _i9.Future<void> addUser({String? userId, String? familyId}) =>
       (super.noSuchMethod(
           Invocation.method(
               #addUser, [], {#userId: userId, #familyId: familyId}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> leaveFamily() =>
+  _i9.Future<void> leaveFamily() =>
       (super.noSuchMethod(Invocation.method(#leaveFamily, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> mergeFamilies(
+  _i9.Future<void> mergeFamilies(
           {String? familyId,
           bool? mergeProducts = false,
           bool? singleMember = false}) =>
@@ -208,73 +217,193 @@ class MockFirestoreHelper extends _i1.Mock implements _i8.FirestoreHelper {
             #singleMember: singleMember
           }),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<String?> addProduct({_i9.Product? product, dynamic image}) =>
+  _i9.Future<String?> addProduct({_i11.Product? product, dynamic image}) =>
       (super.noSuchMethod(
           Invocation.method(
               #addProduct, [], {#product: product, #image: image}),
-          returnValue: Future<String?>.value()) as _i7.Future<String?>);
+          returnValue: Future<String?>.value()) as _i9.Future<String?>);
   @override
-  _i7.Future<void> addShoppingList({_i10.ShoppingList? list}) => (super
+  _i9.Future<void> addShoppingList({_i12.ShoppingList? list}) => (super
       .noSuchMethod(Invocation.method(#addShoppingList, [], {#list: list}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> deleteProduct(String? productId) =>
+  _i9.Future<void> deleteProduct(String? productId) =>
       (super.noSuchMethod(Invocation.method(#deleteProduct, [productId]),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> deleteShoppingList(String? id) =>
+  _i9.Future<void> deleteShoppingList(String? id) =>
       (super.noSuchMethod(Invocation.method(#deleteShoppingList, [id]),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> deleteShoppingListElement(
+  _i9.Future<void> deleteShoppingListElement(
           String? shoppingListid, String? elementId) =>
       (super.noSuchMethod(
           Invocation.method(
               #deleteShoppingListElement, [shoppingListid, elementId]),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> updateCompleted({String? listId, bool? completed}) =>
+  _i9.Future<void> updateCompleted({String? listId, bool? completed}) =>
       (super.noSuchMethod(
           Invocation.method(
               #updateCompleted, [], {#listId: listId, #completed: completed}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> updateQuantity(
+  _i9.Future<void> updateQuantity(
           {String? listId, String? elementId, int? quantity}) =>
       (super.noSuchMethod(
           Invocation.method(#updateQuantity, [],
               {#listId: listId, #elementId: elementId, #quantity: quantity}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> updateChecked(
+  _i9.Future<void> updateChecked(
           {String? listId, String? elementId, bool? checked}) =>
       (super.noSuchMethod(
           Invocation.method(#updateChecked, [],
               {#listId: listId, #elementId: elementId, #checked: checked}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
   @override
-  _i7.Future<void> addElementToShoppingList(
-          {String? listId, _i12.ShoppingListElement? shoppingListElement}) =>
+  _i9.Future<void> addElementToShoppingList(
+          {String? listId, _i14.ShoppingListElement? shoppingListElement}) =>
       (super.noSuchMethod(
           Invocation.method(#addElementToShoppingList, [],
               {#listId: listId, #shoppingListElement: shoppingListElement}),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+}
+
+/// A class which mocks [FirebaseMessaging].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFirebaseMessaging extends _i1.Mock implements _i15.FirebaseMessaging {
+  MockFirebaseMessaging() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.FirebaseApp get app => (super.noSuchMethod(Invocation.getter(#app),
+      returnValue: _FakeFirebaseApp_3()) as _i5.FirebaseApp);
+  @override
+  set app(_i5.FirebaseApp? _app) =>
+      super.noSuchMethod(Invocation.setter(#app, _app),
+          returnValueForMissingStub: null);
+  @override
+  bool get isAutoInitEnabled =>
+      (super.noSuchMethod(Invocation.getter(#isAutoInitEnabled),
+          returnValue: false) as bool);
+  @override
+  _i9.Stream<String> get onTokenRefresh =>
+      (super.noSuchMethod(Invocation.getter(#onTokenRefresh),
+          returnValue: Stream<String>.empty()) as _i9.Stream<String>);
+  @override
+  Map<dynamic, dynamic> get pluginConstants =>
+      (super.noSuchMethod(Invocation.getter(#pluginConstants),
+          returnValue: <dynamic, dynamic>{}) as Map<dynamic, dynamic>);
+  @override
+  _i9.Future<_i6.RemoteMessage?> getInitialMessage() =>
+      (super.noSuchMethod(Invocation.method(#getInitialMessage, []),
+              returnValue: Future<_i6.RemoteMessage?>.value())
+          as _i9.Future<_i6.RemoteMessage?>);
+  @override
+  _i9.Future<void> deleteToken() =>
+      (super.noSuchMethod(Invocation.method(#deleteToken, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+  @override
+  _i9.Future<String?> getAPNSToken() =>
+      (super.noSuchMethod(Invocation.method(#getAPNSToken, []),
+          returnValue: Future<String?>.value()) as _i9.Future<String?>);
+  @override
+  _i9.Future<String?> getToken({String? vapidKey}) => (super.noSuchMethod(
+      Invocation.method(#getToken, [], {#vapidKey: vapidKey}),
+      returnValue: Future<String?>.value()) as _i9.Future<String?>);
+  @override
+  bool isSupported() => (super.noSuchMethod(Invocation.method(#isSupported, []),
+      returnValue: false) as bool);
+  @override
+  _i9.Future<_i6.NotificationSettings> getNotificationSettings() =>
+      (super.noSuchMethod(Invocation.method(#getNotificationSettings, []),
+              returnValue: Future<_i6.NotificationSettings>.value(
+                  _FakeNotificationSettings_4()))
+          as _i9.Future<_i6.NotificationSettings>);
+  @override
+  _i9.Future<_i6.NotificationSettings> requestPermission(
+          {bool? alert = true,
+          bool? announcement = false,
+          bool? badge = true,
+          bool? carPlay = false,
+          bool? criticalAlert = false,
+          bool? provisional = false,
+          bool? sound = true}) =>
+      (super.noSuchMethod(
+              Invocation.method(#requestPermission, [], {
+                #alert: alert,
+                #announcement: announcement,
+                #badge: badge,
+                #carPlay: carPlay,
+                #criticalAlert: criticalAlert,
+                #provisional: provisional,
+                #sound: sound
+              }),
+              returnValue: Future<_i6.NotificationSettings>.value(
+                  _FakeNotificationSettings_4()))
+          as _i9.Future<_i6.NotificationSettings>);
+  @override
+  _i9.Future<void> sendMessage(
+          {String? to,
+          Map<String, String>? data,
+          String? collapseKey,
+          String? messageId,
+          String? messageType,
+          int? ttl}) =>
+      (super.noSuchMethod(
+          Invocation.method(#sendMessage, [], {
+            #to: to,
+            #data: data,
+            #collapseKey: collapseKey,
+            #messageId: messageId,
+            #messageType: messageType,
+            #ttl: ttl
+          }),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setAutoInitEnabled(bool? enabled) =>
+      (super.noSuchMethod(Invocation.method(#setAutoInitEnabled, [enabled]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setForegroundNotificationPresentationOptions(
+          {bool? alert = false, bool? badge = false, bool? sound = false}) =>
+      (super.noSuchMethod(
+          Invocation.method(#setForegroundNotificationPresentationOptions, [],
+              {#alert: alert, #badge: badge, #sound: sound}),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+  @override
+  _i9.Future<void> subscribeToTopic(String? topic) =>
+      (super.noSuchMethod(Invocation.method(#subscribeToTopic, [topic]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
+  @override
+  _i9.Future<void> unsubscribeFromTopic(String? topic) =>
+      (super.noSuchMethod(Invocation.method(#unsubscribeFromTopic, [topic]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
 }
 
 /// A class which mocks [SharedPreferences].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferences extends _i1.Mock implements _i13.SharedPreferences {
+class MockSharedPreferences extends _i1.Mock implements _i16.SharedPreferences {
   MockSharedPreferences() {
     _i1.throwOnMissingStub(this);
   }
@@ -306,47 +435,47 @@ class MockSharedPreferences extends _i1.Mock implements _i13.SharedPreferences {
       (super.noSuchMethod(Invocation.method(#getStringList, [key]))
           as List<String>?);
   @override
-  _i7.Future<bool> setBool(String? key, bool? value) =>
+  _i9.Future<bool> setBool(String? key, bool? value) =>
       (super.noSuchMethod(Invocation.method(#setBool, [key, value]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> setInt(String? key, int? value) =>
+  _i9.Future<bool> setInt(String? key, int? value) =>
       (super.noSuchMethod(Invocation.method(#setInt, [key, value]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> setDouble(String? key, double? value) =>
+  _i9.Future<bool> setDouble(String? key, double? value) =>
       (super.noSuchMethod(Invocation.method(#setDouble, [key, value]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> setString(String? key, String? value) =>
+  _i9.Future<bool> setString(String? key, String? value) =>
       (super.noSuchMethod(Invocation.method(#setString, [key, value]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> setStringList(String? key, List<String>? value) =>
+  _i9.Future<bool> setStringList(String? key, List<String>? value) =>
       (super.noSuchMethod(Invocation.method(#setStringList, [key, value]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> remove(String? key) =>
+  _i9.Future<bool> remove(String? key) =>
       (super.noSuchMethod(Invocation.method(#remove, [key]),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> commit() =>
+  _i9.Future<bool> commit() =>
       (super.noSuchMethod(Invocation.method(#commit, []),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<bool> clear() => (super.noSuchMethod(Invocation.method(#clear, []),
-      returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  _i9.Future<bool> clear() => (super.noSuchMethod(Invocation.method(#clear, []),
+      returnValue: Future<bool>.value(false)) as _i9.Future<bool>);
   @override
-  _i7.Future<void> reload() =>
+  _i9.Future<void> reload() =>
       (super.noSuchMethod(Invocation.method(#reload, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
 }
 
 /// A class which mocks [UserInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserInfo extends _i1.Mock implements _i14.UserInfo {
+class MockUserInfo extends _i1.Mock implements _i17.UserInfo {
   MockUserInfo() {
     _i1.throwOnMissingStub(this);
   }
@@ -368,8 +497,8 @@ class MockUserInfo extends _i1.Mock implements _i14.UserInfo {
       super.noSuchMethod(Invocation.setter(#email, email),
           returnValueForMissingStub: null);
   @override
-  _i7.Future<void> initUserInfoProvider() =>
+  _i9.Future<void> initUserInfoProvider() =>
       (super.noSuchMethod(Invocation.method(#initUserInfoProvider, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i9.Future<void>);
 }
