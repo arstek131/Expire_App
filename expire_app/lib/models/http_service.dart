@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 class HttpService{
   /*
     Altre chiavi API:
+    CHIAVE PRESENTAZIONE --> 1ea3056bff4f4095b38779b61c79e6eb
     1) b385898bef554001872e9e2710451a8d
     2) d53be8e7bdf642a6a61c4c1773958dba
     3) d1829587c9b44fac84f3086e8e15e74d
