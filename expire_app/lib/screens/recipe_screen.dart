@@ -116,18 +116,17 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                     );
                                   },
                                 )
-                              : Expanded(
-                                  child: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: deviceInfo.isTabletLandscape(context) ? 5 : 3,
-                                    ),
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return RecipeCard(
-                                        r: snapshot.data![index],
-                                      );
-                                    },
+                              : GridView.builder(
+                                  shrinkWrap: true,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: deviceInfo.isTabletLandscape(context) ? 5 : 3,
                                   ),
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return RecipeCard(
+                                      r: snapshot.data![index],
+                                    );
+                                  },
                                 ),
                         );
                       } else

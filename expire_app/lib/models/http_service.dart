@@ -5,7 +5,7 @@ import 'package:expire_app/models/recipe.dart';
 import 'package:expire_app/models/recipe_details.dart';
 import 'package:http/http.dart';
 
-class HttpService{
+class HttpService {
   /*
     Altre chiavi API:
     CHIAVE PRESENTAZIONE --> 1ea3056bff4f4095b38779b61c79e6eb
@@ -14,66 +14,48 @@ class HttpService{
     3) d1829587c9b44fac84f3086e8e15e74d
   */
 
+  static final queryParameters2 = {'apiKey': '1ea3056bff4f4095b38779b61c79e6eb'};
 
+  static Future<List<Recipe>> getRecipes(String ingredients) async {
+    Map<String, String> queryParameters = {
+      'apiKey': '1ea3056bff4f4095b38779b61c79e6eb',
+      'ingredients': ingredients,
+      'number': '10',
+    };
 
-
-  static final queryParameters2 = {
-    'apiKey': 'b385898bef554001872e9e2710451a8d'
-  };
-
-
-
- static Future<List<Recipe>> getRecipes(String ingredients) async{
-
-   Map<String, String> queryParameters = {
-     'apiKey': 'b385898bef554001872e9e2710451a8d',
-     'ingredients': ingredients,
-     'number': '10',
-   };
-
-    final uri = Uri.https(
-        'api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
+    final uri = Uri.https('api.spoonacular.com', '/recipes/findByIngredients', queryParameters);
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
 
-    if(res.statusCode == 200){
+    if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
       print(uri.toString());
 
       List<Recipe> recipes = body.map((dynamic item) => Recipe.fromJson(item)).toList();
 
-
       return recipes;
-    }else{
+    } else {
       throw 'can\'t get recipes';
     }
-
   }
 
-   static Future <RecipeDetails> getInfoRecipes(String id) async{
-
-    final uri = Uri.https(
-        'api.spoonacular.com', '/recipes/$id/information', queryParameters2);
+  static Future<RecipeDetails> getInfoRecipes(String id) async {
+    final uri = Uri.https('api.spoonacular.com', '/recipes/$id/information', queryParameters2);
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     Response res = await get(uri, headers: headers);
 
-    if(res.statusCode == 200){
+    if (res.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(res.body);
       print(uri.toString());
-
-
 
       RecipeDetails recipesDetails = RecipeDetails.fromJson(body);
       //print(recipesDetails.title);
       //print(recipesDetails.analyzedInstructions[0].steps.length);
 
       return recipesDetails;
-    }else{
+    } else {
       throw 'can\'t get infos';
     }
-
   }
-
-
 }
