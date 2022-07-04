@@ -2,6 +2,9 @@
 <img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/DD/Images/Logo/expiry_app_logo.png" width=192 height=192 align="right"/>
 Final project for the DIMA (Design And Implementation Of Mobile Applications) course at Politecnico di Milano.
 
+
+**Final Score**: 30L/30
+
 ## Brief Description
 Expire App has been developed using [Flutter](https://flutter.dev/). The main purpose of the app, is to track, as the name suggests, the expiration date of the food you buy, by sending reminders. 
 
