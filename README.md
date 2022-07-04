@@ -42,3 +42,6 @@ flutter run
 ## Group Members
 - [Arslan Ali](https://github.com/arstek131)
 - [Alessandro Sorrentino](https://github.com/sorre97)
+
+## License
+All the code available under the MIT + Apache 2.0. licenses. See [LICENSE](LICENSE).
