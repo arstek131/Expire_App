@@ -13,3 +13,12 @@ Expire App is available for both users, online and offline.
 ## App Preview
 ### Products screen
 <img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/Mocks/mock_git_1.png"  /> 
+
+### Recipes screen
+<img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/Mocks/mock_git_2.png"  />
+
+### Shopping lists, statistics and user screen
+<img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/Mocks/mock_git_3.png"  />
+
+### Multi layouts
+<img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/Mocks/mock_git_4.png"  />
