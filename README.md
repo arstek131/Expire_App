@@ -38,3 +38,7 @@ git clone https://github.com/arstek131/Expire_App.git
 flutter pub get
 flutter run
 ```
+
+## Group Members
+- [Arslan Ali](https://github.com/arstek131)
+- [Alessandro Sorrentino](https://github.com/sorre97)
