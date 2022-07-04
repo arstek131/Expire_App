@@ -22,3 +22,19 @@ Expire App is available for both users, online and offline.
 
 ### Multi layouts
 <img src="https://github.com/arstek131/MAD_Prj/blob/main/docs/Mocks/mock_git_4.png"  />
+
+## Building from Source
+
+1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
+2. Fetch latest source code from master branch.
+
+```
+git clone https://github.com/arstek131/Expire_App.git
+```
+
+3. Run the app with Android Studio or VS Code. Or the command line:
+
+```
+flutter pub get
+flutter run
+```
